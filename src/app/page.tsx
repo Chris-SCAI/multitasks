@@ -1,0 +1,47 @@
+import dynamic from "next/dynamic";
+import { HeroSection } from "@/components/landing/HeroSection";
+
+const ProofSection = dynamic(() => import("@/components/landing/ProofSection").then(mod => mod.ProofSection));
+const DemoSection = dynamic(() => import("@/components/landing/DemoSection").then(mod => mod.DemoSection));
+const HowItWorksSection = dynamic(() => import("@/components/landing/HowItWorksSection").then(mod => mod.HowItWorksSection));
+const PricingSection = dynamic(() => import("@/components/landing/PricingSection").then(mod => mod.PricingSection));
+const FAQSection = dynamic(() => import("@/components/landing/FAQSection").then(mod => mod.FAQSection));
+const FinalCTASection = dynamic(() => import("@/components/landing/FinalCTASection").then(mod => mod.FinalCTASection));
+const Footer = dynamic(() => import("@/components/landing/Footer").then(mod => mod.Footer));
+
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-[#0B1120] text-neutral-100">
+      <HeroSection />
+      <ProofSection />
+      <DemoSection />
+      <HowItWorksSection />
+      <PricingSection />
+      <FAQSection />
+      <FinalCTASection />
+      <Footer />
+
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "Multitasks",
+            applicationCategory: "ProductivityApplication",
+            operatingSystem: "Web",
+            offers: [
+              { "@type": "Offer", price: "0", priceCurrency: "EUR", name: "Gratuit" },
+              { "@type": "Offer", price: "5.90", priceCurrency: "EUR", name: "IA Quotidienne" },
+              { "@type": "Offer", price: "12.90", priceCurrency: "EUR", name: "Pro Sync" },
+            ],
+            description:
+              "Gestion de tâches avec priorisation IA via la matrice d'Eisenhower",
+            url: "https://multitasks.fr",
+          }),
+        }}
+      />
+    </div>
+  );
+}

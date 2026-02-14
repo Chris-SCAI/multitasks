@@ -1,0 +1,306 @@
+"use client";
+
+import { useState, useCallback } from "react";
+import {
+  DndContext,
+  DragOverlay,
+  useDraggable,
+  useDroppable,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragStartEvent,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { DomainBadge } from "@/components/domains/DomainBadge";
+import { ConflictBadge } from "@/components/calendar/ConflictBadge";
+import type { Task, TaskPriority, Domain } from "@/types";
+import type { DayInfo, ConflictInfo } from "@/hooks/useCalendar";
+
+const PRIORITY_COLORS: Record<TaskPriority, string> = {
+  urgent: "bg-red-900/30 text-red-400",
+  high: "bg-orange-900/30 text-orange-400",
+  medium: "bg-blue-900/30 text-blue-400",
+  low: "bg-neutral-800 text-neutral-400",
+};
+
+const PRIORITY_LABELS: Record<TaskPriority, string> = {
+  urgent: "Urgente",
+  high: "Haute",
+  medium: "Moyenne",
+  low: "Basse",
+};
+
+interface CalendarWeekProps {
+  days: DayInfo[];
+  getTasksForDay: (date: string) => Task[];
+  getDayLoad: (date: string) => number;
+  getConflicts: (date: string) => ConflictInfo;
+  updateTaskDeadline: (taskId: string, newDate: string) => Promise<void>;
+  domains: Domain[];
+}
+
+function formatMinutes(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h === 0) return `${m}min`;
+  if (m === 0) return `${h}h`;
+  return `${h}h${String(m).padStart(2, "0")}`;
+}
+
+function DraggableTask({
+  task,
+  domain,
+}: {
+  task: Task;
+  domain?: Domain;
+}) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: task.id,
+    data: { task },
+  });
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            ref={setNodeRef}
+            {...listeners}
+            {...attributes}
+            className={cn(
+              "cursor-grab rounded-md border border-[#1E293B] bg-[#151D2E] p-1.5 text-sm shadow-sm transition-shadow hover:shadow-md active:cursor-grabbing",
+              isDragging && "opacity-30"
+            )}
+          >
+            <p className="truncate font-medium leading-tight text-white">{task.title}</p>
+            <div className="mt-1 flex flex-wrap items-center gap-1">
+              <Badge
+                variant="secondary"
+                className={cn("text-[10px] px-1 py-0", PRIORITY_COLORS[task.priority])}
+              >
+                {PRIORITY_LABELS[task.priority]}
+              </Badge>
+              {domain && <DomainBadge domain={domain} size="sm" />}
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs">
+          <div className="space-y-1">
+            <p className="font-medium">{task.title}</p>
+            {task.description && (
+              <p className="text-sm opacity-80">{task.description}</p>
+            )}
+            {task.estimatedMinutes && (
+              <p className="text-sm opacity-80">
+                Estimé : {formatMinutes(task.estimatedMinutes)}
+              </p>
+            )}
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+function TaskCardOverlay({
+  task,
+  domain,
+}: {
+  task: Task;
+  domain?: Domain;
+}) {
+  return (
+    <div className="w-36 cursor-grabbing rounded-md border border-[#1E293B] bg-[#151D2E] p-1.5 text-sm shadow-xl ring-2 ring-primary/30">
+      <p className="truncate font-medium leading-tight text-white">{task.title}</p>
+      <div className="mt-1 flex flex-wrap items-center gap-1">
+        <Badge
+          variant="secondary"
+          className={cn("text-[10px] px-1 py-0", PRIORITY_COLORS[task.priority])}
+        >
+          {PRIORITY_LABELS[task.priority]}
+        </Badge>
+        {domain && <DomainBadge domain={domain} size="sm" />}
+      </div>
+    </div>
+  );
+}
+
+function DroppableDay({
+  day,
+  tasks,
+  domains,
+  dayLoad,
+  conflict,
+  isOver,
+}: {
+  day: DayInfo;
+  tasks: Task[];
+  domains: Domain[];
+  dayLoad: number;
+  conflict: ConflictInfo;
+  isOver: boolean;
+}) {
+  const { setNodeRef } = useDroppable({
+    id: day.date,
+    data: { date: day.date },
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={cn(
+        "flex min-h-[140px] flex-col rounded-lg border transition-colors sm:min-h-[200px]",
+        day.isToday
+          ? "border-primary/50 bg-primary/10"
+          : "border-[#1E293B] bg-[#151D2E]",
+        tasks.length === 0 &&
+          !day.isToday &&
+          "bg-[#0B1120]/50",
+        isOver && "border-primary bg-primary/10 ring-2 ring-primary/20"
+      )}
+    >
+      <div className="flex items-center justify-between border-b border-[#1E293B]/50 px-2 py-1.5">
+        <div className="flex items-center gap-1">
+          <span
+            className={cn(
+              "text-sm",
+              day.isToday
+                ? "font-bold text-primary"
+                : "font-medium text-neutral-300"
+            )}
+          >
+            {day.dayName}
+          </span>
+          <span
+            className={cn(
+              "flex size-6 items-center justify-center rounded-full text-sm",
+              day.isToday
+                ? "bg-primary font-bold text-white"
+                : "font-medium text-white"
+            )}
+          >
+            {day.dayNumber}
+          </span>
+        </div>
+        <ConflictBadge conflict={conflict} size="sm" />
+      </div>
+
+      <div className="flex-1 space-y-1 overflow-y-auto p-1.5">
+        {tasks.map((task) => (
+          <DraggableTask
+            key={task.id}
+            task={task}
+            domain={domains.find((d) => d.id === task.domainId)}
+          />
+        ))}
+      </div>
+
+      {dayLoad > 0 && (
+        <div className="border-t border-[#1E293B]/50 px-2 py-1">
+          <span className="text-xs text-neutral-300">
+            {formatMinutes(dayLoad)}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function CalendarWeek({
+  days,
+  getTasksForDay,
+  getDayLoad,
+  getConflicts,
+  updateTaskDeadline,
+  domains,
+}: CalendarWeekProps) {
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 5 },
+    })
+  );
+
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    const task = event.active.data.current?.task as Task | undefined;
+    if (task) setActiveTask(task);
+  }, []);
+
+  const handleDragOver = useCallback(
+    (event: { over: { id: string | number } | null }) => {
+      setOverId(event.over ? String(event.over.id) : null);
+    },
+    []
+  );
+
+  const handleDragEnd = useCallback(
+    async (event: DragEndEvent) => {
+      setActiveTask(null);
+      setOverId(null);
+      const { active, over } = event;
+      if (!over) return;
+
+      const taskId = String(active.id);
+      const newDate = String(over.id);
+      const task = active.data.current?.task as Task | undefined;
+
+      if (task && task.dueDate !== newDate) {
+        await updateTaskDeadline(taskId, newDate);
+      }
+    },
+    [updateTaskDeadline]
+  );
+
+  const handleDragCancel = useCallback(() => {
+    setActiveTask(null);
+    setOverId(null);
+  }, []);
+
+  return (
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+    >
+      <div className="grid grid-cols-7 gap-1.5 overflow-x-auto sm:gap-2">
+        {days.map((day) => (
+          <DroppableDay
+            key={day.date}
+            day={day}
+            tasks={getTasksForDay(day.date)}
+            domains={domains}
+            dayLoad={getDayLoad(day.date)}
+            conflict={getConflicts(day.date)}
+            isOver={overId === day.date}
+          />
+        ))}
+      </div>
+
+      <DragOverlay dropAnimation={null}>
+        {activeTask ? (
+          <TaskCardOverlay
+            task={activeTask}
+            domain={domains.find((d) => d.id === activeTask.domainId)}
+          />
+        ) : null}
+      </DragOverlay>
+    </DndContext>
+  );
+}
