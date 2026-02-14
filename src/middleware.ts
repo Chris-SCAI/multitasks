@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 
 // =============================================================================
 // Rate Limiter en mémoire — compatible Edge Runtime (pas de dépendance Node.js)
@@ -145,6 +146,24 @@ function isAuthRoute(pathname: string): boolean {
   return AUTH_ROUTE_PATTERNS.some((pattern) => pattern.test(pathname));
 }
 
+/** Routes protégées nécessitant une session */
+const PROTECTED_PATTERNS: ReadonlyArray<RegExp> = [
+  /^\/dashboard(\/|$)/,
+];
+
+/** Routes accessibles uniquement sans session (login/register) */
+const AUTH_ONLY_PATTERNS: ReadonlyArray<RegExp> = [
+  /^\/(login|register)(\/|$)/,
+];
+
+function isProtectedRoute(pathname: string): boolean {
+  return PROTECTED_PATTERNS.some((pattern) => pattern.test(pathname));
+}
+
+function isAuthOnlyRoute(pathname: string): boolean {
+  return AUTH_ONLY_PATTERNS.some((pattern) => pattern.test(pathname));
+}
+
 /** Extrait l'adresse IP du client depuis les headers de la requête */
 function getClientIp(request: NextRequest): string {
   // En production (Vercel, Cloudflare, etc.), l'IP est dans un header spécifique
@@ -187,7 +206,7 @@ function createRateLimitResponse(resetAt: number): NextResponse {
 // Middleware principal
 // =============================================================================
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const clientIp = getClientIp(request);
 
@@ -205,8 +224,54 @@ export function middleware(request: NextRequest) {
     return createRateLimitResponse(globalResult.resetAt);
   }
 
-  // --- Requête autorisée ---
-  const response = NextResponse.next();
+  // --- Rafraîchissement de session Supabase + protection des routes ---
+  let response = NextResponse.next({
+    request: { headers: request.headers },
+  });
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (supabaseUrl && supabaseAnonKey) {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          // Mettre à jour les cookies sur la requête (pour le SSR en aval)
+          for (const { name, value } of cookiesToSet) {
+            request.cookies.set(name, value);
+          }
+          // Recréer la réponse avec les headers de requête mis à jour
+          response = NextResponse.next({
+            request: { headers: request.headers },
+          });
+          // Mettre à jour les cookies sur la réponse (pour le navigateur)
+          for (const { name, value, options } of cookiesToSet) {
+            response.cookies.set(name, value, options);
+          }
+        },
+      },
+    });
+
+    // Rafraîchir la session (rotation des tokens)
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Route protégée sans session → redirection login
+    if (!user && isProtectedRoute(pathname)) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Route auth-only avec session → redirection dashboard
+    if (user && isAuthOnlyRoute(pathname)) {
+      const dashboardUrl = request.nextUrl.clone();
+      dashboardUrl.pathname = "/dashboard";
+      return NextResponse.redirect(dashboardUrl);
+    }
+  }
 
   // Ajout des headers informatifs de rate limiting (RFC 6585 / draft-ietf-httpapi-ratelimit-headers)
   response.headers.set(

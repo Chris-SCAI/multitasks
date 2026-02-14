@@ -1,10 +1,14 @@
-// TODO: Install @supabase/ssr when Supabase is configured
-// import { createBrowserClient } from "@supabase/ssr";
+import { createBrowserClient } from "@supabase/ssr";
 
 export function createClient() {
-  // Supabase not configured in local-first mode
-  // When NEXT_PUBLIC_SUPABASE_URL is set, this will use the actual Supabase client
-  return null;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+
+  return createBrowserClient(supabaseUrl, supabaseAnonKey);
 }
 
 export function isSupabaseConfigured(): boolean {
