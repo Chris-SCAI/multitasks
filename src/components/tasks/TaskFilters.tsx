@@ -80,7 +80,9 @@ export function TaskFilters({
               }
               className={cn(
                 "cursor-pointer transition-colors",
-                filters.status?.includes(opt.value) && "bg-primary text-primary-foreground"
+                filters.status?.includes(opt.value)
+                  ? "bg-primary text-primary-foreground"
+                  : "border-neutral-300 text-neutral-700 dark:border-neutral-600 dark:text-neutral-300"
               )}
             >
               {opt.label}
@@ -105,7 +107,9 @@ export function TaskFilters({
               }
               className={cn(
                 "cursor-pointer transition-colors",
-                filters.priority?.includes(opt.value) && "bg-primary text-primary-foreground"
+                filters.priority?.includes(opt.value)
+                  ? "bg-primary text-primary-foreground"
+                  : "border-neutral-300 text-neutral-700 dark:border-neutral-600 dark:text-neutral-300"
               )}
             >
               {opt.label}
