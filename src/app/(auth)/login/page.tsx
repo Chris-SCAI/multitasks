@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0B1120] px-4">
-      <div className="w-full max-w-md space-y-8">
+      <div className="w-full max-w-lg space-y-8">
         <div className="flex flex-col items-center">
           <div className="mb-4 flex items-center gap-2.5">
             <Sparkles className="size-7 text-yellow-400" />
@@ -28,7 +28,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 shadow-lg">
+        <div className="rounded-2xl border border-[#1E293B] bg-[#151D2E] p-8 shadow-lg">
           <form
             onSubmit={(e) => e.preventDefault()}
             className="space-y-4"

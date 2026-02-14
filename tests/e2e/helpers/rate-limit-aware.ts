@@ -1,37 +1,26 @@
 import { Page } from "@playwright/test";
 
 /**
- * Compteur global de navigations depuis la derniere pause.
- * Persiste entre fichiers de test avec workers: 1.
- * Chaque page.goto/reload consomme ~12-15 requetes HTTP.
- * Rate limit : 100 req/min (fenetre glissante 60s).
- * Seuil : apres 5 navigations (~75 req), on attend 65s pour reinitialiser.
+ * Verifie le budget rate limit et attend si necessaire.
+ * Fait UNE seule requete de verification, puis attend si le budget est bas.
+ * Ne boucle pas pour eviter de consommer plus de budget.
  */
-let navigationCount = 0;
-let lastPauseTime = Date.now();
+export async function waitForRateLimitBudget(page: Page, minRemaining = 40): Promise<void> {
+  const response = await page.request.get("/dashboard");
 
-export async function waitForRateLimitBudget(page: Page): Promise<void> {
-  const now = Date.now();
-  const elapsed = now - lastPauseTime;
-
-  // Si 65+ secondes se sont ecoulees depuis la derniere pause,
-  // le budget s'est reinitialise naturellement
-  if (elapsed >= 65000) {
-    navigationCount = 0;
-    lastPauseTime = now;
+  // Si 429, attendre le Retry-After
+  if (response.status() === 429) {
+    const retryAfter = parseInt(response.headers()["retry-after"] || "60", 10);
+    await page.waitForTimeout((retryAfter + 3) * 1000);
     return;
   }
 
-  // Si on a fait assez de navigations pour epuiser le budget
-  if (navigationCount >= 5) {
-    const waitMs = Math.max(0, 65000 - elapsed);
-    if (waitMs > 0) {
-      await page.waitForTimeout(waitMs);
-    }
-    navigationCount = 0;
-    lastPauseTime = Date.now();
+  // Verifier le budget restant
+  const remaining = parseInt(response.headers()["x-ratelimit-remaining"] || "100", 10);
+  if (remaining < minRemaining) {
+    const resetAt = parseInt(response.headers()["x-ratelimit-reset"] || "0", 10);
+    const now = Math.ceil(Date.now() / 1000);
+    const waitSeconds = Math.max(5, Math.min(65, resetAt - now + 3));
+    await page.waitForTimeout(waitSeconds * 1000);
   }
-
-  // Compter les navigations que ce test va faire (~2 en moyenne)
-  navigationCount += 2;
 }

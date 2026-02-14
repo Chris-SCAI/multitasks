@@ -48,7 +48,7 @@ export default function PrivacyPage() {
             <ul>
               <li>Fourniture et amelioration du service</li>
               <li>Gestion de votre compte et de votre abonnement</li>
-              <li>Analyse IA de vos taches (envoi des titres et descriptions a l&apos;API Anthropic)</li>
+              <li>Analyse IA de vos taches (envoi des titres et descriptions a l&apos;API OpenAI)</li>
               <li>Communication relative au service (emails transactionnels)</li>
             </ul>
           </section>
@@ -65,9 +65,9 @@ export default function PrivacyPage() {
             <h2>5. Analyse IA</h2>
             <p>
               Lors d&apos;une analyse, les titres et descriptions de vos taches
-              sont envoyes a l&apos;API Anthropic (Claude). Vos donnees ne sont ni
+              sont envoyes a l&apos;API OpenAI (GPT-4o-mini). Vos donnees ne sont ni
               stockees ni utilisees pour l&apos;entrainement des modeles par
-              Anthropic.
+              OpenAI.
             </p>
           </section>
 
@@ -77,7 +77,7 @@ export default function PrivacyPage() {
             <ul>
               <li>Supabase (hebergement base de donnees, UE)</li>
               <li>Stripe (paiements securises)</li>
-              <li>Anthropic (analyse IA, traitement ponctuel)</li>
+              <li>OpenAI (analyse IA, traitement ponctuel)</li>
               <li>Vercel (hebergement application)</li>
             </ul>
             <p>Aucune donnee n&apos;est vendue a des tiers.</p>

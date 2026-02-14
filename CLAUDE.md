@@ -275,15 +275,15 @@
     name="ai-engine-agent"
     type="general-purpose"
     model="opus"
-    role="Intégration Anthropic, prompt engineering, parsing IA"
+    role="Intégration OpenAI, prompt engineering, parsing IA"
     phase="3.3"
     plan_mode_required="true"
   >
     <spawn_prompt>
       Tu es l'agent AI Engine de Multitasks.fr. Ta responsabilité : UNIQUE point d'intégration
-      avec l'API Anthropic. Prompt d'analyse, parsing réponses, validation Zod.
+      avec l'API OpenAI. Prompt d'analyse, parsing réponses, validation Zod.
       Tu travailles UNIQUEMENT sur tes fichiers (voir FILE_OWNERSHIP dans CLAUDE.md section 0.2).
-      Modèle production : claude-sonnet-4-20250514. Temperature 0.1. Max tokens 2000.
+      Modèle production : gpt-4o-mini. Temperature 0.1. Max tokens 2000.
       Le prompt complet est dans CLAUDE.md section 5 — implémente-le fidèlement.
       Quand tu termines, envoie un message au team-lead ET au frontend-agent (pour FE-07).
 
@@ -297,7 +297,7 @@
       - Tester avec des titres de tâches malveillants ("ignore previous instructions", injection HTML).
 
       RÈGLES : JSON strict en sortie, validation Zod avant stockage,
-      ANTHROPIC_API_KEY côté serveur uniquement.
+      OPENAI_API_KEY côté serveur uniquement.
     </spawn_prompt>
     <file_ownership>
       src/app/api/ai/analyze/route.ts
@@ -311,7 +311,7 @@
             description="src/lib/ai/prompt-builder.ts conforme section 5. Injection dynamique tâches avec domaines, deadlines, durées. Timezone."
             blocked_by="F-03"/>
       <task id="AI-02" subject="API route /api/ai/analyze + response parser"
-            description="Route POST : auth + quota check + Anthropic SDK + parsing Zod. Retry 1x. Sauvegarde DB. Conforme section 5."
+            description="Route POST : auth + quota check + OpenAI SDK + parsing Zod. Retry 1x. Sauvegarde DB. Conforme section 5."
             blocked_by="AI-01, BE-02, F-05"/>
       <task id="AI-03" subject="Analysis store (Zustand)"
             description="analysis-store.ts : état analyses (loading, results, history). Hook useAnalysis. Quota indicator."
@@ -409,7 +409,7 @@
             description="Vitest : reminder scheduler, conflict detection, calendar hooks."
             blocked_by="FE-06, BE-03"/>
       <task id="QA-03" subject="Tests unitaires Phase 3"
-            description="Vitest : prompt-builder, response-parser, quota checker. Mock Anthropic API."
+            description="Vitest : prompt-builder, response-parser, quota checker. Mock OpenAI API."
             blocked_by="AI-02, BE-02"/>
       <task id="QA-04" subject="Tests E2E parcours critiques"
             description="Playwright : onboarding (3 tâches en 5min), analyse IA flow, payment flow, sync."
@@ -664,7 +664,7 @@
   <feature id="F03" name="Analyse IA" priority="P0" tier="all">
     20 tâches max par analyse. Matrice Eisenhower. Priorité + durée estimée + next action.
     Quotas : free=2 lifetime | ia_quotidienne=8/mois | pro_sync=3/jour.
-    Config : claude-sonnet-4-20250514, temp 0.1, max_tokens 2000.
+    Config : gpt-4o-mini, temp 0.1, max_tokens 2000.
   </feature>
   <feature id="F04" name="Calendrier" priority="P1" tier="all">
     Semaine(all) + Mois(payant). Conflict detection (2+ deadlines/jour ou charge>8h). Drag and drop.
@@ -690,7 +690,7 @@
   <stack>
     Frontend: Next.js 15, React 19, TailwindCSS 4, shadcn/ui, Lucide, Dexie.js, date-fns, react-beautiful-dnd, Zustand, next-pwa, Framer Motion (micro-interactions premium)
     Backend: Next.js API Routes, Supabase (Auth + Postgres + RLS), @upstash/ratelimit (rate limiting), DOMPurify (XSS sanitization)
-    IA: Anthropic SDK TS, Claude Sonnet 4, Zod
+    IA: OpenAI SDK TS, GPT-4o-mini, Zod
     Paiements: Stripe (abonnements + webhooks)
     Infra: Vercel, Supabase Cloud
     Qualité: TypeScript strict, Vitest, Playwright, ESLint + Prettier
@@ -837,7 +837,7 @@
     At rest : Supabase (AES-256 transparent). Pas de données sensibles en clair dans les logs.
     In transit : TLS 1.3 obligatoire partout. HSTS header avec max-age=31536000 includeSubDomains.
     Local (IndexedDB) : Non chiffré (device trust model). Mention dans les CGU.
-    API keys : Jamais transmises au client. Appels Anthropic/Stripe côté serveur uniquement.
+    API keys : Jamais transmises au client. Appels OpenAI/Stripe côté serveur uniquement.
   </encryption>
 
   <!-- ============================================ -->
@@ -875,7 +875,7 @@
     Configurés dans next.config.ts headers() :
     Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com;
       style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co
-      https://api.anthropic.com https://api.stripe.com; frame-src https://js.stripe.com;
+      https://api.openai.com https://api.stripe.com; frame-src https://js.stripe.com;
     X-Frame-Options: DENY
     X-Content-Type-Options: nosniff
     X-XSS-Protection: 0 (désactivé au profit de CSP)
@@ -907,10 +907,10 @@
   </stripe_security>
 
   <!-- ============================================ -->
-  <!-- ANTHROPIC API SÉCURITÉ                       -->
+  <!-- OPENAI API SÉCURITÉ                            -->
   <!-- ============================================ -->
   <ai_security>
-    ANTHROPIC_API_KEY : côté serveur uniquement. Route /api/ai/analyze = seul point d'appel.
+    OPENAI_API_KEY : côté serveur uniquement. Route /api/ai/analyze = seul point d'appel.
     Prompt injection protection :
       - Les titres/descriptions des tâches sont injectés dans un template fixe.
       - Le prompt système est NON modifiable par l'utilisateur.
@@ -940,9 +940,9 @@
     <data_portability>Export CSV + PDF disponible pour tous les plans payants.</data_portability>
     <ai_disclosure>
       Banner visible à la première analyse IA :
-      "L'analyse envoie les titres et descriptions de vos tâches à l'API Anthropic (Claude).
+      "L'analyse envoie les titres et descriptions de vos tâches à l'API OpenAI (GPT-4o-mini).
        Vos données ne sont ni stockées ni utilisées pour l'entraînement des modèles."
-      Lien vers la politique de données Anthropic.
+      Lien vers la politique de données OpenAI.
     </ai_disclosure>
     <cookies>
       Cookies strictement nécessaires uniquement (session auth).
@@ -954,7 +954,7 @@
   <!-- SECRETS ET ENVIRONNEMENT                     -->
   <!-- ============================================ -->
   <secrets>
-    ANTHROPIC_API_KEY         → Vercel env (encrypted, server only)
+    OPENAI_API_KEY            → Vercel env (encrypted, server only)
     SUPABASE_SERVICE_ROLE_KEY → Vercel env (encrypted, server only, CRITIQUE)
     STRIPE_SECRET_KEY         → Vercel env (encrypted, server only)
     STRIPE_WEBHOOK_SECRET     → Vercel env (encrypted, server only)
@@ -1265,7 +1265,7 @@
 ```
 # .env.example
 NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY
-ANTHROPIC_API_KEY / NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY / STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET
+OPENAI_API_KEY / NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY / STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 # Commandes

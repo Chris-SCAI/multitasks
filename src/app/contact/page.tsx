@@ -36,7 +36,7 @@ export default function ContactPage() {
 
         <h1 className="mb-4 text-4xl font-bold text-white">Contact</h1>
         <p className="mb-10 text-lg text-neutral-400">
-          Une question, un probleme ou une suggestion ? Ecrivez-nous.
+          Une question, un problème ou une suggestion ? Écrivez-nous.
         </p>
 
         <div className="mb-10 flex items-center gap-3 rounded-xl border border-[#1E293B] bg-[#151D2E] p-5">
@@ -52,10 +52,10 @@ export default function ContactPage() {
         {sent ? (
           <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-8 text-center">
             <p className="text-lg font-semibold text-emerald-400">
-              Votre client email a ete ouvert avec le message pre-rempli.
+              Votre client email a été ouvert avec le message pré-rempli.
             </p>
             <p className="mt-2 text-neutral-400">
-              Si rien ne s&apos;est passe, envoyez directement un email a
+              Si rien ne s&apos;est passé, envoyez directement un email à
               contact@multitasks.fr.
             </p>
           </div>
@@ -97,7 +97,7 @@ export default function ContactPage() {
                 name="message"
                 required
                 rows={5}
-                placeholder="Decrivez votre demande..."
+                placeholder="Décrivez votre demande..."
                 className="border-[#1E293B] bg-[#151D2E] text-white placeholder:text-neutral-500 focus:ring-violet-500"
               />
             </div>

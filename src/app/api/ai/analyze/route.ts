@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import { z } from "zod";
 import { buildAnalysisPrompt } from "@/lib/ai/prompt-builder";
 import {
@@ -31,10 +31,10 @@ const requestBodySchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "AI analysis not configured. Set ANTHROPIC_API_KEY." },
+        { error: "AI analysis not configured. Set OPENAI_API_KEY." },
         { status: 503 }
       );
     }
@@ -76,20 +76,22 @@ export async function POST(request: NextRequest) {
       currentDate: new Date().toISOString().split("T")[0],
     });
 
-    const client = new Anthropic({ apiKey });
+    const client = new OpenAI({ apiKey });
     const startTime = Date.now();
 
-    const callAnthropic = async () => {
+    const callOpenAI = async () => {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 30_000);
       try {
-        return await client.messages.create(
+        return await client.chat.completions.create(
           {
-            model: "claude-sonnet-4-20250514",
+            model: "gpt-4o-mini",
             max_tokens: 2000,
             temperature: 0.1,
-            system: systemPrompt,
-            messages: [{ role: "user", content: userPrompt }],
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt },
+            ],
           },
           { signal: controller.signal }
         );
@@ -98,12 +100,12 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    let message: Anthropic.Message;
+    let message: OpenAI.Chat.Completions.ChatCompletion;
     try {
-      message = await callAnthropic();
+      message = await callOpenAI();
     } catch {
       try {
-        message = await callAnthropic();
+        message = await callOpenAI();
       } catch (retryError) {
         if (
           retryError instanceof Error &&
@@ -122,10 +124,10 @@ export async function POST(request: NextRequest) {
     }
 
     const durationMs = Date.now() - startTime;
-    const responseText =
-      message.content[0].type === "text" ? message.content[0].text : "";
+    const responseText = message.choices[0].message.content ?? "";
     const tokensUsed =
-      message.usage.input_tokens + message.usage.output_tokens;
+      (message.usage?.prompt_tokens ?? 0) +
+      (message.usage?.completion_tokens ?? 0);
 
     const analysis = parseAnalysisResponse(responseText);
     const validIds = tasks.map((t) => t.id);
@@ -144,7 +146,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         tokensUsed,
         durationMs,
-        model: "claude-sonnet-4-20250514",
+        model: "gpt-4o-mini",
         taskCount: tasks.length,
       },
     });

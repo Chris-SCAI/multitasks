@@ -42,7 +42,7 @@ export function Footer() {
         </div>
 
         <div className="mt-10 border-t border-[#1E293B] pt-10 text-center text-base text-neutral-600">
-          <p>&copy; 2025 Multitasks. Tous droits réservés.</p>
+          <p>&copy; 2026 Multitasks. Tous droits réservés.</p>
         </div>
       </div>
     </footer>
