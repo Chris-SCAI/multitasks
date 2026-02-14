@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { trackEvent, EVENTS } from "@/lib/analytics/track";
 
 export function FinalCTASection() {
   return (
@@ -25,7 +28,11 @@ export function FinalCTASection() {
           size="lg"
           className="rounded-full bg-violet-600 px-12 py-8 text-2xl text-white shadow-2xl shadow-violet-600/25 transition-all hover:bg-violet-500 hover:shadow-violet-500/30 active:scale-95"
         >
-          <Link href="/register" className="inline-flex items-center gap-3">
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-3"
+            onClick={() => trackEvent(EVENTS.CTA_FINAL_CLICK)}
+          >
             Commencer gratuitement
             <ArrowRight className="size-7" />
           </Link>

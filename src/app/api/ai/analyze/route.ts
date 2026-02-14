@@ -6,6 +6,7 @@ import {
   parseAnalysisResponse,
   validateTaskIds,
 } from "@/lib/ai/response-parser";
+import { checkQuota, incrementQuota } from "@/lib/quotas/checker";
 
 const taskInputSchema = z.object({
   id: z.string().uuid(),
@@ -61,6 +62,14 @@ export async function POST(request: NextRequest) {
 
     const { tasks } = parseResult.data;
 
+    const quota = checkQuota();
+    if (!quota.allowed) {
+      return NextResponse.json(
+        { error: quota.message },
+        { status: 429 }
+      );
+    }
+
     const { systemPrompt, userPrompt } = buildAnalysisPrompt({
       tasks,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -70,13 +79,47 @@ export async function POST(request: NextRequest) {
     const client = new Anthropic({ apiKey });
     const startTime = Date.now();
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 2000,
-      temperature: 0.1,
-      system: systemPrompt,
-      messages: [{ role: "user", content: userPrompt }],
-    });
+    const callAnthropic = async () => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30_000);
+      try {
+        return await client.messages.create(
+          {
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 2000,
+            temperature: 0.1,
+            system: systemPrompt,
+            messages: [{ role: "user", content: userPrompt }],
+          },
+          { signal: controller.signal }
+        );
+      } finally {
+        clearTimeout(timeout);
+      }
+    };
+
+    let message: Anthropic.Message;
+    try {
+      message = await callAnthropic();
+    } catch {
+      try {
+        message = await callAnthropic();
+      } catch (retryError) {
+        if (
+          retryError instanceof Error &&
+          retryError.name === "AbortError"
+        ) {
+          return NextResponse.json(
+            { error: "L'analyse a pris trop de temps. Veuillez réessayer." },
+            { status: 504 }
+          );
+        }
+        return NextResponse.json(
+          { error: "Analysis failed. Please try again." },
+          { status: 500 }
+        );
+      }
+    }
 
     const durationMs = Date.now() - startTime;
     const responseText =
@@ -93,6 +136,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    incrementQuota();
 
     return NextResponse.json({
       analysis,

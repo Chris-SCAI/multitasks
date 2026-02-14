@@ -1,12 +1,10 @@
-// Stub pour Vercel Analytics — sera activé au déploiement
+import { track } from "@vercel/analytics";
+
 export function trackEvent(
   name: string,
-  properties?: Record<string, string | number>
+  properties?: Record<string, string | number>,
 ) {
-  if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
-    console.debug("[analytics]", name, properties);
-  }
-  // En production, Vercel Analytics sera ajouté via next.config.ts
+  track(name, properties);
 }
 
 export const EVENTS = {
@@ -17,4 +15,6 @@ export const EVENTS = {
   TASK_CREATED: "task_created",
   EXPORT_CSV: "export_csv",
   EXPORT_PDF: "export_pdf",
+  CTA_HERO_CLICK: "cta_hero_click",
+  CTA_FINAL_CLICK: "cta_final_click",
 } as const;

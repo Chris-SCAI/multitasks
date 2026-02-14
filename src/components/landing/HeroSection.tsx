@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { trackEvent, EVENTS } from "@/lib/analytics/track";
 
 function LandingNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -218,7 +219,11 @@ export function HeroSection() {
                 size="lg"
                 className="rounded-full bg-violet-600 px-10 py-7 text-xl text-white shadow-lg shadow-violet-600/25 transition-all hover:bg-violet-500 hover:shadow-xl hover:shadow-violet-500/30 active:scale-95"
               >
-                <Link href="/register" className="inline-flex items-center gap-3">
+                <Link
+                  href="/register"
+                  className="inline-flex items-center gap-3"
+                  onClick={() => trackEvent(EVENTS.CTA_HERO_CLICK)}
+                >
                   Commencer gratuitement
                   <ArrowRight className="size-6" />
                 </Link>

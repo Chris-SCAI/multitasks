@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { PWAProvider } from "@/components/pwa/PWAProvider";
 import "./globals.css";
@@ -87,6 +88,7 @@ export default function RootLayout({
         <ThemeProvider>
           <PWAProvider>{children}</PWAProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
