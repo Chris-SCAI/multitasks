@@ -229,7 +229,7 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
         transition={{ duration: 0.4, delay: 0.45, ease: "easeOut" }}
         className="relative mb-10 max-w-md text-center text-sm leading-relaxed text-slate-400"
       >
-        Ajoutez vos premières tâches et laissez l&apos;IA les prioriser
+        Ajoutez vos premières tâches et laissez l&apos;IA les prioriser{" "}
         <br className="hidden sm:block" />
         avec la matrice d&apos;Eisenhower — en 10 secondes.
       </motion.p>
