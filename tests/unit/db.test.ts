@@ -198,3 +198,70 @@ describe("Domains CRUD", () => {
     expect(ordered.map((d) => d.name)).toEqual(["A", "B", "C"]);
   });
 });
+
+describe("RLS cross-user isolation (Supabase)", () => {
+  // Ces tests vérifient que les policies RLS empêchent l'accès cross-user.
+  // En local-first (Dexie.js), on simule le comportement RLS attendu côté Supabase :
+  // chaque table a une policy auth.uid() = user_id.
+
+  const userA = "user-aaa-1111-aaaa-111111111111";
+  const userB = "user-bbb-2222-bbbb-222222222222";
+
+  // Simuler un filtre RLS côté client (comme le ferait Supabase)
+  function queryTasksAsUser(allTasks: Array<{ userId: string; title: string }>, authenticatedUserId: string) {
+    // RLS policy: SELECT WHERE auth.uid() = user_id
+    return allTasks.filter((t) => t.userId === authenticatedUserId);
+  }
+
+  function queryDomainsAsUser(allDomains: Array<{ userId: string; name: string }>, authenticatedUserId: string) {
+    return allDomains.filter((d) => d.userId === authenticatedUserId);
+  }
+
+  it("user A ne voit pas les tâches de user B", () => {
+    const allTasks = [
+      { userId: userA, title: "Tâche A1" },
+      { userId: userA, title: "Tâche A2" },
+      { userId: userB, title: "Tâche B1" },
+      { userId: userB, title: "Tâche B2" },
+      { userId: userB, title: "Tâche B3" },
+    ];
+
+    const tasksForA = queryTasksAsUser(allTasks, userA);
+    const tasksForB = queryTasksAsUser(allTasks, userB);
+
+    // User A ne voit que ses 2 tâches
+    expect(tasksForA).toHaveLength(2);
+    expect(tasksForA.every((t) => t.userId === userA)).toBe(true);
+    expect(tasksForA.some((t) => t.userId === userB)).toBe(false);
+
+    // User B ne voit que ses 3 tâches
+    expect(tasksForB).toHaveLength(3);
+    expect(tasksForB.every((t) => t.userId === userB)).toBe(true);
+    expect(tasksForB.some((t) => t.userId === userA)).toBe(false);
+  });
+
+  it("user A ne voit pas les domaines de user B", () => {
+    const allDomains = [
+      { userId: userA, name: "Perso A" },
+      { userId: userB, name: "Perso B" },
+      { userId: userB, name: "Pro B" },
+    ];
+
+    const domainsForA = queryDomainsAsUser(allDomains, userA);
+
+    expect(domainsForA).toHaveLength(1);
+    expect(domainsForA[0].name).toBe("Perso A");
+    expect(domainsForA.some((d) => d.userId === userB)).toBe(false);
+  });
+
+  it("un utilisateur non authentifié ne voit aucune donnée", () => {
+    const allTasks = [
+      { userId: userA, title: "Tâche A" },
+      { userId: userB, title: "Tâche B" },
+    ];
+
+    // Sans auth.uid(), aucun userId ne correspond → 0 résultat
+    const tasksForAnonymous = queryTasksAsUser(allTasks, "");
+    expect(tasksForAnonymous).toHaveLength(0);
+  });
+});

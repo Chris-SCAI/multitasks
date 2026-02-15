@@ -370,3 +370,46 @@ describe("Logique métier des plans", () => {
     expect(PLANS.pro_sync.limits.calendarViews).toContain("month");
   });
 });
+
+describe("Webhook Stripe — signature invalide", () => {
+  it("rejette (400) une requête avec signature invalide", async () => {
+    // Setup : clé secrète + webhook secret configurés
+    const originalSecret = process.env.STRIPE_SECRET_KEY;
+    const originalWebhook = process.env.STRIPE_WEBHOOK_SECRET;
+    process.env.STRIPE_SECRET_KEY = "sk_test_fake_key_for_testing";
+    process.env.STRIPE_WEBHOOK_SECRET = "whsec_test_secret";
+
+    // Reset le singleton Stripe pour forcer la recréation
+    vi.resetModules();
+    const { POST } = await import("@/app/api/stripe/webhook/route");
+
+    // Construire une requête avec une signature invalide
+    const body = JSON.stringify({ type: "checkout.session.completed" });
+    const request = new Request("http://localhost:3000/api/stripe/webhook", {
+      method: "POST",
+      body,
+      headers: {
+        "stripe-signature": "t=9999999,v1=invalid_signature_value",
+        "content-type": "application/json",
+      },
+    });
+
+    const response = await POST(request as never);
+    expect(response.status).toBe(400);
+
+    const json = await response.json();
+    expect(json.error).toBe("Invalid signature");
+
+    // Restaurer les variables
+    if (originalSecret) {
+      process.env.STRIPE_SECRET_KEY = originalSecret;
+    } else {
+      delete process.env.STRIPE_SECRET_KEY;
+    }
+    if (originalWebhook) {
+      process.env.STRIPE_WEBHOOK_SECRET = originalWebhook;
+    } else {
+      delete process.env.STRIPE_WEBHOOK_SECRET;
+    }
+  });
+});
