@@ -9,7 +9,7 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
   test("affiche l'empty state au premier lancement", async ({ page }) => {
     // Naviguer et nettoyer IndexedDB
     await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
     await page.evaluate(async () => {
       const dbs = await indexedDB.databases();
       for (const db of dbs) {
@@ -18,19 +18,19 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
     });
     await page.waitForTimeout(2000);
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
     await page.waitForTimeout(1000);
 
-    await expect(page.getByText("Aucune tâche")).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText("Prêt à conquérir votre journée")).toBeVisible({ timeout: 15000 });
     await expect(
-      page.getByText("Commencez par ajouter votre première tâche")
+      page.getByText("Ajoutez vos premières tâches")
     ).toBeVisible();
   });
 
   test("creer une tache et verifier la persistance", async ({ page }) => {
     // Naviguer et nettoyer IndexedDB
     await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
     await page.evaluate(async () => {
       const dbs = await indexedDB.databases();
       for (const db of dbs) {
@@ -39,15 +39,15 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
     });
     await page.waitForTimeout(2000);
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
     await page.waitForTimeout(2000);
 
-    // Le FAB doit etre visible
-    const fab = page.locator('button[aria-label="Ajouter une tâche"]');
-    await expect(fab).toBeVisible({ timeout: 15000 });
+    // Cliquer sur le bouton de l'empty state
+    const addButton = page.getByRole("button", { name: "Ajouter ma première tâche" });
+    await expect(addButton).toBeVisible({ timeout: 15000 });
 
     // Ouvrir le formulaire
-    await fab.click();
+    await addButton.click();
     const dialog = page.locator('[role="dialog"]');
     await expect(dialog).toBeVisible({ timeout: 5000 });
 
@@ -78,7 +78,7 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
 
     // Recharger et verifier la persistance (IndexedDB)
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
     await expect(page.getByText("Ma premiere tache E2E")).toBeVisible({ timeout: 15000 });
   });
 });

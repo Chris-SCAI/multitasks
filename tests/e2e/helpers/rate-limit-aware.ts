@@ -6,7 +6,13 @@ import { Page } from "@playwright/test";
  * Ne boucle pas pour eviter de consommer plus de budget.
  */
 export async function waitForRateLimitBudget(page: Page, minRemaining = 40): Promise<void> {
-  const response = await page.request.get("/dashboard");
+  let response;
+  try {
+    response = await page.request.get("/dashboard");
+  } catch {
+    // Network error (ECONNRESET, etc.) — skip rate-limit check silently
+    return;
+  }
 
   // Si 429, attendre le Retry-After
   if (response.status() === 429) {

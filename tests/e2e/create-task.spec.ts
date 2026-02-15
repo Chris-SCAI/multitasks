@@ -6,7 +6,7 @@ test("create a task via FAB button", async ({ page }) => {
 
   // Naviguer et nettoyer IndexedDB
   await page.goto("/dashboard");
-  await page.waitForLoadState("networkidle");
+  await page.waitForLoadState("load");
   await page.evaluate(async () => {
     const dbs = await indexedDB.databases();
     for (const db of dbs) {
@@ -15,14 +15,14 @@ test("create a task via FAB button", async ({ page }) => {
   });
   await page.waitForTimeout(2000);
   await page.reload();
-  await page.waitForLoadState("networkidle");
+  await page.waitForLoadState("load");
   await page.waitForTimeout(1000);
 
   // Vérifier l'empty state
-  await expect(page.getByText("Aucune tâche")).toBeVisible({ timeout: 15000 });
+  await expect(page.getByText("Prêt à conquérir votre journée")).toBeVisible({ timeout: 15000 });
 
-  // Cliquer sur le FAB
-  await page.getByLabel("Ajouter une tâche").click();
+  // Cliquer sur le bouton de l'empty state
+  await page.getByRole("button", { name: "Ajouter ma première tâche" }).click();
 
   // Vérifier que le dialog s'ouvre
   await expect(page.getByText("Nouvelle tâche")).toBeVisible({ timeout: 5000 });
@@ -53,5 +53,5 @@ test("create a task via FAB button", async ({ page }) => {
   await expect(page.getByText("Ma première tâche de test")).toBeVisible({ timeout: 10000 });
 
   // Vérifier que l'empty state a disparu
-  await expect(page.getByText("Aucune tâche")).not.toBeVisible();
+  await expect(page.getByText("Prêt à conquérir votre journée")).not.toBeVisible();
 });

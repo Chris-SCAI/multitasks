@@ -9,7 +9,7 @@ test.describe("Gestion des domaines", () => {
   test("page domaines charge avec contenu", async ({ page }) => {
     // Naviguer et nettoyer IndexedDB
     await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
     await page.evaluate(async () => {
       const dbs = await indexedDB.databases();
       for (const db of dbs) {
@@ -20,7 +20,7 @@ test.describe("Gestion des domaines", () => {
 
     // Naviguer directement vers domaines (evite le sidebar pour economiser des requetes)
     await page.goto("/dashboard/domains");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
 
     // Attendre que les domaines se chargent
     await expect(page.getByText("Mes domaines")).toBeVisible({ timeout: 15000 });
@@ -39,7 +39,7 @@ test.describe("Gestion des domaines", () => {
   }) => {
     // Naviguer et nettoyer IndexedDB
     await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
     await page.evaluate(async () => {
       const dbs = await indexedDB.databases();
       for (const db of dbs) {
@@ -50,7 +50,7 @@ test.describe("Gestion des domaines", () => {
 
     // Naviguer directement vers domaines
     await page.goto("/dashboard/domains");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
 
     // Attendre le chargement
     await expect(page.getByText("Personnel").first()).toBeVisible({ timeout: 15000 });

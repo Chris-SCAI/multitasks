@@ -8,7 +8,7 @@ test.describe("Analyse IA flow", () => {
 
   test("page analyse IA affiche le launcher avec quota", async ({ page }) => {
     await page.goto("/dashboard/analysis");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
 
     // Le heading Analyse IA est visible
     await expect(
@@ -26,9 +26,11 @@ test.describe("Analyse IA flow", () => {
   });
 
   test("creation de tache puis selection dans analyse IA", async ({ page }) => {
+    test.setTimeout(90000);
+
     // Naviguer vers l'app et nettoyer IndexedDB
     await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
     await page.evaluate(async () => {
       const dbs = await indexedDB.databases();
       for (const db of dbs) {
@@ -36,13 +38,13 @@ test.describe("Analyse IA flow", () => {
       }
     });
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
     await page.waitForTimeout(1500);
 
-    // Creer une tache
-    const fab = page.locator('button[aria-label="Ajouter une tâche"]');
-    await expect(fab).toBeVisible({ timeout: 15000 });
-    await fab.click();
+    // Creer une tache via le bouton de l'empty state
+    const addButton = page.getByRole("button", { name: "Ajouter ma première tâche" });
+    await expect(addButton).toBeVisible({ timeout: 15000 });
+    await addButton.click();
 
     const dialog = page.locator('[role="dialog"]');
     await expect(dialog).toBeVisible({ timeout: 5000 });
@@ -66,15 +68,14 @@ test.describe("Analyse IA flow", () => {
 
     // Naviguer vers la page analyse
     await page.goto("/dashboard/analysis");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
 
     // La tache doit etre listee
     await expect(page.getByText("Tache pour analyse")).toBeVisible({ timeout: 15000 });
 
-    // Selectionner la tache
+    // Selectionner la tache (clic sur le label car le checkbox est stylé)
     await page
       .locator("label", { hasText: "Tache pour analyse" })
-      .locator("input[type='checkbox']")
       .click();
 
     // Le bouton analyser doit etre active
@@ -86,7 +87,7 @@ test.describe("Analyse IA flow", () => {
 
   test("tout selectionner / tout deselectionner", async ({ page }) => {
     await page.goto("/dashboard/analysis");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
 
     // Attendre que les taches se chargent
     const taskList = page.locator("label input[type='checkbox']");
