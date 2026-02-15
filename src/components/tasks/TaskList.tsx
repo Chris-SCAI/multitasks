@@ -81,15 +81,15 @@ function TaskListSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="bg-card animate-pulse rounded-lg border p-4"
+          className="skeleton-shimmer rounded-lg border border-border bg-card p-4"
         >
           <div className="flex items-start gap-3">
-            <div className="bg-muted mt-0.5 size-5 rounded-full" />
+            <div className="mt-0.5 size-5 rounded-full bg-muted" />
             <div className="flex-1 space-y-2">
-              <div className="bg-muted h-4 w-3/4 rounded" />
+              <div className="h-4 w-3/4 rounded bg-muted" />
               <div className="flex gap-2">
-                <div className="bg-muted h-5 w-16 rounded-full" />
-                <div className="bg-muted h-5 w-20 rounded-full" />
+                <div className="h-5 w-16 rounded-full bg-muted" />
+                <div className="h-5 w-20 rounded-full bg-muted" />
               </div>
             </div>
           </div>
@@ -101,18 +101,53 @@ function TaskListSkeleton() {
 
 function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16">
-      <div className="bg-muted mb-4 flex size-16 items-center justify-center rounded-full">
-        <ClipboardList className="text-muted-foreground size-8" />
+    <div className="relative flex flex-col items-center justify-center py-16">
+      {/* Gradient glow décoratif */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="h-64 w-64 rounded-full bg-violet-500/10 blur-3xl" />
       </div>
-      <h3 className="mb-1 text-lg font-semibold">Aucune tâche</h3>
-      <p className="text-muted-foreground mb-6 text-sm">
-        Commencez par ajouter votre première tâche
+
+      {/* Illustration SVG inline */}
+      <div className="relative mb-6">
+        <svg
+          width="120"
+          height="120"
+          viewBox="0 0 120 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="drop-shadow-lg"
+        >
+          {/* Fond carte */}
+          <rect x="20" y="15" width="80" height="90" rx="12" fill="#1E293B" stroke="#334155" strokeWidth="1.5" />
+          {/* Lignes checklist */}
+          <rect x="36" y="35" width="12" height="12" rx="3" stroke="#7C3AED" strokeWidth="2" fill="none" />
+          <line x1="54" y1="41" x2="82" y2="41" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+          <rect x="36" y="55" width="12" height="12" rx="3" stroke="#7C3AED" strokeWidth="2" fill="none" />
+          <line x1="54" y1="61" x2="76" y2="61" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+          <rect x="36" y="75" width="12" height="12" rx="3" stroke="#7C3AED" strokeWidth="2" fill="none" />
+          <line x1="54" y1="81" x2="70" y2="81" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
+          {/* Étoiles décoratives */}
+          <circle cx="95" cy="20" r="3" fill="#7C3AED" opacity="0.8" />
+          <circle cx="15" cy="45" r="2" fill="#A78BFA" opacity="0.6" />
+          <circle cx="105" cy="70" r="2.5" fill="#A78BFA" opacity="0.7" />
+          {/* Check animé sur première ligne */}
+          <path d="M39 41 L43 45 L48 37" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+
+      <h3 className="relative mb-2 text-xl font-bold text-white">
+        Prêt à conquérir votre journée ?
+      </h3>
+      <p className="relative mb-8 max-w-sm text-center text-sm text-slate-400">
+        Ajoutez vos premières tâches et laissez l&apos;IA vous aider à prioriser ce qui compte vraiment.
       </p>
-      <Button onClick={onCreateTask}>
-        <Plus className="size-4" />
+      <button
+        onClick={onCreateTask}
+        className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-violet-600/30 active:scale-95"
+      >
+        <Plus className="size-5" />
         Ajouter une tâche
-      </Button>
+      </button>
     </div>
   );
 }

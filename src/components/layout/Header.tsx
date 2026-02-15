@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { useUIStore } from "@/stores/ui-store";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "Tâches",
@@ -43,9 +43,19 @@ export function Header({
   const pathname = usePathname();
   const { theme, setTheme } = useUIStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [displayName, setDisplayName] = useState<string | null>(null);
+
+  useEffect(() => {
+    setDisplayName(localStorage.getItem("displayName"));
+  }, []);
 
   const title = pageTitles[pathname] ?? "Multitasks";
   const isDark = theme === "dark";
+  const today = new Date().toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 
   return (
     <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-[#1E293B] bg-[#0B1120]/95 px-4 backdrop-blur-sm md:h-16 md:px-6">
@@ -59,9 +69,12 @@ export function Header({
         <Menu className="size-5" />
       </Button>
 
-      <h1 className="flex-1 text-xl font-bold text-white">
-        {title}
-      </h1>
+      <div className="flex-1">
+        <h1 className="text-xl font-bold text-white">
+          {displayName ? `${title} — ${displayName}` : title}
+        </h1>
+        <p className="text-xs capitalize text-slate-400">{today}</p>
+      </div>
 
       <Button
         variant="ghost"

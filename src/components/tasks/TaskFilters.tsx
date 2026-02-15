@@ -68,54 +68,67 @@ export function TaskFilters({
         <span className="text-muted-foreground text-xs font-medium">
           Statut :
         </span>
-        {STATUS_OPTIONS.map((opt) => (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => toggleStatus(opt.value)}
-          >
-            <Badge
-              variant={
-                filters.status?.includes(opt.value) ? "default" : "outline"
-              }
-              className={cn(
-                "cursor-pointer transition-colors",
-                filters.status?.includes(opt.value)
-                  ? "bg-primary text-primary-foreground"
-                  : "border-neutral-300 text-neutral-700 dark:border-neutral-600 dark:text-neutral-300"
-              )}
+        {STATUS_OPTIONS.map((opt) => {
+          const isActive = filters.status?.includes(opt.value);
+          const activeColors: Record<TaskStatus, string> = {
+            todo: "bg-slate-600 text-slate-100",
+            in_progress: "bg-blue-600 text-blue-100",
+            done: "bg-emerald-600 text-emerald-100",
+          };
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => toggleStatus(opt.value)}
             >
-              {opt.label}
-            </Badge>
-          </button>
-        ))}
+              <Badge
+                variant={isActive ? "default" : "outline"}
+                className={cn(
+                  "cursor-pointer transition-colors",
+                  isActive
+                    ? activeColors[opt.value]
+                    : "border-border text-muted-foreground hover:bg-muted"
+                )}
+              >
+                {opt.label}
+              </Badge>
+            </button>
+          );
+        })}
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-muted-foreground text-xs font-medium">
           Priorité :
         </span>
-        {PRIORITY_OPTIONS.map((opt) => (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => togglePriority(opt.value)}
-          >
-            <Badge
-              variant={
-                filters.priority?.includes(opt.value) ? "default" : "outline"
-              }
-              className={cn(
-                "cursor-pointer transition-colors",
-                filters.priority?.includes(opt.value)
-                  ? "bg-primary text-primary-foreground"
-                  : "border-neutral-300 text-neutral-700 dark:border-neutral-600 dark:text-neutral-300"
-              )}
+        {PRIORITY_OPTIONS.map((opt) => {
+          const isActive = filters.priority?.includes(opt.value);
+          const activeColors: Record<TaskPriority, string> = {
+            urgent: "bg-red-600 text-red-100",
+            high: "bg-orange-600 text-orange-100",
+            medium: "bg-blue-600 text-blue-100",
+            low: "bg-slate-600 text-slate-100",
+          };
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => togglePriority(opt.value)}
             >
-              {opt.label}
-            </Badge>
-          </button>
-        ))}
+              <Badge
+                variant={isActive ? "default" : "outline"}
+                className={cn(
+                  "cursor-pointer transition-colors",
+                  isActive
+                    ? activeColors[opt.value]
+                    : "border-border text-muted-foreground hover:bg-muted"
+                )}
+              >
+                {opt.label}
+              </Badge>
+            </button>
+          );
+        })}
       </div>
 
       {hasFilters && (

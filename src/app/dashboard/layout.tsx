@@ -25,7 +25,7 @@ export default function DashboardLayout({
   }, [loadDomains, loadTasks]);
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-white">
+    <div className="dark min-h-screen bg-[#0B1120] text-white">
       <Sidebar />
       <div
         className={`flex min-h-screen flex-col transition-[margin] duration-250 ease-in-out ${
