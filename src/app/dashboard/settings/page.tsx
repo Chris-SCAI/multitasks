@@ -114,8 +114,8 @@ export default function SettingsPage() {
       className="space-y-6"
     >
       <div className="flex items-center gap-3">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-violet-600/20">
-          <User className="size-5 text-violet-400" />
+        <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
+          <User className="size-5 text-white" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-white">
@@ -152,7 +152,9 @@ export default function SettingsPage() {
         </TabsList>
 
         <TabsContent value="profil" className="mt-6">
-          <div className="max-w-lg space-y-6 rounded-lg border border-[#1E293B] bg-[#151D2E] p-6">
+          <div className="group relative max-w-lg space-y-6 rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 transition-all duration-300 hover:border-[#2A3654] hover:shadow-lg hover:shadow-violet-500/5">
+            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-violet-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
+
             <div className="space-y-2">
               <Label htmlFor="display-name" className="text-base font-semibold text-white">Nom d&apos;affichage</Label>
               <Input
@@ -210,23 +212,27 @@ export default function SettingsPage() {
             </div>
 
             <Button
-              className="rounded-full bg-violet-600 text-white hover:bg-violet-500"
+              className="group/btn relative overflow-hidden rounded-full bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/30"
               onClick={handleSaveProfile}
             >
-              {profileSaved ? (
-                <>
-                  <Check className="size-4" />
-                  Sauvegardé !
-                </>
-              ) : (
-                "Sauvegarder"
-              )}
+              <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover/btn:translate-x-full" />
+              <span className="relative flex items-center gap-2">
+                {profileSaved ? (
+                  <>
+                    <Check className="size-4" />
+                    Sauvegardé !
+                  </>
+                ) : (
+                  "Sauvegarder"
+                )}
+              </span>
             </Button>
           </div>
         </TabsContent>
 
         <TabsContent value="domaines" className="mt-6">
-          <div className="max-w-lg rounded-lg border border-[#1E293B] bg-[#151D2E] p-6">
+          <div className="group relative max-w-lg rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 transition-all duration-300 hover:border-[#2A3654] hover:shadow-lg hover:shadow-violet-500/5">
+            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-violet-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
             <DomainManager
               domains={domains}
               onCreateDomain={createDomain}
@@ -237,7 +243,9 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="abonnement" className="mt-6">
-          <div className="max-w-lg space-y-6 rounded-lg border border-[#1E293B] bg-[#151D2E] p-6">
+          <div className="group relative max-w-lg space-y-6 rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 transition-all duration-300 hover:border-[#2A3654] hover:shadow-lg hover:shadow-violet-500/5">
+            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-violet-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
+
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-white">
@@ -282,7 +290,9 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="donnees" className="mt-6">
-          <div className="max-w-lg space-y-4 rounded-lg border border-[#1E293B] bg-[#151D2E] p-6">
+          <div className="group relative max-w-lg space-y-4 rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 transition-all duration-300 hover:border-[#2A3654] hover:shadow-lg hover:shadow-violet-500/5">
+            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-violet-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
+
             <h3 className="font-semibold text-white">
               Export de données
             </h3>
@@ -313,7 +323,9 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="compte" className="mt-6">
-          <div className="max-w-lg space-y-4 rounded-lg border border-red-900/50 bg-[#151D2E] p-6">
+          <div className="group relative max-w-lg space-y-4 rounded-2xl border border-red-900/50 bg-[#151D2E] p-6 transition-all duration-300 hover:border-red-800/60 hover:shadow-lg hover:shadow-red-500/5">
+            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-red-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
+
             <h3 className="font-semibold text-red-400">
               Zone dangereuse
             </h3>

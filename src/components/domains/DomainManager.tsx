@@ -79,11 +79,15 @@ export function DomainManager({
         {domains.map((domain) => (
           <div
             key={domain.id}
-            className="bg-[#151D2E] flex items-center gap-3 rounded-lg border border-[#1E293B] p-3 shadow-sm transition-all hover:bg-[#1C2640] hover:shadow-md"
+            className="flex items-center gap-3 rounded-xl border border-[#1E293B] p-3 shadow-sm transition-all duration-200 hover:scale-[1.02] hover:bg-[#1C2640] hover:shadow-md"
+            style={{ backgroundColor: `${domain.color}08` }}
           >
             <span
-              className="size-4 shrink-0 rounded-full"
-              style={{ backgroundColor: domain.color }}
+              className="size-5 shrink-0 rounded-lg"
+              style={{
+                backgroundColor: domain.color,
+                boxShadow: `0 0 12px ${domain.color}30`,
+              }}
             />
 
             {editId === domain.id ? (
@@ -162,7 +166,7 @@ export function DomainManager({
           <Button
             variant="outline"
             size="sm"
-            className="w-full"
+            className="w-full border-dashed border-[#1E293B] transition-colors hover:border-violet-500/50 hover:bg-violet-500/5 hover:text-violet-400"
             disabled={!canAdd}
           >
             <Plus className="size-4" />

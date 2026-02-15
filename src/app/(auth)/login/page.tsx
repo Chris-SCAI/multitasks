@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,7 +102,14 @@ export default function LoginPage() {
       transition={{ duration: 0.3 }}
       className="flex min-h-screen items-center justify-center bg-[#0B1120] px-4"
     >
-      <div className="w-full max-w-lg space-y-8">
+      {/* Glow mesh background */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2">
+          <div className="h-[500px] w-[600px] rounded-full bg-violet-600/5 blur-[120px]" />
+        </div>
+      </div>
+
+      <div className="relative w-full max-w-lg space-y-8">
         <div className="flex flex-col items-center">
           <div className="mb-4 flex items-center gap-2.5">
             <Sparkles className="size-7 text-yellow-400" />
@@ -116,17 +123,45 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-[#1E293B] bg-[#151D2E] p-8 shadow-lg">
-          {error && (
-            <div id="login-error" role="alert" aria-live="assertive" className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
-              {error}
-            </div>
-          )}
-          {message && (
-            <div role="status" aria-live="polite" className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-400">
-              {message}
-            </div>
-          )}
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+          className="relative overflow-hidden rounded-2xl border border-[#1E293B] bg-[#151D2E] p-8 shadow-2xl shadow-violet-500/5"
+        >
+          {/* Internal glow */}
+          <div className="pointer-events-none absolute -right-16 -top-16 size-32 rounded-full bg-violet-600 opacity-[0.04] blur-3xl" />
+
+          <AnimatePresence mode="wait">
+            {error && (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div id="login-error" role="alert" aria-live="assertive" className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+                  {error}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence mode="wait">
+            {message && (
+              <motion.div
+                key="message"
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div role="status" aria-live="polite" className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-400">
+                  {message}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <form onSubmit={handleSubmit} className="space-y-4" aria-describedby={error ? "login-error" : undefined}>
             <div className="space-y-2">
@@ -169,18 +204,21 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full rounded-full bg-violet-600 text-lg font-semibold text-white hover:bg-violet-500"
+              className="group relative w-full overflow-hidden rounded-full bg-gradient-to-r from-violet-500 to-blue-500 text-lg font-semibold text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/30"
               size="lg"
               disabled={isAnyLoading}
             >
-              {loading ? (
-                <>
-                  <Loader2 className="size-5 animate-spin" />
-                  Connexion...
-                </>
-              ) : (
-                "Se connecter"
-              )}
+              <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+              <span className="relative flex items-center justify-center gap-2">
+                {loading ? (
+                  <>
+                    <Loader2 className="size-5 animate-spin" />
+                    Connexion...
+                  </>
+                ) : (
+                  "Se connecter"
+                )}
+              </span>
             </Button>
           </form>
 
@@ -206,7 +244,7 @@ export default function LoginPage() {
               Magic link
             </Button>
           </div>
-        </div>
+        </motion.div>
 
         <p className="text-center text-base font-semibold text-white">
           Pas de compte ?{" "}

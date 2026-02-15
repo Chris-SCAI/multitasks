@@ -53,14 +53,18 @@ export function AnalysisLauncher({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold text-white">
-          Analyse IA
-        </h2>
-        <p className="mt-1 text-base text-neutral-300">
-          Sélectionnez les tâches à analyser pour obtenir une priorisation
-          Eisenhower.
-        </p>
+      {/* Header premium avec icon gradient */}
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
+          <Sparkles className="size-5 text-white" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-white">Analyse IA</h2>
+          <p className="mt-1 text-sm text-neutral-300">
+            Sélectionnez les tâches à analyser pour obtenir une priorisation
+            Eisenhower.
+          </p>
+        </div>
       </div>
 
       <QuotaIndicator
@@ -140,13 +144,16 @@ export function AnalysisLauncher({
       <Button
         onClick={() => onAnalyze(Array.from(selectedIds))}
         disabled={selectedIds.size === 0 || isAnalyzing || quotaExhausted}
-        className="w-full bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-md transition-all hover:from-violet-600 hover:to-blue-600 hover:shadow-lg disabled:opacity-50"
+        className="group relative w-full overflow-hidden bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/30 disabled:opacity-50"
         size="lg"
       >
-        <Sparkles className="size-5" />
-        {quotaExhausted
-          ? "Quota épuisé"
-          : `Analyser avec l'IA (${selectedIds.size} tâche${selectedIds.size > 1 ? "s" : ""})`}
+        <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+        <span className="relative flex items-center justify-center gap-2">
+          <Sparkles className="size-5" />
+          {quotaExhausted
+            ? "Quota épuisé"
+            : `Analyser avec l'IA (${selectedIds.size} tâche${selectedIds.size > 1 ? "s" : ""})`}
+        </span>
       </Button>
     </div>
   );

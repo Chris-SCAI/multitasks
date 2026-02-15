@@ -6,6 +6,7 @@ import { AnalysisLauncher } from "@/components/analysis/AnalysisLauncher";
 import { AnalysisResult } from "@/components/analysis/AnalysisResult";
 import { AILoadingAnimation } from "@/components/analysis/AILoadingAnimation";
 import { motion, AnimatePresence } from "framer-motion";
+import { AlertTriangle } from "lucide-react";
 
 export default function AnalysisPage() {
   const tasks = useTaskStore((s) => s.tasks);
@@ -68,9 +69,21 @@ export default function AnalysisPage() {
               quotaInfo={quotaInfo}
             />
             {status === "error" && (
-              <div role="alert" aria-live="assertive" className="mt-4 rounded-lg border border-red-900/50 bg-red-900/20 p-3 text-base text-red-400">
-                {useAnalysisStore.getState().error}
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                role="alert"
+                aria-live="assertive"
+                className="mt-4 flex items-start gap-3 rounded-lg border border-red-900/50 bg-red-900/20 p-4"
+              >
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-red-500/20">
+                  <AlertTriangle className="size-5 text-red-400" />
+                </div>
+                <p className="text-base text-red-400">
+                  {useAnalysisStore.getState().error}
+                </p>
+              </motion.div>
             )}
           </motion.div>
         )}
