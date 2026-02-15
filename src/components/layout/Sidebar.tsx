@@ -34,11 +34,11 @@ export function Sidebar() {
     <AnimatePresence>
       {sidebarOpen && (
         <motion.aside
-          initial={{ x: -280, opacity: 0 }}
+          initial={{ x: -400, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -280, opacity: 0 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
-          className="fixed inset-y-0 left-0 z-30 hidden w-[320px] flex-col border-r border-[#1E293B] bg-[#0B1120] md:flex overflow-hidden"
+          className="fixed inset-y-0 left-0 z-30 hidden w-80 flex-col border-r border-[#1E293B] bg-[#0B1120] md:flex overflow-hidden"
         >
           {/* Glow décoratif en haut */}
           <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full bg-violet-600/10 blur-[80px]" />

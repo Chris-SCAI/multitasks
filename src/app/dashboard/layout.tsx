@@ -29,7 +29,7 @@ export default function DashboardLayout({
       <Sidebar />
       <div
         className={`flex min-h-screen flex-col transition-[margin] duration-250 ease-in-out ${
-          sidebarOpen ? "md:ml-[320px]" : ""
+          sidebarOpen ? "md:ml-80" : ""
         }`}
       >
         {/* Dot grid texture */}

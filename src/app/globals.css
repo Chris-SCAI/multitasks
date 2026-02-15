@@ -122,6 +122,17 @@
   --sidebar-ring: #2563EB;
 }
 
+/* Responsive root font-size scaling for large displays */
+@media (min-width: 1536px) {
+  html { font-size: 18px; }
+}
+@media (min-width: 1920px) {
+  html { font-size: 20px; }
+}
+@media (min-width: 2560px) {
+  html { font-size: 22px; }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

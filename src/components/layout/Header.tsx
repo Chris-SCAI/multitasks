@@ -134,7 +134,7 @@ export function Header({
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#1E293B] to-transparent" />
 
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent side="left" className="w-[320px] border-[#1E293B] bg-[#0B1120] p-0">
+        <SheetContent side="left" className="w-80 border-[#1E293B] bg-[#0B1120] p-0">
           <SheetHeader className="sr-only">
             <SheetTitle>Navigation</SheetTitle>
           </SheetHeader>
