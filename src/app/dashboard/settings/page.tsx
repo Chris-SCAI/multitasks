@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, Tags, CreditCard, Download, AlertTriangle, Check } from "lucide-react";
+import { User, Tags, CreditCard, Download, AlertTriangle, Check, Settings } from "lucide-react";
 import { generateTasksCSV } from "@/lib/export/csv-generator";
 import { generateTasksPDF } from "@/lib/export/pdf-generator";
 import { useTaskStore } from "@/stores/task-store";
@@ -35,6 +35,26 @@ import { useDomainStore } from "@/stores/domain-store";
 import { useUIStore } from "@/stores/ui-store";
 import { useSubscriptionStore } from "@/stores/subscription-store";
 import { useAnalysisStore } from "@/stores/analysis-store";
+
+function GradientCard({
+  children,
+  gradient = "from-violet-500/30 via-blue-500/10 to-transparent",
+  glowColor = "bg-violet-500",
+}: {
+  children: React.ReactNode;
+  gradient?: string;
+  glowColor?: string;
+}) {
+  return (
+    <div className="relative max-w-lg rounded-2xl">
+      <div className={`absolute -inset-px rounded-2xl bg-gradient-to-b ${gradient}`} />
+      <div className="relative overflow-hidden rounded-2xl bg-[#151D2E] p-6">
+        <div className={`pointer-events-none absolute -right-20 -top-20 size-40 rounded-full ${glowColor} opacity-[0.04] blur-3xl`} />
+        {children}
+      </div>
+    </div>
+  );
+}
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -114,8 +134,8 @@ export default function SettingsPage() {
       className="space-y-6"
     >
       <div className="flex items-center gap-3">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
-          <User className="size-5 text-white" />
+        <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30">
+          <Settings className="size-6 text-white" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-white">
@@ -129,217 +149,247 @@ export default function SettingsPage() {
 
       <Tabs defaultValue="profil" aria-label="Sections des paramètres">
         <TabsList className="w-full border-[#1E293B] bg-[#151D2E] sm:w-auto">
-          <TabsTrigger value="profil" aria-label="Profil" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="profil" aria-label="Profil" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
             <User className="size-4" />
             <span className="hidden sm:inline">Profil</span>
           </TabsTrigger>
-          <TabsTrigger value="domaines" aria-label="Domaines" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="domaines" aria-label="Domaines" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
             <Tags className="size-4" />
             <span className="hidden sm:inline">Domaines</span>
           </TabsTrigger>
-          <TabsTrigger value="abonnement" aria-label="Abonnement" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="abonnement" aria-label="Abonnement" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
             <CreditCard className="size-4" />
             <span className="hidden sm:inline">Abonnement</span>
           </TabsTrigger>
-          <TabsTrigger value="donnees" aria-label="Données" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="donnees" aria-label="Données" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
             <Download className="size-4" />
             <span className="hidden sm:inline">Données</span>
           </TabsTrigger>
-          <TabsTrigger value="compte" aria-label="Compte" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="compte" aria-label="Compte" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-600/20 data-[state=active]:to-red-600/10 data-[state=active]:text-red-400">
             <AlertTriangle className="size-4" />
             <span className="hidden sm:inline">Compte</span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="profil" className="mt-6">
-          <div className="group relative max-w-lg space-y-6 rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 transition-all duration-300 hover:border-[#2A3654] hover:shadow-lg hover:shadow-violet-500/5">
-            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-violet-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GradientCard>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="display-name" className="text-base font-semibold text-white">Nom d&apos;affichage</Label>
+                  <Input
+                    id="display-name"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    maxLength={50}
+                    className="border-[#1E293B] bg-[#0B1120] text-white placeholder:text-neutral-500 focus:border-violet-500 focus:ring-violet-500/20"
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="display-name" className="text-base font-semibold text-white">Nom d&apos;affichage</Label>
-              <Input
-                id="display-name"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                maxLength={50}
-                className="border-[#1E293B] bg-[#0B1120] text-white placeholder:text-neutral-500 focus:border-violet-500 focus:ring-violet-500/20"
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email-display" className="text-base font-semibold text-white">Email</Label>
+                  <Input
+                    id="email-display"
+                    value="utilisateur@example.com"
+                    readOnly
+                    className="border-[#1E293B] bg-[#0B1120] text-neutral-400"
+                  />
+                  <p className="text-sm text-neutral-400">
+                    L&apos;email ne peut pas être modifié.
+                  </p>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email-display" className="text-base font-semibold text-white">Email</Label>
-              <Input
-                id="email-display"
-                value="utilisateur@example.com"
-                readOnly
-                className="border-[#1E293B] bg-[#0B1120] text-neutral-400"
-              />
-              <p className="text-sm text-neutral-400">
-                L&apos;email ne peut pas être modifié.
-              </p>
-            </div>
+                <div className="space-y-2">
+                  <Label className="text-base font-semibold text-white">Thème</Label>
+                  <Select
+                    value={theme}
+                    onValueChange={(v) =>
+                      setTheme(v as "light" | "dark" | "system")
+                    }
+                  >
+                    <SelectTrigger className="w-full border-[#1E293B] bg-[#0B1120] text-white focus:ring-2 focus:ring-violet-500/20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="border-[#1E293B] bg-[#151D2E]">
+                      <SelectItem value="light">Clair</SelectItem>
+                      <SelectItem value="dark">Sombre</SelectItem>
+                      <SelectItem value="system">Système</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-white">Thème</Label>
-              <Select
-                value={theme}
-                onValueChange={(v) =>
-                  setTheme(v as "light" | "dark" | "system")
-                }
-              >
-                <SelectTrigger className="w-full border-[#1E293B] bg-[#0B1120] text-white focus:ring-2 focus:ring-violet-500/20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-[#1E293B] bg-[#151D2E]">
-                  <SelectItem value="light">Clair</SelectItem>
-                  <SelectItem value="dark">Sombre</SelectItem>
-                  <SelectItem value="system">Système</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <div className="space-y-2">
+                  <Label className="text-base font-semibold text-white">Langue</Label>
+                  <Select value={language} onValueChange={setLanguage}>
+                    <SelectTrigger className="w-full border-[#1E293B] bg-[#0B1120] text-white focus:ring-2 focus:ring-violet-500/20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="border-[#1E293B] bg-[#151D2E]">
+                      <SelectItem value="fr">Français</SelectItem>
+                      <SelectItem value="en">English</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="space-y-2">
-              <Label className="text-base font-semibold text-white">Langue</Label>
-              <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-full border-[#1E293B] bg-[#0B1120] text-white focus:ring-2 focus:ring-violet-500/20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="border-[#1E293B] bg-[#151D2E]">
-                  <SelectItem value="fr">Français</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Button
-              className="group/btn relative overflow-hidden rounded-full bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/30"
-              onClick={handleSaveProfile}
-            >
-              <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover/btn:translate-x-full" />
-              <span className="relative flex items-center gap-2">
-                {profileSaved ? (
-                  <>
-                    <Check className="size-4" />
-                    Sauvegardé !
-                  </>
-                ) : (
-                  "Sauvegarder"
-                )}
-              </span>
-            </Button>
-          </div>
+                <Button
+                  className="group/btn relative overflow-hidden rounded-full bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/40"
+                  onClick={handleSaveProfile}
+                >
+                  <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover/btn:translate-x-full" />
+                  <span className="relative flex items-center gap-2">
+                    {profileSaved ? (
+                      <>
+                        <Check className="size-4" />
+                        Sauvegardé !
+                      </>
+                    ) : (
+                      "Sauvegarder"
+                    )}
+                  </span>
+                </Button>
+              </div>
+            </GradientCard>
+          </motion.div>
         </TabsContent>
 
         <TabsContent value="domaines" className="mt-6">
-          <div className="group relative max-w-lg rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 transition-all duration-300 hover:border-[#2A3654] hover:shadow-lg hover:shadow-violet-500/5">
-            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-violet-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
-            <DomainManager
-              domains={domains}
-              onCreateDomain={createDomain}
-              onUpdateDomain={updateDomain}
-              onDeleteDomain={deleteDomain}
-            />
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GradientCard>
+              <DomainManager
+                domains={domains}
+                onCreateDomain={createDomain}
+                onUpdateDomain={updateDomain}
+                onDeleteDomain={deleteDomain}
+              />
+            </GradientCard>
+          </motion.div>
         </TabsContent>
 
         <TabsContent value="abonnement" className="mt-6">
-          <div className="group relative max-w-lg space-y-6 rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 transition-all duration-300 hover:border-[#2A3654] hover:shadow-lg hover:shadow-violet-500/5">
-            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-violet-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GradientCard>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-white">
+                      Plan actuel
+                    </h3>
+                    <p className="mt-1 text-base text-neutral-300">
+                      Gérez votre abonnement Multitasks.
+                    </p>
+                  </div>
+                  <PlanBadge planId={planId} size="md" />
+                </div>
 
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-white">
-                  Plan actuel
-                </h3>
-                <p className="mt-1 text-base text-neutral-300">
-                  Gérez votre abonnement Multitasks.
-                </p>
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-neutral-300">
+                    Analyses restantes
+                  </Label>
+                  <QuotaIndicator
+                    used={quotaInfo.used}
+                    limit={quotaInfo.limit}
+                    plan={quotaInfo.plan}
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Button
+                    className="group relative flex-1 overflow-hidden bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/40"
+                    onClick={() => router.push("/dashboard/pricing")}
+                  >
+                    <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                    <span className="relative">Changer de plan</span>
+                  </Button>
+                  {isPaid && (
+                    <Button
+                      variant="outline"
+                      className="flex-1 border-red-900/50 text-red-400 hover:bg-red-900/10 hover:text-red-300"
+                      onClick={() => setShowCancelDialog(true)}
+                    >
+                      Annuler l&apos;abonnement
+                    </Button>
+                  )}
+                </div>
               </div>
-              <PlanBadge planId={planId} size="md" />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-neutral-300">
-                Analyses restantes
-              </Label>
-              <QuotaIndicator
-                used={quotaInfo.used}
-                limit={quotaInfo.limit}
-                plan={quotaInfo.plan}
-              />
-            </div>
-
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <Button
-                className="flex-1 bg-gradient-to-r from-violet-500 to-blue-500 text-white hover:from-violet-600 hover:to-blue-600"
-                onClick={() => router.push("/dashboard/pricing")}
-              >
-                Changer de plan
-              </Button>
-              {isPaid && (
-                <Button
-                  variant="outline"
-                  className="flex-1 border-red-900/50 text-red-400 hover:bg-red-900/10 hover:text-red-300"
-                  onClick={() => setShowCancelDialog(true)}
-                >
-                  Annuler l&apos;abonnement
-                </Button>
-              )}
-            </div>
-          </div>
+            </GradientCard>
+          </motion.div>
         </TabsContent>
 
         <TabsContent value="donnees" className="mt-6">
-          <div className="group relative max-w-lg space-y-4 rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 transition-all duration-300 hover:border-[#2A3654] hover:shadow-lg hover:shadow-violet-500/5">
-            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-violet-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
-
-            <h3 className="font-semibold text-white">
-              Export de données
-            </h3>
-            <p className="text-base text-neutral-300">
-              Exportez vos tâches et analyses dans le format de votre choix.
-            </p>
-            <FeatureGate feature="export">
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <Button
-                  variant="outline"
-                  className="flex-1 border-[#1E293B] text-white hover:bg-[#1C2640]"
-                  onClick={handleExportCSV}
-                >
-                  <Download className="size-4" />
-                  Export CSV
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1 border-[#1E293B] text-white hover:bg-[#1C2640]"
-                  onClick={handleExportPDF}
-                >
-                  <Download className="size-4" />
-                  Export PDF
-                </Button>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GradientCard>
+              <div className="space-y-4">
+                <h3 className="font-semibold text-white">
+                  Export de données
+                </h3>
+                <p className="text-base text-neutral-300">
+                  Exportez vos tâches et analyses dans le format de votre choix.
+                </p>
+                <FeatureGate feature="export">
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Button
+                      variant="outline"
+                      className="flex-1 border-[#1E293B] text-white transition-all hover:border-violet-500/30 hover:bg-violet-500/5"
+                      onClick={handleExportCSV}
+                    >
+                      <Download className="size-4" />
+                      Export CSV
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="flex-1 border-[#1E293B] text-white transition-all hover:border-violet-500/30 hover:bg-violet-500/5"
+                      onClick={handleExportPDF}
+                    >
+                      <Download className="size-4" />
+                      Export PDF
+                    </Button>
+                  </div>
+                </FeatureGate>
               </div>
-            </FeatureGate>
-          </div>
+            </GradientCard>
+          </motion.div>
         </TabsContent>
 
         <TabsContent value="compte" className="mt-6">
-          <div className="group relative max-w-lg space-y-4 rounded-2xl border border-red-900/50 bg-[#151D2E] p-6 transition-all duration-300 hover:border-red-800/60 hover:shadow-lg hover:shadow-red-500/5">
-            <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-red-500 opacity-[0.03] blur-3xl transition-opacity group-hover:opacity-[0.08]" />
-
-            <h3 className="font-semibold text-red-400">
-              Zone dangereuse
-            </h3>
-            <p className="text-base text-neutral-300">
-              La suppression de votre compte est irréversible. Toutes vos
-              tâches, domaines et analyses seront définitivement supprimés.
-            </p>
-            <Button
-              variant="destructive"
-              onClick={() => setShowDeleteDialog(true)}
-            >
-              Supprimer mon compte
-            </Button>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GradientCard gradient="from-red-500/30 via-red-500/10 to-transparent" glowColor="bg-red-500">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-red-400">
+                  Zone dangereuse
+                </h3>
+                <p className="text-base text-neutral-300">
+                  La suppression de votre compte est irréversible. Toutes vos
+                  tâches, domaines et analyses seront définitivement supprimés.
+                </p>
+                <Button
+                  variant="destructive"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  Supprimer mon compte
+                </Button>
+              </div>
+            </GradientCard>
+          </motion.div>
         </TabsContent>
       </Tabs>
 

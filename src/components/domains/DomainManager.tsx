@@ -69,7 +69,7 @@ export function DomainManager({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold">Domaines</h3>
+        <h3 className="text-base font-semibold text-white">Domaines</h3>
         <span className="text-neutral-300 text-sm">
           {domains.length}/{maxDomains} domaines (gratuit)
         </span>
@@ -79,84 +79,97 @@ export function DomainManager({
         {domains.map((domain) => (
           <div
             key={domain.id}
-            className="flex items-center gap-3 rounded-xl border border-[#1E293B] p-3 shadow-sm transition-all duration-200 hover:scale-[1.02] hover:bg-[#1C2640] hover:shadow-md"
-            style={{ backgroundColor: `${domain.color}08` }}
+            className="group/card relative rounded-xl"
           >
-            <span
-              className="size-5 shrink-0 rounded-lg"
+            {/* Gradient border tinted with domain color */}
+            <div
+              className="absolute -inset-px rounded-xl opacity-30 transition-opacity duration-300 group-hover/card:opacity-60"
               style={{
-                backgroundColor: domain.color,
-                boxShadow: `0 0 12px ${domain.color}30`,
+                background: `linear-gradient(to bottom, ${domain.color}40, transparent)`,
               }}
             />
+            <div
+              className="relative flex items-center gap-3 rounded-xl bg-[#151D2E] p-3 transition-all duration-200 group-hover/card:shadow-md"
+              style={{ backgroundColor: `${domain.color}08` }}
+            >
+              {/* Color dot with glow */}
+              <span
+                className="size-6 shrink-0 rounded-lg"
+                style={{
+                  backgroundColor: domain.color,
+                  boxShadow: `0 0 16px ${domain.color}40`,
+                }}
+              />
 
-            {editId === domain.id ? (
-              <div className="flex flex-1 items-center gap-2">
-                <Input
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  className="h-7 text-base border-[#1E293B] bg-[#0B1120] text-white focus:border-violet-500"
-                />
-                <input
-                  type="color"
-                  value={editColor}
-                  onChange={(e) => setEditColor(e.target.value)}
-                  className="h-7 w-8 cursor-pointer rounded border-0"
-                />
-                <Button size="xs" onClick={handleUpdate}>
-                  OK
-                </Button>
-                <Button
-                  size="xs"
-                  variant="ghost"
-                  onClick={() => setEditId(null)}
-                >
-                  Annuler
-                </Button>
-              </div>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  className="flex-1 text-left text-base font-medium"
-                  onClick={() => startEdit(domain)}
-                >
-                  {domain.name}
-                </button>
+              {editId === domain.id ? (
+                <div className="flex flex-1 items-center gap-2">
+                  <Input
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="h-7 text-base border-[#1E293B] bg-[#0B1120] text-white focus:border-violet-500"
+                  />
+                  <input
+                    type="color"
+                    value={editColor}
+                    onChange={(e) => setEditColor(e.target.value)}
+                    className="h-7 w-8 cursor-pointer rounded border-0"
+                  />
+                  <Button size="xs" onClick={handleUpdate}>
+                    OK
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => setEditId(null)}
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="flex-1 text-left text-base font-medium text-white transition-colors hover:text-violet-300"
+                    onClick={() => startEdit(domain)}
+                  >
+                    {domain.name}
+                  </button>
 
-                {!domain.isDefault && (
-                  <>
-                    {deleteConfirmId === domain.id ? (
-                      <div className="flex items-center gap-1">
+                  {!domain.isDefault && (
+                    <>
+                      {deleteConfirmId === domain.id ? (
+                        <div className="flex items-center gap-1">
+                          <Button
+                            size="xs"
+                            variant="destructive"
+                            onClick={() => handleDelete(domain.id)}
+                          >
+                            Confirmer
+                          </Button>
+                          <Button
+                            size="xs"
+                            variant="ghost"
+                            onClick={() => setDeleteConfirmId(null)}
+                          >
+                            Annuler
+                          </Button>
+                        </div>
+                      ) : (
                         <Button
-                          size="xs"
-                          variant="destructive"
-                          onClick={() => handleDelete(domain.id)}
-                        >
-                          Confirmer
-                        </Button>
-                        <Button
-                          size="xs"
+                          size="icon-xs"
                           variant="ghost"
-                          onClick={() => setDeleteConfirmId(null)}
+                          aria-label="Supprimer le domaine"
+                          onClick={() => setDeleteConfirmId(domain.id)}
+                          className="opacity-0 transition-opacity group-hover/card:opacity-100"
                         >
-                          Annuler
+                          <Trash2 className="size-3.5 text-neutral-300" />
                         </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        size="icon-xs"
-                        variant="ghost"
-                        aria-label="Supprimer le domaine"
-                        onClick={() => setDeleteConfirmId(domain.id)}
-                      >
-                        <Trash2 className="size-3.5 text-neutral-300" />
-                      </Button>
-                    )}
-                  </>
-                )}
-              </>
-            )}
+                      )}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -166,10 +179,10 @@ export function DomainManager({
           <Button
             variant="outline"
             size="sm"
-            className="w-full border-dashed border-[#1E293B] transition-colors hover:border-violet-500/50 hover:bg-violet-500/5 hover:text-violet-400"
+            className="group relative w-full overflow-hidden border-dashed border-[#1E293B] transition-all hover:border-violet-500/50 hover:bg-violet-500/5 hover:text-violet-400"
             disabled={!canAdd}
           >
-            <Plus className="size-4" />
+            <Plus className="size-4 transition-transform group-hover:rotate-90" />
             Ajouter un domaine
           </Button>
         </DialogTrigger>

@@ -11,10 +11,10 @@ function DomainSkeleton() {
       {Array.from({ length: 3 }).map((_, i) => (
         <div
           key={i}
-          className="skeleton-shimmer rounded-lg border border-[#1E293B] bg-[#151D2E] p-4"
+          className="skeleton-shimmer rounded-xl border border-[#1E293B] bg-[#151D2E] p-4"
         >
           <div className="flex items-center gap-3">
-            <div className="size-8 rounded-full bg-[#1E293B]" />
+            <div className="size-8 rounded-lg bg-[#1E293B]" />
             <div className="h-5 w-32 rounded bg-[#1E293B]" />
           </div>
         </div>
@@ -71,55 +71,124 @@ export default function DomainsPage() {
       </div>
 
       {domains.length === 0 ? (
-        <div className="mt-6 flex flex-col items-center justify-center rounded-xl border border-dashed border-[#1E293B] bg-[#151D2E]/50 px-6 py-12 text-center">
-          {/* Glow décoratif */}
-          <div className="pointer-events-none absolute size-32 rounded-full bg-violet-500/10 blur-3xl" />
+        <div className="relative mt-6 flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed border-[#1E293B] bg-[#151D2E]/50 px-6 py-16 text-center">
+          {/* Multiple gradient glows */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="absolute h-64 w-64 rounded-full bg-violet-600/15 blur-[100px]" />
+            <div className="absolute -left-10 top-10 h-40 w-40 rounded-full bg-blue-600/10 blur-[80px]" />
+            <div className="absolute -right-10 bottom-10 h-40 w-40 rounded-full bg-purple-600/10 blur-[80px]" />
+          </div>
 
-          <svg
-            className="relative mb-4 size-[120px]"
-            viewBox="0 0 120 100"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+          {/* Rich SVG illustration with floating elements */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="relative mb-8"
           >
-            {/* Card bleue */}
-            <rect x="10" y="20" width="45" height="24" rx="6" fill="#3B82F6" opacity="0.15" stroke="#3B82F6" strokeWidth="1.5" />
-            <circle cx="22" cy="32" r="4" fill="#3B82F6" opacity="0.4" />
-            <rect x="30" y="29" width="18" height="3" rx="1.5" fill="#3B82F6" opacity="0.3" />
-            <rect x="30" y="35" width="12" height="2" rx="1" fill="#3B82F6" opacity="0.2" />
+            <svg
+              width="240"
+              height="200"
+              viewBox="0 0 240 200"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Main folder card — blue */}
+              <rect x="30" y="50" width="80" height="55" rx="10" fill="#151D2E" stroke="#3B82F6" strokeWidth="1.5" />
+              <rect x="30" y="50" width="35" height="12" rx="6" fill="#3B82F6" opacity="0.3" />
+              <rect x="30" y="56" width="80" height="6" fill="#3B82F6" opacity="0.15" />
+              <circle cx="50" cy="78" r="6" fill="#3B82F6" opacity="0.3" />
+              <rect x="62" y="73" width="35" height="5" rx="2.5" fill="#334155" />
+              <rect x="62" y="83" width="25" height="4" rx="2" fill="#1E293B" />
 
-            {/* Card verte */}
-            <rect x="20" y="50" width="45" height="24" rx="6" fill="#10B981" opacity="0.15" stroke="#10B981" strokeWidth="1.5" />
-            <circle cx="32" cy="62" r="4" fill="#10B981" opacity="0.4" />
-            <rect x="40" y="59" width="18" height="3" rx="1.5" fill="#10B981" opacity="0.3" />
-            <rect x="40" y="65" width="12" height="2" rx="1" fill="#10B981" opacity="0.2" />
+              {/* Second card — green */}
+              <rect x="55" y="115" width="80" height="55" rx="10" fill="#151D2E" stroke="#10B981" strokeWidth="1.5" />
+              <rect x="55" y="115" width="35" height="12" rx="6" fill="#10B981" opacity="0.3" />
+              <rect x="55" y="121" width="80" height="6" fill="#10B981" opacity="0.15" />
+              <circle cx="75" cy="143" r="6" fill="#10B981" opacity="0.3" />
+              <rect x="87" y="138" width="35" height="5" rx="2.5" fill="#334155" />
+              <rect x="87" y="148" width="25" height="4" rx="2" fill="#1E293B" />
 
-            {/* Card rouge dashed */}
-            <rect x="55" y="35" width="45" height="24" rx="6" fill="none" stroke="#EF4444" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.4" />
-            <circle cx="67" cy="47" r="4" fill="#EF4444" opacity="0.2" />
-            <rect x="75" y="44" width="18" height="3" rx="1.5" fill="#EF4444" opacity="0.15" />
+              {/* Third card — dashed red (to create) */}
+              <rect x="120" y="70" width="80" height="55" rx="10" fill="none" stroke="#EF4444" strokeWidth="1.5" strokeDasharray="5 4" opacity="0.4" />
+              <circle cx="140" cy="98" r="6" fill="#EF4444" opacity="0.15" />
+              <rect x="152" y="93" width="35" height="5" rx="2.5" fill="#EF4444" opacity="0.12" />
+              <rect x="152" y="103" width="25" height="4" rx="2" fill="#EF4444" opacity="0.08" />
 
-            {/* Bouton + flottant */}
-            <g>
-              <circle cx="95" cy="22" r="14" fill="#7C3AED" opacity="0.15" />
-              <circle cx="95" cy="22" r="10" fill="#7C3AED" opacity="0.25" />
-              <line x1="95" y1="17" x2="95" y2="27" stroke="#A78BFA" strokeWidth="2" strokeLinecap="round" />
-              <line x1="90" y1="22" x2="100" y2="22" stroke="#A78BFA" strokeWidth="2" strokeLinecap="round" />
-            </g>
-          </svg>
+              {/* Floating "+" button */}
+              <g filter="url(#domShadow1)" className="animate-float">
+                <circle cx="195" cy="40" r="18" fill="url(#domPlusGradient)" />
+                <line x1="195" y1="32" x2="195" y2="48" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                <line x1="187" y1="40" x2="203" y2="40" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+              </g>
+
+              {/* Floating tag badge */}
+              <g filter="url(#domShadow2)" className="animate-float-delayed">
+                <rect x="0" y="25" width="50" height="24" rx="12" fill="url(#domTagGradient)" />
+                <text x="11" y="41" fill="white" fontSize="10" fontWeight="600" fontFamily="Inter, sans-serif">Tags</text>
+              </g>
+
+              {/* Floating color palette */}
+              <g className="animate-float">
+                <circle cx="210" cy="155" r="8" fill="#3B82F6" opacity="0.6">
+                  <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="225" cy="145" r="6" fill="#10B981" opacity="0.5">
+                  <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2.5s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="220" cy="165" r="5" fill="#EF4444" opacity="0.4">
+                  <animate attributeName="opacity" values="0.4;0.8;0.4" dur="3.5s" repeatCount="indefinite" />
+                </circle>
+              </g>
+
+              {/* Pulsing stars */}
+              <circle cx="15" cy="140" r="2.5" fill="#7C3AED" opacity="0.5">
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="185" cy="185" r="2" fill="#A78BFA" opacity="0.4">
+                <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2.8s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="100" cy="15" r="2" fill="#2563EB" opacity="0.4">
+                <animate attributeName="opacity" values="0.4;0.9;0.4" dur="3.2s" repeatCount="indefinite" />
+              </circle>
+
+              {/* Connecting lines (subtle) */}
+              <line x1="110" y1="77" x2="120" y2="82" stroke="#334155" strokeWidth="1" strokeDasharray="3 3" opacity="0.4" />
+              <line x1="90" y1="105" x2="80" y2="115" stroke="#334155" strokeWidth="1" strokeDasharray="3 3" opacity="0.4" />
+
+              {/* Defs */}
+              <defs>
+                <linearGradient id="domPlusGradient" x1="177" y1="22" x2="213" y2="58">
+                  <stop stopColor="#7C3AED" />
+                  <stop offset="1" stopColor="#2563EB" />
+                </linearGradient>
+                <linearGradient id="domTagGradient" x1="0" y1="25" x2="50" y2="49">
+                  <stop stopColor="#7C3AED" />
+                  <stop offset="1" stopColor="#3B82F6" />
+                </linearGradient>
+                <filter id="domShadow1" x="167" y="14" width="56" height="56" filterUnits="userSpaceOnUse">
+                  <feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#7C3AED" floodOpacity="0.35" />
+                </filter>
+                <filter id="domShadow2" x="-10" y="17" width="70" height="42" filterUnits="userSpaceOnUse">
+                  <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#7C3AED" floodOpacity="0.25" />
+                </filter>
+              </defs>
+            </svg>
+          </motion.div>
 
           <motion.h3
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="text-lg font-semibold text-white"
+            transition={{ delay: 0.3, duration: 0.4 }}
+            className="relative text-xl font-extrabold tracking-tight text-white"
           >
             Organisez par domaine
           </motion.h3>
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-            className="mt-1 max-w-sm text-sm text-neutral-400"
+            transition={{ delay: 0.45, duration: 0.4 }}
+            className="relative mt-2 max-w-sm text-sm text-neutral-400"
           >
             Créez votre premier domaine pour organiser vos tâches par catégorie (Pro, Perso, Urgent...).
           </motion.p>
