@@ -73,10 +73,23 @@ export function Header({
       </Button>
 
       <div className="flex-1">
-        <h1 className="text-lg font-bold text-white md:text-xl">
-          {displayName ? `${greeting}, ${displayName}` : title}
-        </h1>
-        <p className="text-xs capitalize text-slate-500">{today}</p>
+        {pathname === "/dashboard" ? (
+          <>
+            <h1 className="text-xl font-bold text-white md:text-2xl">
+              {displayName ? `${greeting}, ${displayName}` : greeting}
+            </h1>
+            <p className="text-xs text-slate-500">
+              {today.charAt(0).toUpperCase() + today.slice(1)}
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="text-lg font-bold text-white md:text-xl">{title}</h1>
+            <p className="text-xs text-slate-500">
+              {today.charAt(0).toUpperCase() + today.slice(1)}
+            </p>
+          </>
+        )}
       </div>
 
       <Button

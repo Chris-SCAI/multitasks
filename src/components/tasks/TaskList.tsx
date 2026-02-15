@@ -101,103 +101,151 @@ function TaskListSkeleton() {
 
 function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
   return (
-    <div className="relative flex flex-col items-center justify-center py-20">
-      {/* Gradient glow décoratifs */}
+    <div className="relative flex flex-col items-center justify-center py-16 md:py-24">
+      {/* Gradient glow décoratifs renforcés */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="absolute h-80 w-80 rounded-full bg-violet-600/15 blur-[100px]" />
-        <div className="absolute -left-20 top-10 h-40 w-40 rounded-full bg-blue-600/10 blur-[80px]" />
-        <div className="absolute -right-10 bottom-10 h-40 w-40 rounded-full bg-purple-600/10 blur-[80px]" />
+        <div className="absolute h-96 w-96 rounded-full bg-violet-600/20 blur-[120px]" />
+        <div className="absolute -left-20 top-10 h-56 w-56 rounded-full bg-blue-600/15 blur-[100px]" />
+        <div className="absolute -right-10 bottom-10 h-56 w-56 rounded-full bg-purple-600/15 blur-[100px]" />
       </div>
 
       {/* Illustration SVG large et détaillée */}
-      <div className="relative mb-10">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+        className="relative mb-10"
+      >
         <svg
-          width="200"
-          height="180"
-          viewBox="0 0 200 180"
+          width="280"
+          height="250"
+          viewBox="0 0 280 250"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* Carte principale — checklist */}
-          <rect x="40" y="20" width="120" height="140" rx="16" fill="#151D2E" stroke="#1E293B" strokeWidth="1.5" />
+          <rect x="60" y="30" width="160" height="190" rx="16" fill="#151D2E" stroke="#1E293B" strokeWidth="1.5" />
           {/* Barre de titre */}
-          <rect x="40" y="20" width="120" height="36" rx="16" fill="#1C2640" />
-          <rect x="40" y="40" width="120" height="16" fill="#1C2640" />
-          <circle cx="56" cy="38" r="4" fill="#EF4444" opacity="0.8" />
-          <circle cx="68" cy="38" r="4" fill="#F59E0B" opacity="0.8" />
-          <circle cx="80" cy="38" r="4" fill="#10B981" opacity="0.8" />
+          <rect x="60" y="30" width="160" height="36" rx="16" fill="#1C2640" />
+          <rect x="60" y="50" width="160" height="16" fill="#1C2640" />
+          <circle cx="78" cy="48" r="4" fill="#EF4444" opacity="0.8" />
+          <circle cx="92" cy="48" r="4" fill="#F59E0B" opacity="0.8" />
+          <circle cx="106" cy="48" r="4" fill="#10B981" opacity="0.8" />
 
           {/* Ligne 1 — complétée */}
-          <rect x="58" y="70" width="16" height="16" rx="4" fill="#7C3AED" opacity="0.2" stroke="#7C3AED" strokeWidth="1.5" />
-          <path d="M62 78 L66 82 L74 72" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          <rect x="82" y="74" width="60" height="8" rx="4" fill="#334155" />
+          <rect x="78" y="82" width="16" height="16" rx="4" fill="#7C3AED" opacity="0.2" stroke="#7C3AED" strokeWidth="1.5" />
+          <path d="M82 90 L86 94 L94 84" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="102" y="86" width="80" height="8" rx="4" fill="#334155" />
+
+          {/* Barre de progression gradient */}
+          <rect x="102" y="98" width="80" height="3" rx="1.5" fill="#1E293B" />
+          <rect x="102" y="98" width="56" height="3" rx="1.5" fill="url(#progressGradient)" />
 
           {/* Ligne 2 — en cours */}
-          <rect x="58" y="96" width="16" height="16" rx="4" fill="#7C3AED" opacity="0.2" stroke="#7C3AED" strokeWidth="1.5" />
-          <rect x="82" y="100" width="50" height="8" rx="4" fill="#334155" />
+          <rect x="78" y="114" width="16" height="16" rx="4" fill="#7C3AED" opacity="0.2" stroke="#7C3AED" strokeWidth="1.5" />
+          <rect x="102" y="118" width="65" height="8" rx="4" fill="#334155" />
 
           {/* Ligne 3 — vide */}
-          <rect x="58" y="122" width="16" height="16" rx="4" fill="transparent" stroke="#334155" strokeWidth="1.5" strokeDasharray="3 3" />
-          <rect x="82" y="126" width="40" height="8" rx="4" fill="#1E293B" />
+          <rect x="78" y="146" width="16" height="16" rx="4" fill="transparent" stroke="#334155" strokeWidth="1.5" strokeDasharray="3 3" />
+          <rect x="102" y="150" width="50" height="8" rx="4" fill="#1E293B" />
+
+          {/* Ligne 4 — vide */}
+          <rect x="78" y="178" width="16" height="16" rx="4" fill="transparent" stroke="#334155" strokeWidth="1.5" strokeDasharray="3 3" />
+          <rect x="102" y="182" width="40" height="8" rx="4" fill="#1E293B" />
 
           {/* Carte flottante — badge IA */}
-          <g filter="url(#shadow1)">
-            <rect x="130" y="6" width="60" height="28" rx="14" fill="url(#aiGradient)" />
-            <text x="147" y="24" fill="white" fontSize="11" fontWeight="600" fontFamily="Inter, sans-serif">✨ IA</text>
+          <g filter="url(#shadow1)" className="animate-float">
+            <rect x="180" y="10" width="70" height="30" rx="15" fill="url(#aiGradient)" />
+            <text x="198" y="30" fill="white" fontSize="12" fontWeight="600" fontFamily="Inter, sans-serif">✨ IA</text>
           </g>
 
           {/* Carte flottante — priorité */}
-          <g filter="url(#shadow2)">
-            <rect x="4" y="90" width="44" height="44" rx="12" fill="#151D2E" stroke="#1E293B" strokeWidth="1" />
-            <text x="14" y="110" fill="#F59E0B" fontSize="10" fontWeight="600" fontFamily="Inter, sans-serif">P1</text>
-            <rect x="12" y="118" width="28" height="4" rx="2" fill="#334155" />
+          <g filter="url(#shadow2)" className="animate-float-delayed">
+            <rect x="6" y="100" width="44" height="48" rx="12" fill="#151D2E" stroke="#1E293B" strokeWidth="1" />
+            <text x="16" y="122" fill="#F59E0B" fontSize="11" fontWeight="700" fontFamily="Inter, sans-serif">P1</text>
+            <rect x="14" y="130" width="28" height="4" rx="2" fill="#334155" />
+          </g>
+
+          {/* Mini calendrier flottant */}
+          <g filter="url(#shadow3)" className="animate-float">
+            <rect x="230" y="140" width="40" height="44" rx="10" fill="#151D2E" stroke="#1E293B" strokeWidth="1" />
+            <rect x="230" y="140" width="40" height="14" rx="10" fill="#7C3AED" opacity="0.3" />
+            <rect x="230" y="148" width="40" height="6" fill="#7C3AED" opacity="0.3" />
+            <text x="242" y="150" fill="#A78BFA" fontSize="7" fontWeight="600" fontFamily="Inter, sans-serif">MAR</text>
+            <text x="243" y="175" fill="white" fontSize="14" fontWeight="700" fontFamily="Inter, sans-serif">15</text>
           </g>
 
           {/* Étoiles flottantes */}
-          <circle cx="18" cy="30" r="3" fill="#7C3AED" opacity="0.6">
+          <circle cx="20" cy="40" r="3" fill="#7C3AED" opacity="0.6">
             <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" />
           </circle>
-          <circle cx="185" cy="55" r="2.5" fill="#A78BFA" opacity="0.5">
+          <circle cx="260" cy="70" r="2.5" fill="#A78BFA" opacity="0.5">
             <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2.5s" repeatCount="indefinite" />
           </circle>
-          <circle cx="175" cy="150" r="2" fill="#2563EB" opacity="0.5">
+          <circle cx="250" cy="210" r="2" fill="#2563EB" opacity="0.5">
             <animate attributeName="opacity" values="0.5;1;0.5" dur="4s" repeatCount="indefinite" />
           </circle>
-          <circle cx="30" cy="160" r="2.5" fill="#10B981" opacity="0.4">
+          <circle cx="35" cy="220" r="2.5" fill="#10B981" opacity="0.4">
             <animate attributeName="opacity" values="0.4;0.8;0.4" dur="3.5s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="140" cy="240" r="2" fill="#7C3AED" opacity="0.3">
+            <animate attributeName="opacity" values="0.3;0.7;0.3" dur="3.2s" repeatCount="indefinite" />
           </circle>
 
           {/* Gradients et ombres */}
           <defs>
-            <linearGradient id="aiGradient" x1="130" y1="6" x2="190" y2="34">
+            <linearGradient id="aiGradient" x1="180" y1="10" x2="250" y2="40">
               <stop stopColor="#7C3AED" />
               <stop offset="1" stopColor="#2563EB" />
             </linearGradient>
-            <filter id="shadow1" x="122" y="0" width="76" height="44" filterUnits="userSpaceOnUse">
+            <linearGradient id="progressGradient" x1="102" y1="98" x2="158" y2="98">
+              <stop stopColor="#7C3AED" />
+              <stop offset="1" stopColor="#10B981" />
+            </linearGradient>
+            <filter id="shadow1" x="170" y="2" width="90" height="50" filterUnits="userSpaceOnUse">
               <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#7C3AED" floodOpacity="0.3" />
             </filter>
-            <filter id="shadow2" x="-4" y="82" width="60" height="60" filterUnits="userSpaceOnUse">
+            <filter id="shadow2" x="-4" y="92" width="62" height="66" filterUnits="userSpaceOnUse">
               <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#000" floodOpacity="0.3" />
+            </filter>
+            <filter id="shadow3" x="222" y="132" width="56" height="62" filterUnits="userSpaceOnUse">
+              <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#7C3AED" floodOpacity="0.2" />
             </filter>
           </defs>
         </svg>
-      </div>
+      </motion.div>
 
-      <h3 className="relative mb-3 text-2xl font-extrabold tracking-tight text-white">
+      <motion.h3
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+        className="relative mb-3 text-2xl font-extrabold tracking-tight text-white"
+      >
         Prêt à conquérir votre journée ?
-      </h3>
-      <p className="relative mb-10 max-w-md text-center text-sm leading-relaxed text-slate-400">
+      </motion.h3>
+      <motion.p
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.45, ease: "easeOut" }}
+        className="relative mb-10 max-w-md text-center text-sm leading-relaxed text-slate-400"
+      >
         Ajoutez vos premières tâches et laissez l&apos;IA les prioriser
         <br className="hidden sm:block" />
         avec la matrice d&apos;Eisenhower — en 10 secondes.
-      </p>
-      <button
+      </motion.p>
+      <motion.button
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.6, ease: "easeOut" }}
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.95 }}
         onClick={onCreateTask}
-        className="group relative inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-violet-600/25 transition-all duration-200 hover:scale-[1.04] hover:shadow-2xl hover:shadow-violet-600/30 active:scale-95"
+        className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-violet-600/25"
       >
-        <Plus className="size-5 transition-transform duration-200 group-hover:rotate-90" />
-        Ajouter ma première tâche
-      </button>
+        <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+        <Plus className="relative size-5 transition-transform duration-200 group-hover:rotate-90" />
+        <span className="relative">Ajouter ma première tâche</span>
+      </motion.button>
     </div>
   );
 }
