@@ -26,7 +26,7 @@ export function FinalCTASection() {
         <Button
           asChild
           size="lg"
-          className="rounded-full bg-violet-600 px-12 py-8 text-2xl text-white shadow-2xl shadow-violet-600/25 transition-all hover:bg-violet-500 hover:shadow-violet-500/30 active:scale-95"
+          className="rounded-full bg-violet-600 px-8 py-6 text-lg text-white shadow-2xl shadow-violet-600/25 transition-all hover:bg-violet-500 hover:shadow-violet-500/30 active:scale-95 sm:px-12 sm:py-8 sm:text-2xl"
         >
           <Link
             href="/register"
