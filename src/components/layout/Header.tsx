@@ -51,7 +51,10 @@ export function Header({
 
   const title = pageTitles[pathname] ?? "Multitasks";
   const isDark = theme === "dark";
-  const today = new Date().toLocaleDateString("fr-FR", {
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir";
+  const today = now.toLocaleDateString("fr-FR", {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -70,10 +73,10 @@ export function Header({
       </Button>
 
       <div className="flex-1">
-        <h1 className="text-xl font-bold text-white">
-          {displayName ? `${title} — ${displayName}` : title}
+        <h1 className="text-lg font-bold text-white md:text-xl">
+          {displayName ? `${greeting}, ${displayName}` : title}
         </h1>
-        <p className="text-xs capitalize text-slate-400">{today}</p>
+        <p className="text-xs capitalize text-slate-500">{today}</p>
       </div>
 
       <Button

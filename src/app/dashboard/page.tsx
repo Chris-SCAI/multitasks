@@ -12,21 +12,28 @@ function StatCard({
   icon: Icon,
   label,
   value,
-  color,
+  gradient,
+  glow,
 }: {
   icon: React.ElementType;
   label: string;
   value: number;
-  color: string;
+  gradient: string;
+  glow: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
-      <div className={`flex size-10 items-center justify-center rounded-lg ${color}`}>
-        <Icon className="size-5 text-white" />
-      </div>
-      <div>
-        <p className="text-2xl font-bold text-foreground">{value}</p>
-        <p className="text-xs text-muted-foreground">{label}</p>
+    <div className={`group relative overflow-hidden rounded-2xl p-[1px] ${gradient}`}>
+      <div className="relative rounded-2xl bg-[#0e1726] p-4">
+        <div className={`pointer-events-none absolute -right-4 -top-4 size-24 rounded-full blur-2xl opacity-20 ${glow}`} />
+        <div className="relative flex items-center gap-3">
+          <div className={`flex size-10 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} shadow-lg`}>
+            <Icon className="size-5 text-white" />
+          </div>
+          <div>
+            <p className="text-3xl font-extrabold tracking-tight text-white">{value}</p>
+            <p className="text-xs font-medium text-slate-400">{label}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -69,9 +76,27 @@ export default function TasksPage() {
     <div className="space-y-6">
       {/* Compteurs statistiques */}
       <div className="grid grid-cols-3 gap-3">
-        <StatCard icon={ListTodo} label="Total" value={stats.total} color="bg-violet-600" />
-        <StatCard icon={CalendarClock} label="Aujourd'hui" value={stats.dueToday} color="bg-blue-600" />
-        <StatCard icon={CheckCircle2} label="Terminées" value={stats.completed} color="bg-emerald-600" />
+        <StatCard
+          icon={ListTodo}
+          label="Total"
+          value={stats.total}
+          gradient="from-violet-500 to-purple-600"
+          glow="bg-violet-500"
+        />
+        <StatCard
+          icon={CalendarClock}
+          label="Aujourd'hui"
+          value={stats.dueToday}
+          gradient="from-blue-500 to-cyan-500"
+          glow="bg-blue-500"
+        />
+        <StatCard
+          icon={CheckCircle2}
+          label="Terminées"
+          value={stats.completed}
+          gradient="from-emerald-500 to-teal-500"
+          glow="bg-emerald-500"
+        />
       </div>
 
       <TaskFilters

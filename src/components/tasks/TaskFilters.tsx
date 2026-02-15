@@ -53,27 +53,27 @@ export function TaskFilters({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="rounded-2xl border border-[#1E293B] bg-[#0e1726] p-4 space-y-3">
       <div className="relative">
-        <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" />
         <Input
           placeholder="Rechercher une tâche..."
           value={filters.search ?? ""}
           onChange={(e) => onFilterChange({ search: e.target.value })}
-          className="pl-9"
+          className="border-[#1E293B] bg-[#0B1120] pl-9 text-white placeholder:text-slate-500 focus-visible:ring-violet-500/50"
         />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-muted-foreground text-xs font-medium">
-          Statut :
+        <span className="text-xs font-medium text-slate-500">
+          Statut
         </span>
         {STATUS_OPTIONS.map((opt) => {
           const isActive = filters.status?.includes(opt.value);
           const activeColors: Record<TaskStatus, string> = {
-            todo: "bg-slate-600 text-slate-100",
-            in_progress: "bg-blue-600 text-blue-100",
-            done: "bg-emerald-600 text-emerald-100",
+            todo: "bg-slate-500/20 text-slate-300 border-slate-500/40",
+            in_progress: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+            done: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
           };
           return (
             <button
@@ -82,12 +82,12 @@ export function TaskFilters({
               onClick={() => toggleStatus(opt.value)}
             >
               <Badge
-                variant={isActive ? "default" : "outline"}
+                variant="outline"
                 className={cn(
-                  "cursor-pointer transition-colors",
+                  "cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-all",
                   isActive
                     ? activeColors[opt.value]
-                    : "border-border text-muted-foreground hover:bg-muted"
+                    : "border-[#1E293B] text-slate-400 hover:border-slate-500 hover:text-slate-300"
                 )}
               >
                 {opt.label}
@@ -98,16 +98,16 @@ export function TaskFilters({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-muted-foreground text-xs font-medium">
-          Priorité :
+        <span className="text-xs font-medium text-slate-500">
+          Priorité
         </span>
         {PRIORITY_OPTIONS.map((opt) => {
           const isActive = filters.priority?.includes(opt.value);
           const activeColors: Record<TaskPriority, string> = {
-            urgent: "bg-red-600 text-red-100",
-            high: "bg-orange-600 text-orange-100",
-            medium: "bg-blue-600 text-blue-100",
-            low: "bg-slate-600 text-slate-100",
+            urgent: "bg-red-500/20 text-red-300 border-red-500/40",
+            high: "bg-orange-500/20 text-orange-300 border-orange-500/40",
+            medium: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+            low: "bg-slate-500/20 text-slate-300 border-slate-500/40",
           };
           return (
             <button
@@ -116,12 +116,12 @@ export function TaskFilters({
               onClick={() => togglePriority(opt.value)}
             >
               <Badge
-                variant={isActive ? "default" : "outline"}
+                variant="outline"
                 className={cn(
-                  "cursor-pointer transition-colors",
+                  "cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-all",
                   isActive
                     ? activeColors[opt.value]
-                    : "border-border text-muted-foreground hover:bg-muted"
+                    : "border-[#1E293B] text-slate-400 hover:border-slate-500 hover:text-slate-300"
                 )}
               >
                 {opt.label}
@@ -132,7 +132,7 @@ export function TaskFilters({
       </div>
 
       {hasFilters && (
-        <Button variant="ghost" size="sm" onClick={onClear}>
+        <Button variant="ghost" size="sm" onClick={onClear} className="text-slate-400 hover:text-white hover:bg-[#1C2640]">
           <X className="size-3.5" />
           Effacer les filtres
         </Button>

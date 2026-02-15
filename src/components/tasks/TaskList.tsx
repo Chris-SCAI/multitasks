@@ -101,52 +101,102 @@ function TaskListSkeleton() {
 
 function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
   return (
-    <div className="relative flex flex-col items-center justify-center py-16">
-      {/* Gradient glow décoratif */}
+    <div className="relative flex flex-col items-center justify-center py-20">
+      {/* Gradient glow décoratifs */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="h-64 w-64 rounded-full bg-violet-500/10 blur-3xl" />
+        <div className="absolute h-80 w-80 rounded-full bg-violet-600/15 blur-[100px]" />
+        <div className="absolute -left-20 top-10 h-40 w-40 rounded-full bg-blue-600/10 blur-[80px]" />
+        <div className="absolute -right-10 bottom-10 h-40 w-40 rounded-full bg-purple-600/10 blur-[80px]" />
       </div>
 
-      {/* Illustration SVG inline */}
-      <div className="relative mb-6">
+      {/* Illustration SVG large et détaillée */}
+      <div className="relative mb-10">
         <svg
-          width="120"
-          height="120"
-          viewBox="0 0 120 120"
+          width="200"
+          height="180"
+          viewBox="0 0 200 180"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="drop-shadow-lg"
         >
-          {/* Fond carte */}
-          <rect x="20" y="15" width="80" height="90" rx="12" fill="#1E293B" stroke="#334155" strokeWidth="1.5" />
-          {/* Lignes checklist */}
-          <rect x="36" y="35" width="12" height="12" rx="3" stroke="#7C3AED" strokeWidth="2" fill="none" />
-          <line x1="54" y1="41" x2="82" y2="41" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
-          <rect x="36" y="55" width="12" height="12" rx="3" stroke="#7C3AED" strokeWidth="2" fill="none" />
-          <line x1="54" y1="61" x2="76" y2="61" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
-          <rect x="36" y="75" width="12" height="12" rx="3" stroke="#7C3AED" strokeWidth="2" fill="none" />
-          <line x1="54" y1="81" x2="70" y2="81" stroke="#475569" strokeWidth="2" strokeLinecap="round" />
-          {/* Étoiles décoratives */}
-          <circle cx="95" cy="20" r="3" fill="#7C3AED" opacity="0.8" />
-          <circle cx="15" cy="45" r="2" fill="#A78BFA" opacity="0.6" />
-          <circle cx="105" cy="70" r="2.5" fill="#A78BFA" opacity="0.7" />
-          {/* Check animé sur première ligne */}
-          <path d="M39 41 L43 45 L48 37" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Carte principale — checklist */}
+          <rect x="40" y="20" width="120" height="140" rx="16" fill="#151D2E" stroke="#1E293B" strokeWidth="1.5" />
+          {/* Barre de titre */}
+          <rect x="40" y="20" width="120" height="36" rx="16" fill="#1C2640" />
+          <rect x="40" y="40" width="120" height="16" fill="#1C2640" />
+          <circle cx="56" cy="38" r="4" fill="#EF4444" opacity="0.8" />
+          <circle cx="68" cy="38" r="4" fill="#F59E0B" opacity="0.8" />
+          <circle cx="80" cy="38" r="4" fill="#10B981" opacity="0.8" />
+
+          {/* Ligne 1 — complétée */}
+          <rect x="58" y="70" width="16" height="16" rx="4" fill="#7C3AED" opacity="0.2" stroke="#7C3AED" strokeWidth="1.5" />
+          <path d="M62 78 L66 82 L74 72" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="82" y="74" width="60" height="8" rx="4" fill="#334155" />
+
+          {/* Ligne 2 — en cours */}
+          <rect x="58" y="96" width="16" height="16" rx="4" fill="#7C3AED" opacity="0.2" stroke="#7C3AED" strokeWidth="1.5" />
+          <rect x="82" y="100" width="50" height="8" rx="4" fill="#334155" />
+
+          {/* Ligne 3 — vide */}
+          <rect x="58" y="122" width="16" height="16" rx="4" fill="transparent" stroke="#334155" strokeWidth="1.5" strokeDasharray="3 3" />
+          <rect x="82" y="126" width="40" height="8" rx="4" fill="#1E293B" />
+
+          {/* Carte flottante — badge IA */}
+          <g filter="url(#shadow1)">
+            <rect x="130" y="6" width="60" height="28" rx="14" fill="url(#aiGradient)" />
+            <text x="147" y="24" fill="white" fontSize="11" fontWeight="600" fontFamily="Inter, sans-serif">✨ IA</text>
+          </g>
+
+          {/* Carte flottante — priorité */}
+          <g filter="url(#shadow2)">
+            <rect x="4" y="90" width="44" height="44" rx="12" fill="#151D2E" stroke="#1E293B" strokeWidth="1" />
+            <text x="14" y="110" fill="#F59E0B" fontSize="10" fontWeight="600" fontFamily="Inter, sans-serif">P1</text>
+            <rect x="12" y="118" width="28" height="4" rx="2" fill="#334155" />
+          </g>
+
+          {/* Étoiles flottantes */}
+          <circle cx="18" cy="30" r="3" fill="#7C3AED" opacity="0.6">
+            <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="185" cy="55" r="2.5" fill="#A78BFA" opacity="0.5">
+            <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2.5s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="175" cy="150" r="2" fill="#2563EB" opacity="0.5">
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="4s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="30" cy="160" r="2.5" fill="#10B981" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.8;0.4" dur="3.5s" repeatCount="indefinite" />
+          </circle>
+
+          {/* Gradients et ombres */}
+          <defs>
+            <linearGradient id="aiGradient" x1="130" y1="6" x2="190" y2="34">
+              <stop stopColor="#7C3AED" />
+              <stop offset="1" stopColor="#2563EB" />
+            </linearGradient>
+            <filter id="shadow1" x="122" y="0" width="76" height="44" filterUnits="userSpaceOnUse">
+              <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#7C3AED" floodOpacity="0.3" />
+            </filter>
+            <filter id="shadow2" x="-4" y="82" width="60" height="60" filterUnits="userSpaceOnUse">
+              <feDropShadow dx="0" dy="4" stdDeviation="4" floodColor="#000" floodOpacity="0.3" />
+            </filter>
+          </defs>
         </svg>
       </div>
 
-      <h3 className="relative mb-2 text-xl font-bold text-white">
+      <h3 className="relative mb-3 text-2xl font-extrabold tracking-tight text-white">
         Prêt à conquérir votre journée ?
       </h3>
-      <p className="relative mb-8 max-w-sm text-center text-sm text-slate-400">
-        Ajoutez vos premières tâches et laissez l&apos;IA vous aider à prioriser ce qui compte vraiment.
+      <p className="relative mb-10 max-w-md text-center text-sm leading-relaxed text-slate-400">
+        Ajoutez vos premières tâches et laissez l&apos;IA les prioriser
+        <br className="hidden sm:block" />
+        avec la matrice d&apos;Eisenhower — en 10 secondes.
       </p>
       <button
         onClick={onCreateTask}
-        className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:scale-105 hover:shadow-xl hover:shadow-violet-600/30 active:scale-95"
+        className="group relative inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-violet-600/25 transition-all duration-200 hover:scale-[1.04] hover:shadow-2xl hover:shadow-violet-600/30 active:scale-95"
       >
-        <Plus className="size-5" />
-        Ajouter une tâche
+        <Plus className="size-5 transition-transform duration-200 group-hover:rotate-90" />
+        Ajouter ma première tâche
       </button>
     </div>
   );
