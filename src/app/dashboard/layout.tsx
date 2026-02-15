@@ -32,9 +32,22 @@ export default function DashboardLayout({
           sidebarOpen ? "md:ml-[280px]" : ""
         }`}
       >
+        {/* Dot grid texture */}
+        <div
+          className="pointer-events-none fixed inset-0 opacity-[0.015]"
+          style={{
+            backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
         <Header pendingReminders={pendingCount} />
-        <main className="flex-1 px-4 py-6 pb-24 md:px-6 md:pb-6">
-          <div className="mx-auto max-w-5xl">{children}</div>
+        <main className="relative flex-1 px-4 py-6 pb-24 md:px-6 md:pb-6">
+          {/* Ambient glow orbs */}
+          <div className="pointer-events-none fixed inset-0 overflow-hidden">
+            <div className="absolute -top-32 right-1/4 size-[500px] rounded-full bg-violet-600/[0.03] blur-[120px]" />
+            <div className="absolute -bottom-32 left-1/4 size-[400px] rounded-full bg-blue-600/[0.03] blur-[100px]" />
+          </div>
+          <div className="relative mx-auto max-w-5xl">{children}</div>
         </main>
       </div>
       <MobileNav />

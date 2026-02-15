@@ -78,7 +78,7 @@ function DraggableTask({
             {...listeners}
             {...attributes}
             className={cn(
-              "cursor-grab rounded-md border border-[#1E293B] bg-[#151D2E] p-1.5 text-sm shadow-sm transition-shadow hover:shadow-md active:cursor-grabbing",
+              "cursor-grab rounded-md border border-[#1E293B] bg-[#151D2E] p-1.5 text-sm shadow-sm transition-all duration-200 hover:shadow-md hover:border-violet-500/30 hover:shadow-violet-500/5 active:cursor-grabbing",
               isDragging && "opacity-30"
             )}
           >
@@ -120,7 +120,7 @@ function TaskCardOverlay({
   domain?: Domain;
 }) {
   return (
-    <div className="w-36 cursor-grabbing rounded-md border border-[#1E293B] bg-[#151D2E] p-1.5 text-sm shadow-xl ring-2 ring-primary/30">
+    <div className="w-36 scale-105 cursor-grabbing rounded-md border border-[#1E293B] bg-[#151D2E] p-1.5 text-sm shadow-xl shadow-violet-500/20 ring-2 ring-primary/30">
       <p className="truncate font-medium leading-tight text-white">{task.title}</p>
       <div className="mt-1 flex flex-wrap items-center gap-1">
         <Badge
@@ -161,7 +161,7 @@ function DroppableDay({
       className={cn(
         "flex min-h-[140px] flex-col rounded-lg border transition-colors sm:min-h-[200px]",
         day.isToday
-          ? "border-primary/50 bg-primary/10"
+          ? "border-primary bg-primary/15 shadow-md shadow-primary/10"
           : "border-[#1E293B] bg-[#151D2E]",
         tasks.length === 0 &&
           !day.isToday &&
@@ -183,10 +183,10 @@ function DroppableDay({
           </span>
           <span
             className={cn(
-              "flex size-6 items-center justify-center rounded-full text-sm",
+              "flex items-center justify-center rounded-full text-sm",
               day.isToday
-                ? "bg-primary font-bold text-white"
-                : "font-medium text-white"
+                ? "size-7 bg-primary font-bold text-white shadow-sm shadow-primary/50"
+                : "size-6 font-medium text-white"
             )}
           >
             {day.dayNumber}
@@ -196,18 +196,27 @@ function DroppableDay({
       </div>
 
       <div className="flex-1 space-y-1 overflow-y-auto p-1.5">
-        {tasks.map((task) => (
-          <DraggableTask
-            key={task.id}
-            task={task}
-            domain={domains.find((d) => d.id === task.domainId)}
-          />
-        ))}
+        {tasks.length === 0 ? (
+          <div className="flex h-full items-center justify-center">
+            <span className="text-lg text-[#1E293B]">+</span>
+          </div>
+        ) : (
+          tasks.map((task) => (
+            <DraggableTask
+              key={task.id}
+              task={task}
+              domain={domains.find((d) => d.id === task.domainId)}
+            />
+          ))
+        )}
       </div>
 
       {dayLoad > 0 && (
         <div className="border-t border-[#1E293B]/50 px-2 py-1">
-          <span className="text-xs text-neutral-300">
+          <span className={cn(
+            "text-xs font-medium",
+            dayLoad > 480 ? "text-red-400" : dayLoad > 240 ? "text-amber-400" : "text-neutral-300"
+          )}>
             {formatMinutes(dayLoad)}
           </span>
         </div>

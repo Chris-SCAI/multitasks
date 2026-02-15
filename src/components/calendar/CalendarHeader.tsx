@@ -28,7 +28,7 @@ export function CalendarHeader({
           size="icon"
           onClick={() => onNavigate(-1)}
           aria-label="Précédent"
-          className="size-8 border-[#1E293B] text-white hover:bg-[#1C2640]"
+          className="size-9 border-[#1E293B] text-white hover:border-violet-500/50 hover:text-violet-400 transition-all duration-200"
         >
           <ChevronLeft className="size-4" />
         </Button>
@@ -37,11 +37,11 @@ export function CalendarHeader({
           size="icon"
           onClick={() => onNavigate(1)}
           aria-label="Suivant"
-          className="size-8 border-[#1E293B] text-white hover:bg-[#1C2640]"
+          className="size-9 border-[#1E293B] text-white hover:border-violet-500/50 hover:text-violet-400 transition-all duration-200"
         >
           <ChevronRight className="size-4" />
         </Button>
-        <h2 className="text-base font-semibold text-white sm:text-lg">
+        <h2 className="text-lg font-bold text-white sm:text-xl">
           {label}
         </h2>
       </div>
@@ -51,7 +51,7 @@ export function CalendarHeader({
           variant="outline"
           size="sm"
           onClick={onToday}
-          className="text-sm border-[#1E293B] text-white hover:bg-[#1C2640]"
+          className="text-sm border-[#1E293B] text-white hover:border-violet-500/50 hover:bg-violet-500/10 hover:text-violet-400 transition-all duration-200"
         >
           Aujourd&apos;hui
         </Button>
@@ -59,11 +59,11 @@ export function CalendarHeader({
           value={view}
           onValueChange={(v) => onViewChange(v as CalendarView)}
         >
-          <TabsList className="h-8 bg-[#0B1120] border border-[#1E293B]">
-            <TabsTrigger value="week" className="px-3 text-sm text-neutral-300 data-[state=active]:bg-[#1C2640] data-[state=active]:text-white">
+          <TabsList className="h-9 bg-[#151D2E] border border-[#1E293B]">
+            <TabsTrigger value="week" className="px-3 text-sm text-neutral-300 transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/30 data-[state=active]:to-blue-600/20 data-[state=active]:text-white data-[state=active]:shadow-sm">
               Semaine
             </TabsTrigger>
-            <TabsTrigger value="month" className="px-3 text-sm text-neutral-300 data-[state=active]:bg-[#1C2640] data-[state=active]:text-white">
+            <TabsTrigger value="month" className="px-3 text-sm text-neutral-300 transition-all duration-200 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/30 data-[state=active]:to-blue-600/20 data-[state=active]:text-white data-[state=active]:shadow-sm">
               Mois
             </TabsTrigger>
           </TabsList>

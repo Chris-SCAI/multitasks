@@ -61,7 +61,7 @@ export function Header({
   });
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-[#1E293B] bg-[#0B1120]/95 px-4 backdrop-blur-sm md:h-16 md:px-6">
+    <header className="sticky top-0 z-20 flex h-14 items-center gap-3 bg-[#0B1120]/80 px-4 backdrop-blur-xl md:h-16 md:px-6 relative">
       <Button
         variant="ghost"
         size="icon"
@@ -75,17 +75,17 @@ export function Header({
       <div className="flex-1">
         {pathname === "/dashboard" ? (
           <>
-            <h1 className="text-xl font-bold text-white md:text-2xl">
+            <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
               {displayName ? `${greeting}, ${displayName}` : greeting}
             </h1>
-            <p className="text-xs text-slate-500">
+            <p className="text-sm text-neutral-400">
               {today.charAt(0).toUpperCase() + today.slice(1)}
             </p>
           </>
         ) : (
           <>
-            <h1 className="text-lg font-bold text-white md:text-xl">{title}</h1>
-            <p className="text-xs text-slate-500">
+            <h1 className="text-xl font-bold tracking-tight text-white md:text-2xl">{title}</h1>
+            <p className="text-sm text-neutral-400">
               {today.charAt(0).toUpperCase() + today.slice(1)}
             </p>
           </>
@@ -100,7 +100,7 @@ export function Header({
       >
         <Bell className="size-5" />
         {pendingReminders > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white animate-pulse">
             {pendingReminders > 9 ? "9+" : pendingReminders}
           </span>
         )}
@@ -120,12 +120,18 @@ export function Header({
         <Button
           onClick={onAddTask}
           size="sm"
-          className="gap-1.5 rounded-full bg-violet-600 text-white hover:bg-violet-500"
+          className="group relative gap-1.5 overflow-hidden rounded-full bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-shadow"
         >
-          <Plus className="size-4" />
-          <span className="hidden sm:inline">Nouvelle tâche</span>
+          <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-700" />
+          <span className="relative flex items-center gap-1.5">
+            <Plus className="size-4" />
+            <span className="hidden sm:inline">Nouvelle tâche</span>
+          </span>
         </Button>
       )}
+
+      {/* Gradient border bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#1E293B] to-transparent" />
 
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <SheetContent side="left" className="w-[280px] border-[#1E293B] bg-[#0B1120] p-0">

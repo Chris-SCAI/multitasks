@@ -53,7 +53,7 @@ function LoadIndicator({ taskCount }: { taskCount: number }) {
   if (taskCount <= 2) {
     return (
       <div className="flex gap-0.5">
-        <span className="size-1.5 rounded-full bg-emerald-500" />
+        <span className="size-2 rounded-full bg-emerald-500" />
       </div>
     );
   }
@@ -61,17 +61,17 @@ function LoadIndicator({ taskCount }: { taskCount: number }) {
   if (taskCount <= 4) {
     return (
       <div className="flex gap-0.5">
-        <span className="size-1.5 rounded-full bg-orange-500" />
-        <span className="size-1.5 rounded-full bg-orange-500" />
+        <span className="size-2 rounded-full bg-orange-500" />
+        <span className="size-2 rounded-full bg-orange-500" />
       </div>
     );
   }
 
   return (
     <div className="flex gap-0.5">
-      <span className="size-1.5 rounded-full bg-red-500" />
-      <span className="size-1.5 rounded-full bg-red-500" />
-      <span className="size-1.5 rounded-full bg-red-500" />
+      <span className="size-2 rounded-full bg-red-500 shadow-sm shadow-red-500/50 animate-pulse" />
+      <span className="size-2 rounded-full bg-red-500 shadow-sm shadow-red-500/50 animate-pulse" />
+      <span className="size-2 rounded-full bg-red-500 shadow-sm shadow-red-500/50 animate-pulse" />
     </div>
   );
 }
@@ -103,11 +103,13 @@ export function CalendarMonth({
   return (
     <>
       <div className="overflow-x-auto">
-        <div className="grid min-w-[320px] grid-cols-7 gap-px rounded-lg border border-[#1E293B] bg-[#1E293B]">
+        <div className="relative rounded-xl">
+          <div className="absolute -inset-px rounded-xl bg-gradient-to-b from-violet-500/20 via-blue-500/10 to-transparent pointer-events-none" />
+        <div className="relative grid min-w-[320px] grid-cols-7 gap-px rounded-xl border border-[#1E293B] bg-[#1E293B]">
           {WEEKDAY_HEADERS.map((header, i) => (
             <div
               key={i}
-              className="bg-[#0B1120] py-2 text-center text-sm font-medium text-neutral-400"
+              className="bg-[#0B1120] py-3 text-center text-xs font-semibold uppercase tracking-wider text-neutral-500"
             >
               {header}
             </div>
@@ -123,17 +125,21 @@ export function CalendarMonth({
                 type="button"
                 onClick={() => setSelectedDate(day.date)}
                 className={cn(
-                  "flex min-h-[52px] flex-col items-center gap-1 bg-[#151D2E] p-1.5 transition-colors hover:bg-[#1C2640] sm:min-h-[72px] sm:items-start sm:p-2",
+                  "flex min-h-[52px] flex-col items-center gap-1 p-1.5 transition-all duration-200 hover:bg-[#1C2640] hover:shadow-inner sm:min-h-[80px] sm:items-start sm:p-2",
                   !day.isCurrentMonth && "opacity-40",
-                  day.isToday && "ring-2 ring-inset ring-primary"
+                  day.isToday
+                    ? "bg-primary/10 ring-2 ring-inset ring-primary"
+                    : taskCount > 0
+                      ? "bg-[#151D2E]"
+                      : "bg-[#0F1629]"
                 )}
               >
                 <span
                   className={cn(
-                    "flex size-6 items-center justify-center rounded-full text-sm",
+                    "flex items-center justify-center rounded-full",
                     day.isToday
-                      ? "bg-primary font-bold text-white"
-                      : "font-medium text-neutral-300"
+                      ? "size-7 bg-primary text-sm font-bold text-white shadow-sm shadow-primary/50"
+                      : "size-6 text-sm font-medium text-neutral-300"
                   )}
                 >
                   {day.dayNumber}
@@ -148,6 +154,7 @@ export function CalendarMonth({
             );
           })}
         </div>
+        </div>
       </div>
 
       <Dialog
@@ -156,9 +163,9 @@ export function CalendarMonth({
           if (!open) setSelectedDate(null);
         }}
       >
-        <DialogContent className="max-h-[80vh] overflow-y-auto border-[#1E293B] bg-[#151D2E] sm:max-w-md">
+        <DialogContent className="max-h-[80vh] overflow-y-auto border-[#1E293B] bg-[#151D2E] shadow-2xl shadow-violet-500/5 sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="capitalize text-white">
+            <DialogTitle className="capitalize font-bold text-white">
               {selectedDateFormatted}
             </DialogTitle>
             <DialogDescription>
@@ -175,7 +182,7 @@ export function CalendarMonth({
                 return (
                   <div
                     key={task.id}
-                    className="rounded-lg border border-[#1E293B] bg-[#151D2E] p-3 shadow-sm"
+                    className="rounded-lg border border-[#1E293B] bg-[#151D2E] p-3 shadow-sm hover:border-violet-500/30 transition-colors duration-200"
                   >
                     <p className="text-base font-medium text-white">{task.title}</p>
                     {task.description && (
