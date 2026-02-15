@@ -210,18 +210,25 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const clientIp = getClientIp(request);
 
-  // --- Vérification du rate limit pour les routes auth (plus restrictif) ---
-  if (isAuthRoute(pathname)) {
-    const authResult = authLimiter.check(`auth:${clientIp}`);
-    if (!authResult.allowed) {
-      return createRateLimitResponse(authResult.resetAt);
-    }
-  }
+  // Bypass rate limiting en développement/test
+  const isDev = process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
 
-  // --- Vérification du rate limit global ---
-  const globalResult = globalLimiter.check(`global:${clientIp}`);
-  if (!globalResult.allowed) {
-    return createRateLimitResponse(globalResult.resetAt);
+  let globalResult: RateLimitResult | undefined;
+
+  if (!isDev) {
+    // --- Vérification du rate limit pour les routes auth (plus restrictif) ---
+    if (isAuthRoute(pathname)) {
+      const authResult = authLimiter.check(`auth:${clientIp}`);
+      if (!authResult.allowed) {
+        return createRateLimitResponse(authResult.resetAt);
+      }
+    }
+
+    // --- Vérification du rate limit global ---
+    globalResult = globalLimiter.check(`global:${clientIp}`);
+    if (!globalResult.allowed) {
+      return createRateLimitResponse(globalResult.resetAt);
+    }
   }
 
   // --- Rafraîchissement de session Supabase + protection des routes ---
@@ -274,18 +281,20 @@ export async function middleware(request: NextRequest) {
   }
 
   // Ajout des headers informatifs de rate limiting (RFC 6585 / draft-ietf-httpapi-ratelimit-headers)
-  response.headers.set(
-    "X-RateLimit-Limit",
-    String(globalLimiter.getMaxRequests())
-  );
-  response.headers.set(
-    "X-RateLimit-Remaining",
-    String(globalResult.remaining)
-  );
-  response.headers.set(
-    "X-RateLimit-Reset",
-    String(Math.ceil(globalResult.resetAt / 1000))
-  );
+  if (globalResult) {
+    response.headers.set(
+      "X-RateLimit-Limit",
+      String(globalLimiter.getMaxRequests())
+    );
+    response.headers.set(
+      "X-RateLimit-Remaining",
+      String(globalResult.remaining)
+    );
+    response.headers.set(
+      "X-RateLimit-Reset",
+      String(Math.ceil(globalResult.resetAt / 1000))
+    );
+  }
 
   return response;
 }
