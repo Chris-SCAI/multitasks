@@ -7,7 +7,9 @@ test.describe("Gestion des domaines", () => {
   });
 
   test("page domaines charge avec contenu", async ({ page }) => {
-    // Naviguer et nettoyer IndexedDB
+    test.setTimeout(90000);
+
+    // Naviguer et nettoyer IndexedDB (meme pattern que onboarding/create-task)
     await page.goto("/dashboard");
     await page.waitForLoadState("load");
     await page.evaluate(async () => {
@@ -16,9 +18,11 @@ test.describe("Gestion des domaines", () => {
         if (db.name) indexedDB.deleteDatabase(db.name);
       }
     });
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
+    await page.reload();
+    await page.waitForLoadState("load");
 
-    // Naviguer directement vers domaines (evite le sidebar pour economiser des requetes)
+    // Naviguer vers domaines
     await page.goto("/dashboard/domains");
     await page.waitForLoadState("load");
 
@@ -37,7 +41,9 @@ test.describe("Gestion des domaines", () => {
   test("le bouton ajouter est desactive quand la limite est atteinte", async ({
     page,
   }) => {
-    // Naviguer et nettoyer IndexedDB
+    test.setTimeout(90000);
+
+    // Naviguer et nettoyer IndexedDB (meme pattern que onboarding/create-task)
     await page.goto("/dashboard");
     await page.waitForLoadState("load");
     await page.evaluate(async () => {
@@ -46,9 +52,11 @@ test.describe("Gestion des domaines", () => {
         if (db.name) indexedDB.deleteDatabase(db.name);
       }
     });
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
+    await page.reload();
+    await page.waitForLoadState("load");
 
-    // Naviguer directement vers domaines
+    // Naviguer vers domaines
     await page.goto("/dashboard/domains");
     await page.waitForLoadState("load");
 

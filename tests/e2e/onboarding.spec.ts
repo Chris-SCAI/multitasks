@@ -7,6 +7,7 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
   });
 
   test("affiche l'empty state au premier lancement", async ({ page }) => {
+    test.setTimeout(90000);
     // Naviguer et nettoyer IndexedDB
     await page.goto("/dashboard");
     await page.waitForLoadState("load");

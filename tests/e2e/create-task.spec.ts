@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { waitForRateLimitBudget } from "./helpers/rate-limit-aware";
 
 test("create a task via FAB button", async ({ page }) => {
+  test.setTimeout(90000);
   await waitForRateLimitBudget(page);
 
   // Naviguer et nettoyer IndexedDB
