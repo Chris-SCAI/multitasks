@@ -63,7 +63,7 @@ export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
       exit={{ opacity: 0, x: 100 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
       className={cn(
-        "group flex items-start gap-3 rounded-lg border border-[#1E293B] bg-[#151D2E] p-4 shadow-sm transition-all hover:bg-[#1C2640] hover:shadow-md",
+        "group flex items-start gap-4 rounded-xl border border-[#1E293B] bg-[#151D2E] p-5 shadow-sm transition-all hover:bg-[#1C2640] hover:shadow-md hover:border-violet-500/20",
         isDone && "opacity-60"
       )}
     >
@@ -73,13 +73,13 @@ export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
           whileTap={{ scale: 1.2, rotate: 5 }}
           onClick={toggleComplete}
           className={cn(
-            "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+            "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
             isDone
               ? "border-emerald-500 bg-emerald-500 text-white"
               : "border-[#1E293B] hover:border-violet-500"
           )}
         >
-          {isDone && <Check className="size-3" />}
+          {isDone && <Check className="size-3.5" />}
         </motion.button>
         {isDone && (
           <motion.div className="pointer-events-none absolute -top-1 -left-1" aria-hidden>
@@ -101,11 +101,11 @@ export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
         )}
       </div>
 
-      <div className="min-w-0 flex-1 space-y-1.5">
+      <div className="min-w-0 flex-1 space-y-2">
         <div className="flex items-start justify-between gap-2">
           <span
             className={cn(
-              "text-base font-semibold text-white leading-tight",
+              "text-lg font-semibold text-white leading-tight",
               isDone && "line-through"
             )}
           >
@@ -113,10 +113,10 @@ export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-2">
           <Badge
             variant="secondary"
-            className={cn("text-xs", PRIORITY_COLORS[task.priority])}
+            className={cn("text-sm", PRIORITY_COLORS[task.priority])}
           >
             {PRIORITY_LABELS[task.priority]}
           </Badge>
@@ -124,15 +124,15 @@ export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
           {domain && <DomainBadge domain={domain} size="sm" />}
 
           {task.dueDate && (
-            <span className="inline-flex items-center gap-1 text-xs text-neutral-300">
-              <Calendar className="size-3" />
+            <span className="inline-flex items-center gap-1 text-sm text-neutral-300">
+              <Calendar className="size-3.5" />
               {formatDate(task.dueDate)}
             </span>
           )}
 
           {task.estimatedMinutes && (
-            <span className="inline-flex items-center gap-1 text-xs text-neutral-300">
-              <Clock className="size-3" />
+            <span className="inline-flex items-center gap-1 text-sm text-neutral-300">
+              <Clock className="size-3.5" />
               {task.estimatedMinutes}min
             </span>
           )}
@@ -163,7 +163,7 @@ export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
             variant="ghost"
             onClick={() => setShowDeleteConfirm(true)}
           >
-            <Trash2 className="size-3.5" />
+            <Trash2 className="size-4" />
           </Button>
         )}
       </div>

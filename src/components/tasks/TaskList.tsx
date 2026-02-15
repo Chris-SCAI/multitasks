@@ -81,7 +81,7 @@ function TaskListSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="skeleton-shimmer rounded-lg border border-border bg-card p-4"
+          className="skeleton-shimmer rounded-xl border border-border bg-card p-5"
         >
           <div className="flex items-start gap-3">
             <div className="mt-0.5 size-5 rounded-full bg-muted" />
@@ -219,7 +219,7 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
-        className="relative mb-3 text-2xl font-extrabold tracking-tight text-white"
+        className="relative mb-3 text-3xl font-extrabold tracking-tight text-white"
       >
         Prêt à conquérir votre journée ?
       </motion.h3>
@@ -227,7 +227,7 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.45, ease: "easeOut" }}
-        className="relative mb-10 max-w-md text-center text-sm leading-relaxed text-slate-400"
+        className="relative mb-10 max-w-md text-center text-base leading-relaxed text-slate-400"
       >
         Ajoutez vos premières tâches et laissez l&apos;IA les prioriser{" "}
         <br className="hidden sm:block" />
@@ -240,7 +240,7 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.95 }}
         onClick={onCreateTask}
-        className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-xl shadow-violet-600/25"
+        className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-10 py-4 text-lg font-semibold text-white shadow-xl shadow-violet-600/25"
       >
         <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
         <Plus className="relative size-5 transition-transform duration-200 group-hover:rotate-90" />

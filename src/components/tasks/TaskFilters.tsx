@@ -55,9 +55,9 @@ export function TaskFilters({
   }
 
   return (
-    <div className="rounded-2xl border border-[#1E293B] bg-[#151D2E] p-4 space-y-3">
+    <div className="rounded-2xl border border-[#1E293B] bg-[#151D2E] p-5 space-y-4">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" />
+        <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-500" />
         <Input
           placeholder="Rechercher une tâche..."
           value={filters.search ?? ""}
@@ -65,14 +65,14 @@ export function TaskFilters({
           className="border-[#1E293B] bg-[#0B1120] pl-9 pr-20 text-white placeholder:text-slate-500 focus-visible:ring-2 focus-visible:ring-violet-500/30"
         />
         {taskCount !== undefined && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">
             {taskCount} tâche{taskCount !== 1 ? "s" : ""}
           </span>
         )}
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium text-slate-500">
+        <span className="text-sm font-medium text-slate-500">
           Statut
         </span>
         {STATUS_OPTIONS.map((opt) => {
@@ -97,13 +97,13 @@ export function TaskFilters({
               <Badge
                 variant="outline"
                 className={cn(
-                  "cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-all inline-flex items-center gap-1.5",
+                  "cursor-pointer rounded-full px-3 py-1.5 text-sm font-medium transition-all inline-flex items-center gap-1.5",
                   isActive
                     ? activeColors[opt.value]
                     : "border-[#1E293B] text-slate-400 hover:border-slate-500 hover:text-slate-300"
                 )}
               >
-                <span className={cn("size-1.5 rounded-full", isActive ? dotColors[opt.value] : "bg-slate-600")} />
+                <span className={cn("size-2 rounded-full", isActive ? dotColors[opt.value] : "bg-slate-600")} />
                 {opt.label}
               </Badge>
             </button>
@@ -112,7 +112,7 @@ export function TaskFilters({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium text-slate-500">
+        <span className="text-sm font-medium text-slate-500">
           Priorité
         </span>
         {PRIORITY_OPTIONS.map((opt) => {
@@ -139,13 +139,13 @@ export function TaskFilters({
               <Badge
                 variant="outline"
                 className={cn(
-                  "cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-all inline-flex items-center gap-1.5",
+                  "cursor-pointer rounded-full px-3 py-1.5 text-sm font-medium transition-all inline-flex items-center gap-1.5",
                   isActive
                     ? activeColors[opt.value]
                     : "border-[#1E293B] text-slate-400 hover:border-slate-500 hover:text-slate-300"
                 )}
               >
-                <span className={cn("size-1.5 rounded-full", isActive ? dotColors[opt.value] : "bg-slate-600")} />
+                <span className={cn("size-2 rounded-full", isActive ? dotColors[opt.value] : "bg-slate-600")} />
                 {opt.label}
               </Badge>
             </button>

@@ -31,15 +31,15 @@ function StatCard({
       transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
       className={`group relative overflow-hidden rounded-2xl p-[1px] ${gradient} transition-transform duration-200 hover:scale-[1.03]`}
     >
-      <div className="relative rounded-2xl bg-[#0B1120] p-4">
-        <div className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-32 rounded-full blur-3xl opacity-15 ${glow}`} />
-        <div className="relative flex items-center gap-3">
-          <div className={`flex size-10 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} shadow-lg`}>
-            <Icon className="size-5 text-white" />
+      <div className="relative rounded-2xl bg-[#0B1120] p-5">
+        <div className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-40 rounded-full blur-3xl opacity-15 ${glow}`} />
+        <div className="relative flex items-center gap-4">
+          <div className={`flex size-12 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} shadow-lg`}>
+            <Icon className="size-6 text-white" />
           </div>
           <div>
-            <p className="text-3xl font-extrabold tracking-tight text-white">{value}</p>
-            <p className="text-xs font-medium text-slate-400">{label}</p>
+            <p className="text-4xl font-extrabold tracking-tight text-white">{value}</p>
+            <p className="text-sm font-medium text-slate-400">{label}</p>
           </div>
         </div>
       </div>
@@ -83,11 +83,11 @@ export default function TasksPage() {
   const hasTasks = allTasks.length > 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {hasTasks && (
         <>
           {/* Compteurs statistiques */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-4">
             <StatCard
               icon={ListTodo}
               label="Total"
@@ -144,10 +144,10 @@ export default function TasksPage() {
       {hasTasks && (
         <button
           onClick={() => setShowForm(true)}
-          className="fixed bottom-20 right-4 z-20 flex size-14 items-center justify-center rounded-full bg-violet-600 text-white shadow-lg shadow-violet-600/30 transition-transform hover:scale-105 hover:bg-violet-500 active:scale-95 md:bottom-6"
+          className="fixed bottom-20 right-4 z-20 flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-600/30 transition-transform hover:scale-105 hover:brightness-110 active:scale-95 md:bottom-6"
           aria-label="Ajouter une tâche"
         >
-          <Plus className="size-6" />
+          <Plus className="size-7" />
         </button>
       )}
     </div>
