@@ -41,7 +41,7 @@ export function CalendarHeader({
         >
           <ChevronRight className="size-4" />
         </Button>
-        <h2 className="text-lg font-bold text-white sm:text-xl">
+        <h2 className="text-xl font-bold text-white sm:text-2xl">
           {label}
         </h2>
       </div>

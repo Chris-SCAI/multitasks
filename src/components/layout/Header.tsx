@@ -61,7 +61,7 @@ export function Header({
   });
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center gap-3 bg-[#0B1120]/80 px-4 backdrop-blur-xl md:h-16 md:px-6 relative">
+    <header className="sticky top-0 z-20 flex h-14 items-center gap-3 bg-[#0B1120]/80 px-4 backdrop-blur-xl md:h-20 md:px-8 lg:px-12 relative">
       <Button
         variant="ghost"
         size="icon"
@@ -75,7 +75,7 @@ export function Header({
       <div className="flex-1">
         {pathname === "/dashboard" ? (
           <>
-            <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
+            <h1 className="text-2xl font-bold tracking-tight text-white md:text-4xl">
               {displayName ? `${greeting}, ${displayName}` : greeting}
             </h1>
             <p className="text-sm text-neutral-400">
@@ -84,7 +84,7 @@ export function Header({
           </>
         ) : (
           <>
-            <h1 className="text-xl font-bold tracking-tight text-white md:text-2xl">{title}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">{title}</h1>
             <p className="text-sm text-neutral-400">
               {today.charAt(0).toUpperCase() + today.slice(1)}
             </p>

@@ -60,16 +60,16 @@ export default function CalendarPage() {
   const onNavigate = view === "week" ? navigateWeek : navigateMonth;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
-          <Calendar className="size-5 text-white" />
+        <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
+          <Calendar className="size-6 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-3xl font-bold tracking-tight text-white">
             Calendrier
           </h1>
-          <p className="text-sm text-neutral-300">
+          <p className="text-base text-neutral-300">
             Visualisez vos tâches par semaine ou par mois
           </p>
         </div>

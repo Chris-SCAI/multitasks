@@ -35,12 +35,12 @@ export default function DomainsPage() {
         transition={{ duration: 0.3 }}
       >
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
-            <Tags className="size-5 text-white" />
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
+            <Tags className="size-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Mes domaines</h1>
-            <p className="text-sm text-neutral-300">
+            <h1 className="text-3xl font-bold tracking-tight text-white">Mes domaines</h1>
+            <p className="text-base text-neutral-300">
               Organisez vos tâches par domaine de responsabilité
             </p>
           </div>
@@ -194,7 +194,7 @@ export default function DomainsPage() {
           </motion.p>
         </div>
       ) : (
-        <div className="mt-6 max-w-lg">
+        <div className="mt-8 max-w-2xl">
           <DomainManager
             domains={domains}
             onCreateDomain={createDomain}

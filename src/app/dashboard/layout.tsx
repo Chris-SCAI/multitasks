@@ -41,13 +41,13 @@ export default function DashboardLayout({
           }}
         />
         <Header pendingReminders={pendingCount} />
-        <main className="relative flex-1 px-4 py-6 pb-24 md:px-6 md:pb-6">
+        <main className="relative flex-1 px-4 py-8 pb-24 md:px-8 md:pb-8 lg:px-12">
           {/* Ambient glow orbs */}
           <div className="pointer-events-none fixed inset-0 overflow-hidden">
             <div className="absolute -top-32 right-1/4 size-[500px] rounded-full bg-violet-600/[0.03] blur-[120px]" />
             <div className="absolute -bottom-32 left-1/4 size-[400px] rounded-full bg-blue-600/[0.03] blur-[100px]" />
           </div>
-          <div className="relative mx-auto max-w-5xl">{children}</div>
+          <div className="relative mx-auto max-w-7xl">{children}</div>
         </main>
       </div>
       <MobileNav />

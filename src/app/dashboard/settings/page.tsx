@@ -46,7 +46,7 @@ function GradientCard({
   glowColor?: string;
 }) {
   return (
-    <div className="relative max-w-lg rounded-2xl">
+    <div className="relative max-w-2xl rounded-2xl">
       <div className={`absolute -inset-px rounded-2xl bg-gradient-to-b ${gradient}`} />
       <div className="relative overflow-hidden rounded-2xl bg-[#151D2E] p-6">
         <div className={`pointer-events-none absolute -right-20 -top-20 size-40 rounded-full ${glowColor} opacity-[0.04] blur-3xl`} />
@@ -138,7 +138,7 @@ export default function SettingsPage() {
           <Settings className="size-6 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-3xl font-bold tracking-tight text-white">
             Paramètres
           </h1>
           <p className="mt-1 text-base font-medium text-neutral-300">

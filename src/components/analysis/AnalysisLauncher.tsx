@@ -59,8 +59,8 @@ export function AnalysisLauncher({
           <Sparkles className="size-7 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-white">Analyse IA</h2>
-          <p className="mt-1 text-sm text-neutral-300">
+          <h2 className="text-3xl font-bold tracking-tight text-white">Analyse IA</h2>
+          <p className="mt-1 text-base text-neutral-300">
             Sélectionnez les tâches à analyser pour obtenir une priorisation
             Eisenhower.
           </p>
