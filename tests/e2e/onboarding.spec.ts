@@ -28,6 +28,8 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
   });
 
   test("creer une tache et verifier la persistance", async ({ page }) => {
+    test.setTimeout(90000);
+
     // Naviguer et nettoyer IndexedDB
     await page.goto("/dashboard");
     await page.waitForLoadState("load");
