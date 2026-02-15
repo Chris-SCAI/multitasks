@@ -25,7 +25,7 @@ export function MobileNav() {
     <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-[#1E293B] bg-[#0B1120]/95 backdrop-blur-sm md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="flex items-center justify-around px-2 py-1">
+      <div className="flex items-center justify-around px-2 py-2">
         {navItems.map((item) => {
           const active = isActive(item.href);
           return (
@@ -33,16 +33,16 @@ export function MobileNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-0.5 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors",
+                "flex min-h-[48px] min-w-[48px] flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 text-base font-semibold transition-colors",
                 active
                   ? "text-violet-400"
                   : "text-neutral-300"
               )}
             >
               <span className="relative">
-                <item.icon className={cn("size-5", active && "stroke-[2.5]")} />
+                <item.icon className={cn("size-6", active && "stroke-[2.5]")} />
                 {"badge" in item && item.badge && (
-                  <span className="absolute -right-2.5 -top-1.5 rounded-full bg-violet-500 px-1 text-[10px] font-bold text-white">
+                  <span className="absolute -right-2.5 -top-1.5 rounded-full bg-violet-500 px-1.5 text-xs font-bold text-white">
                     {item.badge}
                   </span>
                 )}
