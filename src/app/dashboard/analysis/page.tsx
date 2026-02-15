@@ -68,7 +68,7 @@ export default function AnalysisPage() {
               quotaInfo={quotaInfo}
             />
             {status === "error" && (
-              <div className="mt-4 rounded-lg border border-red-900/50 bg-red-900/20 p-3 text-base text-red-400">
+              <div role="alert" aria-live="assertive" className="mt-4 rounded-lg border border-red-900/50 bg-red-900/20 p-3 text-base text-red-400">
                 {useAnalysisStore.getState().error}
               </div>
             )}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Mail, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +46,7 @@ export default function LoginPage() {
       if (signInError) {
         setError(signInError.message === "Invalid login credentials"
           ? "Email ou mot de passe incorrect."
-          : signInError.message);
+          : "Une erreur de connexion est survenue. Veuillez réessayer.");
         return;
       }
 
@@ -80,7 +81,9 @@ export default function LoginPage() {
       });
 
       if (otpError) {
-        setError(otpError.message);
+        setError(otpError.message.startsWith("For security purposes")
+          ? "Veuillez patienter 60 secondes avant de renvoyer un lien."
+          : "Impossible d'envoyer le magic link. Veuillez réessayer.");
         return;
       }
 
@@ -93,7 +96,12 @@ export default function LoginPage() {
   const isAnyLoading = loading || magicLinkLoading;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0B1120] px-4">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex min-h-screen items-center justify-center bg-[#0B1120] px-4"
+    >
       <div className="w-full max-w-lg space-y-8">
         <div className="flex flex-col items-center">
           <div className="mb-4 flex items-center gap-2.5">
@@ -110,17 +118,17 @@ export default function LoginPage() {
 
         <div className="rounded-2xl border border-[#1E293B] bg-[#151D2E] p-8 shadow-lg">
           {error && (
-            <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+            <div id="login-error" role="alert" aria-live="assertive" className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
               {error}
             </div>
           )}
           {message && (
-            <div className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-400">
+            <div role="status" aria-live="polite" className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-400">
               {message}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" aria-describedby={error ? "login-error" : undefined}>
             <div className="space-y-2">
               <Label htmlFor="email" className="text-base font-semibold text-white">Email</Label>
               <Input
@@ -131,6 +139,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 disabled={isAnyLoading}
+                aria-required="true"
                 className="border-[#1E293B] bg-[#0B1120] text-white placeholder:text-neutral-500 focus:border-violet-500 focus:ring-violet-500/20"
               />
             </div>
@@ -153,6 +162,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 disabled={isAnyLoading}
+                aria-required="true"
                 className="border-[#1E293B] bg-[#0B1120] text-white placeholder:text-neutral-500 focus:border-violet-500 focus:ring-violet-500/20"
               />
             </div>
@@ -208,6 +218,6 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }

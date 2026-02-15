@@ -3,17 +3,20 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Send } from "lucide-react";
+import { Mail, Send, Loader2 } from "lucide-react";
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setSending(true);
     const form = e.currentTarget;
     const data = new FormData(form);
     const subject = encodeURIComponent(String(data.get("subject") || "Contact Multitasks"));
@@ -22,10 +25,16 @@ export default function ContactPage() {
     );
     window.location.href = `mailto:contact@multitasks.fr?subject=${subject}&body=${body}`;
     setSent(true);
+    setSending(false);
   }
 
   return (
-    <main className="min-h-screen bg-[#0B1120] px-6 py-20 text-neutral-100 sm:px-8 lg:px-12">
+    <motion.main
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen bg-[#0B1120] px-6 py-20 text-neutral-100 sm:px-8 lg:px-12"
+    >
       <div className="mx-auto max-w-xl">
         <Link
           href="/"
@@ -50,7 +59,7 @@ export default function ContactPage() {
         </div>
 
         {sent ? (
-          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-8 text-center">
+          <div role="status" aria-live="polite" className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-8 text-center">
             <p className="text-lg font-semibold text-emerald-400">
               Votre client email a été ouvert avec le message pré-rempli.
             </p>
@@ -70,6 +79,7 @@ export default function ContactPage() {
                 name="email"
                 type="email"
                 required
+                aria-required="true"
                 placeholder="vous@exemple.com"
                 className="border-[#1E293B] bg-[#151D2E] text-white placeholder:text-neutral-500 focus:ring-violet-500"
               />
@@ -83,6 +93,7 @@ export default function ContactPage() {
                 id="subject"
                 name="subject"
                 required
+                aria-required="true"
                 placeholder="Question sur..."
                 className="border-[#1E293B] bg-[#151D2E] text-white placeholder:text-neutral-500 focus:ring-violet-500"
               />
@@ -96,6 +107,7 @@ export default function ContactPage() {
                 id="message"
                 name="message"
                 required
+                aria-required="true"
                 rows={5}
                 placeholder="Décrivez votre demande..."
                 className="border-[#1E293B] bg-[#151D2E] text-white placeholder:text-neutral-500 focus:ring-violet-500"
@@ -104,14 +116,24 @@ export default function ContactPage() {
 
             <Button
               type="submit"
+              disabled={sending}
               className="w-full rounded-xl bg-violet-600 py-6 text-base font-semibold text-white hover:bg-violet-500"
             >
-              <Send className="mr-2 size-4" />
-              Envoyer
+              {sending ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Envoi...
+                </>
+              ) : (
+                <>
+                  <Send className="mr-2 size-4" />
+                  Envoyer
+                </>
+              )}
             </Button>
           </form>
         )}
       </div>
-    </main>
+    </motion.main>
   );
 }

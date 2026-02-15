@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,7 +57,9 @@ export default function RegisterPage() {
       });
 
       if (signUpError) {
-        setError(signUpError.message);
+        setError(signUpError.message === "User already registered"
+          ? "Un compte existe déjà avec cet email."
+          : "Une erreur est survenue. Veuillez réessayer.");
         return;
       }
 
@@ -67,7 +70,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0B1120] px-4">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex min-h-screen items-center justify-center bg-[#0B1120] px-4"
+    >
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center">
           <div className="mb-4 flex items-center gap-2.5">
@@ -84,7 +92,7 @@ export default function RegisterPage() {
 
         <div className="rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6 shadow-lg">
           {success ? (
-            <div className="space-y-4 text-center">
+            <div role="status" aria-live="polite" className="space-y-4 text-center">
               <div className="rounded-lg border border-green-500/30 bg-green-500/10 p-4">
                 <p className="text-base font-semibold text-green-400">
                   Compte créé avec succès !
@@ -104,12 +112,12 @@ export default function RegisterPage() {
           ) : (
             <>
               {error && (
-                <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+                <div id="register-error" role="alert" aria-live="assertive" className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
                   {error}
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" aria-describedby={error ? "register-error" : undefined}>
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-base font-semibold text-white">Nom</Label>
                   <Input
@@ -120,6 +128,7 @@ export default function RegisterPage() {
                     onChange={(e) => setName(e.target.value)}
                     autoComplete="name"
                     disabled={loading}
+                    aria-required="true"
                     className="border-[#1E293B] bg-[#0B1120] text-white placeholder:text-neutral-500 focus:border-violet-500 focus:ring-violet-500/20"
                   />
                 </div>
@@ -134,6 +143,7 @@ export default function RegisterPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
                     disabled={loading}
+                    aria-required="true"
                     className="border-[#1E293B] bg-[#0B1120] text-white placeholder:text-neutral-500 focus:border-violet-500 focus:ring-violet-500/20"
                   />
                 </div>
@@ -148,6 +158,7 @@ export default function RegisterPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="new-password"
                     disabled={loading}
+                    aria-required="true"
                     className="border-[#1E293B] bg-[#0B1120] text-white placeholder:text-neutral-500 focus:border-violet-500 focus:ring-violet-500/20"
                   />
                 </div>
@@ -164,6 +175,7 @@ export default function RegisterPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     autoComplete="new-password"
                     disabled={loading}
+                    aria-required="true"
                     className="border-[#1E293B] bg-[#0B1120] text-white placeholder:text-neutral-500 focus:border-violet-500 focus:ring-violet-500/20"
                   />
                 </div>
@@ -200,6 +212,6 @@ export default function RegisterPage() {
           </p>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

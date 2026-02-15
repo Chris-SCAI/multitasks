@@ -143,6 +143,7 @@ export function DomainManager({
                       <Button
                         size="icon-xs"
                         variant="ghost"
+                        aria-label="Supprimer le domaine"
                         onClick={() => setDeleteConfirmId(domain.id)}
                       >
                         <Trash2 className="size-3.5 text-neutral-300" />

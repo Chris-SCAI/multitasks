@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { User, Tags, CreditCard, Download, AlertTriangle, Check } from "lucide-react";
 import { generateTasksCSV } from "@/lib/export/csv-generator";
 import { generateTasksPDF } from "@/lib/export/pdf-generator";
@@ -92,45 +93,59 @@ export default function SettingsPage() {
   }
 
   async function handleDeleteAccount() {
-    await db.tasks.clear();
-    await db.domains.clear();
-    localStorage.removeItem("multitasks-ui");
-    localStorage.removeItem("multitasks-subscription");
-    localStorage.removeItem("multitasks-quota");
-    localStorage.removeItem("multitasks-display-name");
-    router.push("/");
+    try {
+      await db.tasks.clear();
+      await db.domains.clear();
+      localStorage.removeItem("multitasks-ui");
+      localStorage.removeItem("multitasks-subscription");
+      localStorage.removeItem("multitasks-quota");
+      localStorage.removeItem("multitasks-display-name");
+      router.push("/");
+    } catch {
+      router.push("/");
+    }
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-white">
-          Paramètres
-        </h1>
-        <p className="mt-1 text-base font-medium text-neutral-300">
-          Gérez votre profil, vos domaines et vos préférences.
-        </p>
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 items-center justify-center rounded-xl bg-violet-600/20">
+          <User className="size-5 text-violet-400" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-white">
+            Paramètres
+          </h1>
+          <p className="mt-1 text-base font-medium text-neutral-300">
+            Gérez votre profil, vos domaines et vos préférences.
+          </p>
+        </div>
       </div>
 
-      <Tabs defaultValue="profil">
+      <Tabs defaultValue="profil" aria-label="Sections des paramètres">
         <TabsList className="w-full border-[#1E293B] bg-[#151D2E] sm:w-auto">
-          <TabsTrigger value="profil" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="profil" aria-label="Profil" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
             <User className="size-4" />
             <span className="hidden sm:inline">Profil</span>
           </TabsTrigger>
-          <TabsTrigger value="domaines" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="domaines" aria-label="Domaines" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
             <Tags className="size-4" />
             <span className="hidden sm:inline">Domaines</span>
           </TabsTrigger>
-          <TabsTrigger value="abonnement" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="abonnement" aria-label="Abonnement" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
             <CreditCard className="size-4" />
             <span className="hidden sm:inline">Abonnement</span>
           </TabsTrigger>
-          <TabsTrigger value="donnees" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="donnees" aria-label="Données" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
             <Download className="size-4" />
             <span className="hidden sm:inline">Données</span>
           </TabsTrigger>
-          <TabsTrigger value="compte" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
+          <TabsTrigger value="compte" aria-label="Compte" className="gap-1.5 data-[state=active]:bg-violet-600/20 data-[state=active]:text-violet-400">
             <AlertTriangle className="size-4" />
             <span className="hidden sm:inline">Compte</span>
           </TabsTrigger>
@@ -389,6 +404,6 @@ export default function SettingsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   );
 }
