@@ -200,10 +200,10 @@ export function HeroSection() {
             transition={{ duration: 0.6 }}
             className="text-center lg:text-left"
           >
-            <h1 className="text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-[5.5rem]">
+            <h1 className="text-3xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-[5.5rem]">
               To-do partout.
               <br />
-              <span className="break-words text-violet-400 sm:whitespace-nowrap">Priorités nulle part.</span>
+              <span className="text-violet-400 sm:whitespace-nowrap">Priorités nulle part.</span>
             </h1>
             <p className="mt-6 text-3xl font-semibold text-[#3B5CFF] sm:text-4xl lg:text-5xl">
               On tranche. Tu avances.
