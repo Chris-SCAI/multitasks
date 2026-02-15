@@ -20,10 +20,10 @@ export function PricingSection() {
             Tarification
           </p>
           <h2 className="mb-6 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
-            Des tarifs simples et transparents
+            Choisis ton niveau d&apos;IA
           </h2>
           <p className="mx-auto max-w-3xl text-xl font-medium text-neutral-300 lg:text-2xl">
-            Commence gratuitement, upgrade quand tu veux.
+            Commence gratuit, upgrade quand tu sens la différence.
           </p>
         </div>
 

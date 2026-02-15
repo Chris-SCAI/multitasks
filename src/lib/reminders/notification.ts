@@ -24,7 +24,7 @@ export function sendReminderNotification(
     return;
 
   new Notification("Rappel Multitasks", {
-    body: `"${taskTitle}" \u2014 \u00e9ch\u00e9ance bient\u00f4t`,
+    body: `"${taskTitle}" — échéance bientôt`,
     icon: "/favicon.ico",
     tag: `reminder-${scheduledAt}`, // evite les doublons
   });
