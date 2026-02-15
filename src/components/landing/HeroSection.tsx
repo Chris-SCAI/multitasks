@@ -181,9 +181,9 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative">
       {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2">
           <div className="h-[600px] w-[800px] rounded-full bg-violet-600/8 blur-[120px]" />
         </div>
