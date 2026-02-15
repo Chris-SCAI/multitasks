@@ -101,12 +101,12 @@ function TaskListSkeleton() {
 
 function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
   return (
-    <div className="relative flex flex-col items-center justify-center py-16 md:py-24">
+    <div className="relative flex flex-col items-center justify-center py-20 md:py-32">
       {/* Gradient glow décoratifs renforcés */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="absolute h-96 w-96 rounded-full bg-violet-600/20 blur-[120px]" />
-        <div className="absolute -left-20 top-10 h-56 w-56 rounded-full bg-blue-600/15 blur-[100px]" />
-        <div className="absolute -right-10 bottom-10 h-56 w-56 rounded-full bg-purple-600/15 blur-[100px]" />
+        <div className="absolute size-[32rem] rounded-full bg-violet-600/20 blur-[140px]" />
+        <div className="absolute -left-32 top-10 size-80 rounded-full bg-blue-600/15 blur-[120px]" />
+        <div className="absolute -right-16 bottom-10 size-80 rounded-full bg-purple-600/15 blur-[120px]" />
       </div>
 
       {/* Illustration SVG large et détaillée */}
@@ -114,12 +114,11 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-        className="relative mb-10"
+        className="relative mb-12 w-[22rem] h-auto"
       >
         <svg
-          width="280"
-          height="250"
           viewBox="0 0 280 250"
+          className="w-full h-auto"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -219,7 +218,7 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
-        className="relative mb-3 text-3xl font-extrabold tracking-tight text-white"
+        className="relative mb-4 text-5xl font-extrabold tracking-tight text-white"
       >
         Prêt à conquérir votre journée ?
       </motion.h3>
@@ -227,7 +226,7 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.45, ease: "easeOut" }}
-        className="relative mb-10 max-w-md text-center text-base leading-relaxed text-slate-400"
+        className="relative mb-14 max-w-2xl text-center text-xl leading-relaxed text-slate-400"
       >
         Ajoutez vos premières tâches et laissez l&apos;IA les prioriser{" "}
         <br className="hidden sm:block" />
@@ -240,10 +239,10 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.95 }}
         onClick={onCreateTask}
-        className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-10 py-4 text-lg font-semibold text-white shadow-xl shadow-violet-600/25"
+        className="group relative inline-flex items-center gap-4 overflow-hidden rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-14 py-6 text-2xl font-semibold text-white shadow-2xl shadow-violet-600/30"
       >
         <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-        <Plus className="relative size-5 transition-transform duration-200 group-hover:rotate-90" />
+        <Plus className="relative size-7 transition-transform duration-200 group-hover:rotate-90" />
         <span className="relative">Ajouter ma première tâche</span>
       </motion.button>
     </div>

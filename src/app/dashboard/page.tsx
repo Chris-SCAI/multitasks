@@ -31,15 +31,15 @@ function StatCard({
       transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
       className={`group relative overflow-hidden rounded-2xl p-[1px] ${gradient} transition-transform duration-200 hover:scale-[1.03]`}
     >
-      <div className="relative rounded-2xl bg-[#0B1120] p-5">
-        <div className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-40 rounded-full blur-3xl opacity-15 ${glow}`} />
-        <div className="relative flex items-center gap-4">
-          <div className={`flex size-12 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} shadow-lg`}>
-            <Icon className="size-6 text-white" />
+      <div className="relative rounded-2xl bg-[#0B1120] p-6 md:p-8">
+        <div className={`pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-48 rounded-full blur-3xl opacity-15 ${glow}`} />
+        <div className="relative flex items-center gap-5">
+          <div className={`flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} shadow-lg`}>
+            <Icon className="size-7 text-white" />
           </div>
           <div>
-            <p className="text-4xl font-extrabold tracking-tight text-white">{value}</p>
-            <p className="text-sm font-medium text-slate-400">{label}</p>
+            <p className="text-5xl font-extrabold tracking-tight text-white">{value}</p>
+            <p className="text-base font-medium text-slate-400">{label}</p>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function TasksPage() {
       {hasTasks && (
         <>
           {/* Compteurs statistiques */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-6">
             <StatCard
               icon={ListTodo}
               label="Total"
