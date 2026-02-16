@@ -61,11 +61,11 @@ export function Header({
   });
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center gap-4 bg-[#0B1120]/80 px-4 backdrop-blur-xl md:h-24 md:px-8 lg:px-12 relative">
+    <header className="sticky top-0 z-20 flex h-16 items-center gap-4 bg-background/80 px-4 backdrop-blur-xl md:h-24 md:px-8 lg:px-12 relative">
       <Button
         variant="ghost"
         size="icon"
-        className="text-white hover:bg-[#1C2640] md:hidden"
+        className="text-foreground hover:bg-muted md:hidden"
         onClick={() => setMobileMenuOpen(true)}
         aria-label="Ouvrir le menu"
       >
@@ -75,17 +75,17 @@ export function Header({
       <div className="flex-1">
         {pathname === "/dashboard" ? (
           <>
-            <h1 className="text-2xl font-bold tracking-tight text-white md:text-4xl">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-4xl">
               {displayName ? `${greeting}, ${displayName}` : greeting}
             </h1>
-            <p className="text-sm text-neutral-400">
+            <p className="text-sm text-muted-foreground">
               {today.charAt(0).toUpperCase() + today.slice(1)}
             </p>
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">{title}</h1>
-            <p className="text-sm text-neutral-400">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">{title}</h1>
+            <p className="text-sm text-muted-foreground">
               {today.charAt(0).toUpperCase() + today.slice(1)}
             </p>
           </>
@@ -95,7 +95,7 @@ export function Header({
       <Button
         variant="ghost"
         size="icon"
-        className="relative text-white hover:bg-[#1C2640]"
+        className="relative text-foreground hover:bg-muted"
         aria-label={`${pendingReminders} rappel${pendingReminders !== 1 ? "s" : ""} en attente`}
       >
         <Bell className="size-6" />
@@ -109,7 +109,7 @@ export function Header({
       <Button
         variant="ghost"
         size="icon"
-        className="text-white hover:bg-[#1C2640] md:hidden"
+        className="text-foreground hover:bg-muted md:hidden"
         onClick={() => setTheme(isDark ? "light" : "dark")}
         aria-label={isDark ? "Mode clair" : "Mode sombre"}
       >
@@ -119,7 +119,6 @@ export function Header({
       {onAddTask && (
         <Button
           onClick={onAddTask}
-
           className="group relative gap-2 overflow-hidden rounded-full bg-gradient-to-r from-violet-500 to-blue-500 px-5 py-2.5 text-base font-semibold text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-shadow"
         >
           <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-700" />
@@ -131,16 +130,16 @@ export function Header({
       )}
 
       {/* Gradient border bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#1E293B] to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent side="left" className="w-80 border-[#1E293B] bg-[#0B1120] p-0">
+        <SheetContent side="left" className="w-80 border-border bg-background p-0">
           <SheetHeader className="sr-only">
             <SheetTitle>Navigation</SheetTitle>
           </SheetHeader>
           <div className="flex h-full flex-col">
-            <div className="flex h-20 items-center border-b border-[#1E293B] px-7">
-              <span className="text-3xl font-bold text-white">
+            <div className="flex h-20 items-center border-b border-border px-7">
+              <span className="text-3xl font-bold text-foreground">
                 Multitasks
               </span>
             </div>
@@ -155,8 +154,8 @@ export function Header({
                     className={cn(
                       "flex items-center gap-3.5 rounded-xl px-4 py-3 text-xl font-semibold transition-colors",
                       active
-                        ? "bg-violet-600/20 text-violet-400"
-                        : "text-white hover:bg-[#1C2640]"
+                        ? "bg-violet-500/15 text-violet-600 dark:text-violet-400"
+                        : "text-foreground hover:bg-muted"
                     )}
                   >
                     <item.icon className="size-6" />

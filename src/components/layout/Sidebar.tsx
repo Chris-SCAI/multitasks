@@ -21,10 +21,6 @@ export function Sidebar() {
 
   const isDark = theme !== "light";
 
-  function toggleTheme() {
-    setTheme(isDark ? "light" : "dark");
-  }
-
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(href);
@@ -38,10 +34,10 @@ export function Sidebar() {
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -280, opacity: 0 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
-          className="fixed inset-y-0 left-0 z-30 hidden w-80 flex-col border-r border-[#1E293B] bg-[#0B1120] md:flex overflow-hidden"
+          className="fixed inset-y-0 left-0 z-30 hidden w-80 flex-col border-r border-border bg-background md:flex overflow-hidden"
         >
-          {/* Glow décoratif en haut */}
-          <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full bg-violet-600/10 blur-[80px]" />
+          {/* Glow décoratif en haut (dark only) */}
+          <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full bg-violet-600/10 blur-[80px] hidden dark:block" />
 
           {/* Logo premium */}
           <div className="relative flex h-20 items-center px-7">
@@ -49,7 +45,7 @@ export function Sidebar() {
               <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30">
                 <CheckSquare className="size-6 text-white" />
               </div>
-              <span className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+              <span className="text-3xl font-bold tracking-tight text-foreground dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:to-blue-200 dark:bg-clip-text">
                 Multitasks
               </span>
             </Link>
@@ -66,15 +62,14 @@ export function Sidebar() {
                   className={cn(
                     "relative flex items-center gap-3.5 rounded-xl px-4 py-3 text-xl font-semibold transition-all duration-200",
                     active
-                      ? "bg-gradient-to-r from-violet-500/15 to-transparent text-violet-400"
-                      : "text-white hover:bg-[#151D2E] hover:translate-x-0.5"
+                      ? "bg-gradient-to-r from-violet-500/15 to-transparent text-violet-600 dark:text-violet-400"
+                      : "text-foreground hover:bg-muted hover:translate-x-0.5"
                   )}
                 >
-                  {/* Barre latérale lumineuse pour l'item actif */}
                   {active && (
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 rounded-full bg-gradient-to-b from-violet-500 to-blue-500 shadow-[0_0_12px_rgba(139,92,246,0.4)]" />
                   )}
-                  <item.icon className={cn("size-6", active && "text-violet-400")} />
+                  <item.icon className={cn("size-6", active && "text-violet-600 dark:text-violet-400")} />
                   {item.label}
                   {"badge" in item && item.badge && (
                     <span className="ml-auto rounded-full bg-gradient-to-r from-violet-500 to-blue-500 px-2.5 py-0.5 text-sm font-bold text-white animate-pulse opacity-90">
@@ -87,18 +82,18 @@ export function Sidebar() {
           </nav>
 
           {/* Séparateur décoratif gradient */}
-          <div className="mx-7 h-px bg-gradient-to-r from-transparent via-[#1E293B] to-transparent" />
+          <div className="mx-7 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
           {/* Footer avec toggle thème visuel + version badge */}
           <div className="p-5 space-y-3">
-            <div className="flex items-center justify-between rounded-xl bg-[#151D2E] p-1.5">
+            <div className="flex items-center justify-between rounded-xl bg-card p-1.5">
               <button
                 onClick={() => setTheme("light")}
                 className={cn(
                   "flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-base font-medium transition-all duration-200",
                   !isDark
-                    ? "bg-[#1C2640] text-white shadow-sm"
-                    : "text-neutral-400 hover:text-white"
+                    ? "bg-muted text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 <Sun className="size-5" />
@@ -109,15 +104,15 @@ export function Sidebar() {
                 className={cn(
                   "flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-base font-medium transition-all duration-200",
                   isDark
-                    ? "bg-[#1C2640] text-white shadow-sm"
-                    : "text-neutral-400 hover:text-white"
+                    ? "bg-muted text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 <Moon className="size-5" />
                 Sombre
               </button>
             </div>
-            <span className="text-sm text-neutral-600">v1.0</span>
+            <span className="text-sm text-muted-foreground">v1.0</span>
           </div>
         </motion.aside>
       )}

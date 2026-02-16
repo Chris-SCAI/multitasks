@@ -22,7 +22,7 @@ export function MobileNav() {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-[#1E293B] bg-[#0B1120]/95 backdrop-blur-sm md:hidden"
+    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 backdrop-blur-sm md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="flex items-center justify-around px-2 py-2">
@@ -35,8 +35,8 @@ export function MobileNav() {
               className={cn(
                 "flex min-h-[48px] min-w-[48px] flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 text-base font-semibold transition-colors",
                 active
-                  ? "text-violet-400"
-                  : "text-neutral-300"
+                  ? "text-violet-600 dark:text-violet-400"
+                  : "text-muted-foreground"
               )}
             >
               <span className="relative">
