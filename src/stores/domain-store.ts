@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { db, seedDefaultDomains } from "@/lib/db/local";
+import { db, seedDefaultDomains, deduplicateDomains } from "@/lib/db/local";
 import type { Domain, CreateDomainInput, UpdateDomainInput } from "@/types";
 
 interface DomainState {
@@ -22,6 +22,7 @@ export const useDomainStore = create<DomainState>((set, get) => ({
   loadDomains: async () => {
     set({ isLoading: true, error: null });
     try {
+      await deduplicateDomains();
       await seedDefaultDomains();
       const dbDomains = await db.domains.orderBy("order").toArray();
       const domains: Domain[] = dbDomains.map((d) => ({ ...d, id: d.id! }));
