@@ -135,7 +135,7 @@ export function DomainManager({
                     {domain.name}
                   </button>
 
-                  {!domain.isDefault && (
+                  {domains.length > 1 && (
                     <>
                       {deleteConfirmId === domain.id ? (
                         <div className="flex items-center gap-1">
