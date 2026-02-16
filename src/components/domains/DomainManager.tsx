@@ -37,7 +37,7 @@ export function DomainManager({
   const [editName, setEditName] = useState("");
   const [editColor, setEditColor] = useState("");
 
-  const maxDomains = 3;
+  const maxDomains = 10;
   const canAdd = domains.length < maxDomains;
 
   async function handleCreate() {
