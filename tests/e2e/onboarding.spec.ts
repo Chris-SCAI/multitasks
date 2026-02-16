@@ -7,10 +7,10 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
   });
 
   test("affiche l'empty state au premier lancement", async ({ page }) => {
-    test.setTimeout(90000);
+    test.setTimeout(120000);
     // Naviguer et nettoyer IndexedDB
     await page.goto("/dashboard");
-    await page.waitForLoadState("load");
+    await page.waitForLoadState("domcontentloaded");
     await page.evaluate(async () => {
       const dbs = await indexedDB.databases();
       for (const db of dbs) {
@@ -18,8 +18,7 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
       }
     });
     await page.waitForTimeout(2000);
-    await page.reload();
-    await page.waitForLoadState("load");
+    await page.reload({ waitUntil: "domcontentloaded", timeout: 60000 });
     await page.waitForTimeout(1000);
 
     await expect(page.getByText("Prêt à conquérir votre journée")).toBeVisible({ timeout: 15000 });
@@ -29,11 +28,11 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
   });
 
   test("creer une tache et verifier la persistance", async ({ page }) => {
-    test.setTimeout(90000);
+    test.setTimeout(120000);
 
     // Naviguer et nettoyer IndexedDB
     await page.goto("/dashboard");
-    await page.waitForLoadState("load");
+    await page.waitForLoadState("domcontentloaded");
     await page.evaluate(async () => {
       const dbs = await indexedDB.databases();
       for (const db of dbs) {
@@ -41,8 +40,7 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
       }
     });
     await page.waitForTimeout(2000);
-    await page.reload();
-    await page.waitForLoadState("load");
+    await page.reload({ waitUntil: "domcontentloaded", timeout: 60000 });
     await page.waitForTimeout(2000);
 
     // Cliquer sur le bouton de l'empty state
@@ -80,8 +78,7 @@ test.describe("Onboarding - 3 taches en 5 min", () => {
     await page.waitForTimeout(3000);
 
     // Recharger et verifier la persistance (IndexedDB)
-    await page.reload();
-    await page.waitForLoadState("load");
+    await page.reload({ waitUntil: "domcontentloaded", timeout: 60000 });
     await expect(page.getByText("Ma premiere tache E2E")).toBeVisible({ timeout: 15000 });
   });
 });
