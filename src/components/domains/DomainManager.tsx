@@ -14,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Trash2, Plus, Folder } from "lucide-react";
+import { useSubscriptionStore } from "@/stores/subscription-store";
 
 interface DomainManagerProps {
   domains: Domain[];
@@ -37,7 +38,8 @@ export function DomainManager({
   const [editName, setEditName] = useState("");
   const [editColor, setEditColor] = useState("");
 
-  const maxDomains = 10;
+  const planConfig = useSubscriptionStore((s) => s.getPlanConfig());
+  const maxDomains = planConfig.limits.domains ?? Infinity;
   const canAdd = domains.length < maxDomains;
 
   async function handleCreate() {
@@ -71,7 +73,7 @@ export function DomainManager({
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Domaines</h3>
         <span className="text-neutral-300 text-base">
-          {domains.length}/{maxDomains} domaines (gratuit)
+          {domains.length}/{maxDomains === Infinity ? "∞" : maxDomains} domaines ({planConfig.name.toLowerCase()})
         </span>
       </div>
 
