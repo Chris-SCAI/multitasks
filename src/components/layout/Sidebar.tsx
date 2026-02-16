@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CheckSquare, Calendar, Tags, Settings, Moon, Sun, Sparkles } from "lucide-react";
+import { CheckSquare, Calendar, Tags, Settings, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui-store";
@@ -17,9 +17,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { theme, setTheme, sidebarOpen } = useUIStore();
-
-  const isDark = theme !== "light";
+  const { sidebarOpen } = useUIStore();
 
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -84,34 +82,8 @@ export function Sidebar() {
           {/* Séparateur décoratif gradient */}
           <div className="mx-7 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
-          {/* Footer avec toggle thème visuel + version badge */}
-          <div className="p-5 space-y-3">
-            <div className="flex items-center justify-between rounded-xl bg-card p-1.5">
-              <button
-                onClick={() => setTheme("light")}
-                className={cn(
-                  "flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-base font-medium transition-all duration-200",
-                  !isDark
-                    ? "bg-muted text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Sun className="size-5" />
-                Clair
-              </button>
-              <button
-                onClick={() => setTheme("dark")}
-                className={cn(
-                  "flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-base font-medium transition-all duration-200",
-                  isDark
-                    ? "bg-muted text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Moon className="size-5" />
-                Sombre
-              </button>
-            </div>
+          {/* Footer version badge */}
+          <div className="p-5">
             <span className="text-sm text-muted-foreground">v1.0</span>
           </div>
         </motion.aside>

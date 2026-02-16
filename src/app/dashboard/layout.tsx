@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Header } from "@/components/layout/Header";
@@ -8,7 +8,7 @@ import { useUIStore } from "@/stores/ui-store";
 import { useDomainStore } from "@/stores/domain-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useReminders } from "@/hooks/useReminders";
-import { cn } from "@/lib/utils";
+
 
 export default function DashboardLayout({
   children,
@@ -16,25 +16,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
-  const theme = useUIStore((s) => s.theme);
   const loadDomains = useDomainStore((s) => s.loadDomains);
   const loadTasks = useTaskStore((s) => s.loadTasks);
   const { pendingCount } = useReminders();
-  const [isDark, setIsDark] = useState(true);
-
-  useEffect(() => {
-    if (theme === "light") {
-      setIsDark(false);
-    } else if (theme === "dark") {
-      setIsDark(true);
-    } else {
-      const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      setIsDark(mq.matches);
-      const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
-      mq.addEventListener("change", handler);
-      return () => mq.removeEventListener("change", handler);
-    }
-  }, [theme]);
 
   useEffect(() => {
     loadDomains();
@@ -42,7 +26,7 @@ export default function DashboardLayout({
   }, [loadDomains, loadTasks]);
 
   return (
-    <div className={cn(isDark && "dark", "min-h-screen bg-background text-foreground")}>
+    <div className="dark min-h-screen bg-background text-foreground">
       <Sidebar />
       <div
         className={`flex min-h-screen flex-col transition-[margin] duration-250 ease-in-out ${
@@ -53,7 +37,7 @@ export default function DashboardLayout({
         <div
           className="pointer-events-none fixed inset-0 opacity-[0.015]"
           style={{
-            backgroundImage: `radial-gradient(circle, ${isDark ? "#fff" : "#000"} 1px, transparent 1px)`,
+            backgroundImage: `radial-gradient(circle, #fff 1px, transparent 1px)`,
             backgroundSize: "32px 32px",
           }}
         />

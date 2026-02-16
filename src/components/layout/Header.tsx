@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Plus, Moon, Sun, CheckSquare, Calendar, Tags, Settings, Bell } from "lucide-react";
+import { Menu, Plus, CheckSquare, Calendar, Tags, Settings, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,7 +10,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useUIStore } from "@/stores/ui-store";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 
@@ -41,7 +40,6 @@ export function Header({
   pendingReminders?: number;
 }) {
   const pathname = usePathname();
-  const { theme, setTheme } = useUIStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [displayName, setDisplayName] = useState<string | null>(null);
 
@@ -50,7 +48,6 @@ export function Header({
   }, []);
 
   const title = pageTitles[pathname] ?? "Multitasks";
-  const isDark = theme !== "light";
   const now = new Date();
   const hour = now.getHours();
   const greeting = hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir";
@@ -104,16 +101,6 @@ export function Header({
             {pendingReminders > 9 ? "9+" : pendingReminders}
           </span>
         )}
-      </Button>
-
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-foreground hover:bg-muted md:hidden"
-        onClick={() => setTheme(isDark ? "light" : "dark")}
-        aria-label={isDark ? "Mode clair" : "Mode sombre"}
-      >
-        {isDark ? <Sun className="size-6" /> : <Moon className="size-6" />}
       </Button>
 
       {onAddTask && (
