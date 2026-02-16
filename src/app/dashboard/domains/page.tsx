@@ -193,7 +193,7 @@ export default function DomainsPage() {
           </motion.p>
         </div>
       ) : (
-        <div className="mt-8 max-w-3xl">
+        <div className="mt-8 mx-auto max-w-3xl">
           <DomainManager
             domains={domains}
             onCreateDomain={createDomain}
