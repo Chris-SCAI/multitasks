@@ -109,7 +109,7 @@ export function CalendarMonth({
           {WEEKDAY_HEADERS.map((header, i) => (
             <div
               key={i}
-              className="bg-[#0B1120] py-3 text-center text-xs font-semibold uppercase tracking-wider text-neutral-500"
+              className="bg-[#0B1120] py-3 text-center text-sm font-semibold uppercase tracking-wider text-neutral-500"
             >
               {header}
             </div>
@@ -138,8 +138,8 @@ export function CalendarMonth({
                   className={cn(
                     "flex items-center justify-center rounded-full",
                     day.isToday
-                      ? "size-7 bg-primary text-sm font-bold text-white shadow-sm shadow-primary/50"
-                      : "size-6 text-sm font-medium text-neutral-300"
+                      ? "size-8 bg-primary text-base font-bold text-white shadow-sm shadow-primary/50"
+                      : "size-7 text-base font-medium text-neutral-300"
                   )}
                 >
                   {day.dayNumber}
@@ -184,17 +184,17 @@ export function CalendarMonth({
                     key={task.id}
                     className="rounded-lg border border-[#1E293B] bg-[#151D2E] p-3 shadow-sm hover:border-violet-500/30 transition-colors duration-200"
                   >
-                    <p className="text-base font-medium text-white">{task.title}</p>
+                    <p className="text-lg font-medium text-white">{task.title}</p>
                     {task.description && (
-                      <p className="mt-1 line-clamp-2 text-sm text-neutral-300">
+                      <p className="mt-1 line-clamp-2 text-base text-neutral-300">
                         {task.description}
                       </p>
                     )}
-                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
                       <Badge
                         variant="secondary"
                         className={cn(
-                          "text-xs",
+                          "text-sm",
                           PRIORITY_COLORS[task.priority]
                         )}
                       >
@@ -202,7 +202,7 @@ export function CalendarMonth({
                       </Badge>
                       {domain && <DomainBadge domain={domain} size="sm" />}
                       {task.estimatedMinutes && (
-                        <span className="text-xs text-neutral-300">
+                        <span className="text-sm text-neutral-300">
                           {formatMinutes(task.estimatedMinutes)}
                         </span>
                       )}

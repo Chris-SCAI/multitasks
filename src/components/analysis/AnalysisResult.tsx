@@ -62,11 +62,11 @@ export function AnalysisResult({
       transition={{ duration: 0.4 }}
       className="space-y-6"
     >
-      <div className="rounded-lg border border-[#1E293B] bg-[#151D2E] p-4">
-        <h3 className="mb-2 text-base font-semibold text-white">
+      <div className="rounded-xl border border-[#1E293B] bg-[#151D2E] p-5 md:p-6">
+        <h3 className="mb-3 text-lg font-semibold text-white">
           Résumé de l&apos;analyse
         </h3>
-        <p className="text-base leading-relaxed text-neutral-300">
+        <p className="text-lg leading-relaxed text-neutral-300">
           {analysis.summary}
         </p>
       </div>
@@ -78,8 +78,8 @@ export function AnalysisResult({
               key={i}
               className="flex items-start gap-2 rounded-lg border border-amber-800 bg-amber-900/20 p-3"
             >
-              <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-500" />
-              <p className="text-base text-amber-300">
+              <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-500" />
+              <p className="text-lg text-amber-300">
                 {warning}
               </p>
             </div>
@@ -90,7 +90,7 @@ export function AnalysisResult({
       <EisenhowerMatrix analysis={analysis} tasks={tasks} />
 
       <div className="space-y-3">
-        <h3 className="text-base font-semibold text-white">
+        <h3 className="text-lg font-semibold text-white">
           Ordre suggéré
         </h3>
         <TooltipProvider>
@@ -104,31 +104,31 @@ export function AnalysisResult({
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="flex items-center gap-3 rounded-lg border border-[#1E293B] bg-[#151D2E] p-3"
+                  className="flex items-center gap-3 rounded-xl border border-[#1E293B] bg-[#151D2E] p-4"
                 >
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-[#1E293B] text-sm font-semibold text-neutral-300">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#1E293B] text-base font-semibold text-neutral-300">
                     {item.suggested_order}
                   </span>
 
                   <Badge
                     variant="secondary"
-                    className={cn("shrink-0 text-sm", badge.className)}
+                    className={cn("shrink-0 text-base", badge.className)}
                   >
                     {badge.label}
                   </Badge>
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-base font-medium text-white">
+                    <p className="truncate text-lg font-medium text-white">
                       {task?.title ??
                         `Tâche ${item.task_id.slice(0, 8)}`}
                     </p>
-                    <p className="truncate text-sm text-neutral-300">
+                    <p className="truncate text-base text-neutral-300">
                       {item.next_action}
                     </p>
                   </div>
 
-                  <span className="flex shrink-0 items-center gap-1 text-sm text-neutral-300">
-                    <Clock className="size-3" />
+                  <span className="flex shrink-0 items-center gap-1.5 text-base text-neutral-300">
+                    <Clock className="size-4" />
                     {item.estimated_duration_minutes}min
                   </span>
 
@@ -174,7 +174,7 @@ export function AnalysisResult({
           className="flex-1 bg-gradient-to-r from-violet-500 to-blue-500 text-white hover:from-violet-600 hover:to-blue-600"
           size="lg"
         >
-          <Check className="size-5" />
+          <Check className="size-6" />
           Appliquer les suggestions
         </Button>
         <Button
@@ -183,7 +183,7 @@ export function AnalysisResult({
           className="flex-1"
           size="lg"
         >
-          <RotateCcw className="size-5" />
+          <RotateCcw className="size-6" />
           Nouvelle analyse
         </Button>
       </div>

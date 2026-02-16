@@ -34,13 +34,13 @@ export default function DomainsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex items-center gap-3">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
-            <Tags className="size-6 text-white" />
+        <div className="flex items-center gap-4">
+          <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
+            <Tags className="size-7 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">Mes domaines</h1>
-            <p className="text-base text-neutral-300">
+            <h1 className="text-4xl font-bold tracking-tight text-white">Mes domaines</h1>
+            <p className="text-lg text-neutral-300">
               Organisez vos tâches par domaine de responsabilité
             </p>
           </div>
@@ -58,13 +58,13 @@ export default function DomainsPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="flex items-center gap-3">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
-          <Tags className="size-5 text-white" />
+      <div className="flex items-center gap-4">
+        <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
+          <Tags className="size-7 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-white">Mes domaines</h1>
-          <p className="text-sm text-neutral-300">
+          <h1 className="text-4xl font-bold tracking-tight text-white">Mes domaines</h1>
+          <p className="text-lg text-neutral-300">
             Organisez vos tâches par domaine de responsabilité
           </p>
         </div>
@@ -87,8 +87,7 @@ export default function DomainsPage() {
             className="relative mb-8"
           >
             <svg
-              width="240"
-              height="200"
+              className="w-[20rem] h-auto"
               viewBox="0 0 240 200"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -180,7 +179,7 @@ export default function DomainsPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.4 }}
-            className="relative text-xl font-extrabold tracking-tight text-white"
+            className="relative text-3xl font-extrabold tracking-tight text-white"
           >
             Organisez par domaine
           </motion.h3>
@@ -188,13 +187,13 @@ export default function DomainsPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45, duration: 0.4 }}
-            className="relative mt-2 max-w-sm text-sm text-neutral-400"
+            className="relative mt-3 max-w-lg text-base text-neutral-400"
           >
             Créez votre premier domaine pour organiser vos tâches par catégorie (Pro, Perso, Urgent...).
           </motion.p>
         </div>
       ) : (
-        <div className="mt-8 max-w-2xl">
+        <div className="mt-8 max-w-3xl">
           <DomainManager
             domains={domains}
             onCreateDomain={createDomain}

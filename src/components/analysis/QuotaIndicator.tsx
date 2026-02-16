@@ -18,7 +18,7 @@ export function QuotaIndicator({ used, limit, plan }: QuotaIndicatorProps) {
   return (
     <div className="flex items-center gap-3">
       <div className="flex-1">
-        <div className="mb-1 flex items-center justify-between text-sm">
+        <div className="mb-1.5 flex items-center justify-between text-base">
           <span className="font-medium text-neutral-300">
             {isUnlimited
               ? "Analyses illimitées"
@@ -27,13 +27,13 @@ export function QuotaIndicator({ used, limit, plan }: QuotaIndicatorProps) {
           {isExhausted && (
             <button
               type="button"
-              className="text-sm font-semibold text-violet-400"
+              className="text-base font-semibold text-violet-400"
             >
               Débloquer
             </button>
           )}
         </div>
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#1E293B]">
+        <div className="h-2 w-full overflow-hidden rounded-full bg-[#1E293B]">
           <div
             className={cn(
               "h-full rounded-full transition-all duration-500",

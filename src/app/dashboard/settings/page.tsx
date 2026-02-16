@@ -46,9 +46,9 @@ function GradientCard({
   glowColor?: string;
 }) {
   return (
-    <div className="relative max-w-2xl rounded-2xl">
+    <div className="relative max-w-3xl rounded-2xl">
       <div className={`absolute -inset-px rounded-2xl bg-gradient-to-b ${gradient}`} />
-      <div className="relative overflow-hidden rounded-2xl bg-[#151D2E] p-6">
+      <div className="relative overflow-hidden rounded-2xl bg-[#151D2E] p-6 md:p-8">
         <div className={`pointer-events-none absolute -right-20 -top-20 size-40 rounded-full ${glowColor} opacity-[0.04] blur-3xl`} />
         {children}
       </div>
@@ -133,15 +133,15 @@ export default function SettingsPage() {
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
-      <div className="flex items-center gap-3">
-        <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30">
-          <Settings className="size-6 text-white" />
+      <div className="flex items-center gap-4">
+        <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30">
+          <Settings className="size-7 text-white" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">
+          <h1 className="text-4xl font-bold tracking-tight text-white">
             Paramètres
           </h1>
-          <p className="mt-1 text-base font-medium text-neutral-300">
+          <p className="mt-1 text-lg font-medium text-neutral-300">
             Gérez votre profil, vos domaines et vos préférences.
           </p>
         </div>
@@ -150,23 +150,23 @@ export default function SettingsPage() {
       <Tabs defaultValue="profil" aria-label="Sections des paramètres">
         <TabsList className="w-full border-[#1E293B] bg-[#151D2E] sm:w-auto">
           <TabsTrigger value="profil" aria-label="Profil" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
-            <User className="size-4" />
+            <User className="size-5" />
             <span className="hidden sm:inline">Profil</span>
           </TabsTrigger>
           <TabsTrigger value="domaines" aria-label="Domaines" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
-            <Tags className="size-4" />
+            <Tags className="size-5" />
             <span className="hidden sm:inline">Domaines</span>
           </TabsTrigger>
           <TabsTrigger value="abonnement" aria-label="Abonnement" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
-            <CreditCard className="size-4" />
+            <CreditCard className="size-5" />
             <span className="hidden sm:inline">Abonnement</span>
           </TabsTrigger>
           <TabsTrigger value="donnees" aria-label="Données" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
-            <Download className="size-4" />
+            <Download className="size-5" />
             <span className="hidden sm:inline">Données</span>
           </TabsTrigger>
           <TabsTrigger value="compte" aria-label="Compte" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-600/20 data-[state=active]:to-red-600/10 data-[state=active]:text-red-400">
-            <AlertTriangle className="size-4" />
+            <AlertTriangle className="size-5" />
             <span className="hidden sm:inline">Compte</span>
           </TabsTrigger>
         </TabsList>
@@ -283,10 +283,10 @@ export default function SettingsPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-semibold text-white">
+                    <h3 className="text-lg font-semibold text-white">
                       Plan actuel
                     </h3>
-                    <p className="mt-1 text-base text-neutral-300">
+                    <p className="mt-1 text-lg text-neutral-300">
                       Gérez votre abonnement Multitasks.
                     </p>
                   </div>
@@ -294,7 +294,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium text-neutral-300">
+                  <Label className="text-base font-medium text-neutral-300">
                     Analyses restantes
                   </Label>
                   <QuotaIndicator
@@ -335,10 +335,10 @@ export default function SettingsPage() {
           >
             <GradientCard>
               <div className="space-y-4">
-                <h3 className="font-semibold text-white">
+                <h3 className="text-lg font-semibold text-white">
                   Export de données
                 </h3>
-                <p className="text-base text-neutral-300">
+                <p className="text-lg text-neutral-300">
                   Exportez vos tâches et analyses dans le format de votre choix.
                 </p>
                 <FeatureGate feature="export">
@@ -348,7 +348,7 @@ export default function SettingsPage() {
                       className="flex-1 border-[#1E293B] text-white transition-all hover:border-violet-500/30 hover:bg-violet-500/5"
                       onClick={handleExportCSV}
                     >
-                      <Download className="size-4" />
+                      <Download className="size-5" />
                       Export CSV
                     </Button>
                     <Button
@@ -356,7 +356,7 @@ export default function SettingsPage() {
                       className="flex-1 border-[#1E293B] text-white transition-all hover:border-violet-500/30 hover:bg-violet-500/5"
                       onClick={handleExportPDF}
                     >
-                      <Download className="size-4" />
+                      <Download className="size-5" />
                       Export PDF
                     </Button>
                   </div>
@@ -374,10 +374,10 @@ export default function SettingsPage() {
           >
             <GradientCard gradient="from-red-500/30 via-red-500/10 to-transparent" glowColor="bg-red-500">
               <div className="space-y-4">
-                <h3 className="font-semibold text-red-400">
+                <h3 className="text-lg font-semibold text-red-400">
                   Zone dangereuse
                 </h3>
-                <p className="text-base text-neutral-300">
+                <p className="text-lg text-neutral-300">
                   La suppression de votre compte est irréversible. Toutes vos
                   tâches, domaines et analyses seront définitivement supprimés.
                 </p>

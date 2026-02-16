@@ -69,8 +69,8 @@ export function DomainManager({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold text-white">Domaines</h3>
-        <span className="text-neutral-300 text-sm">
+        <h3 className="text-lg font-semibold text-white">Domaines</h3>
+        <span className="text-neutral-300 text-base">
           {domains.length}/{maxDomains} domaines (gratuit)
         </span>
       </div>
@@ -89,12 +89,12 @@ export function DomainManager({
               }}
             />
             <div
-              className="relative flex items-center gap-3 rounded-xl bg-[#151D2E] p-3 transition-all duration-200 group-hover/card:shadow-md"
+              className="relative flex items-center gap-4 rounded-xl bg-[#151D2E] p-4 transition-all duration-200 group-hover/card:shadow-md"
               style={{ backgroundColor: `${domain.color}08` }}
             >
               {/* Color dot with glow */}
               <span
-                className="size-6 shrink-0 rounded-lg"
+                className="size-7 shrink-0 rounded-lg"
                 style={{
                   backgroundColor: domain.color,
                   boxShadow: `0 0 16px ${domain.color}40`,
@@ -106,7 +106,7 @@ export function DomainManager({
                   <Input
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="h-7 text-base border-[#1E293B] bg-[#0B1120] text-white focus:border-violet-500"
+                    className="h-8 text-lg border-[#1E293B] bg-[#0B1120] text-white focus:border-violet-500"
                   />
                   <input
                     type="color"
@@ -129,7 +129,7 @@ export function DomainManager({
                 <>
                   <button
                     type="button"
-                    className="flex-1 text-left text-base font-medium text-white transition-colors hover:text-violet-300"
+                    className="flex-1 text-left text-lg font-medium text-white transition-colors hover:text-violet-300"
                     onClick={() => startEdit(domain)}
                   >
                     {domain.name}
@@ -162,7 +162,7 @@ export function DomainManager({
                           onClick={() => setDeleteConfirmId(domain.id)}
                           className="opacity-0 transition-opacity group-hover/card:opacity-100"
                         >
-                          <Trash2 className="size-3.5 text-neutral-300" />
+                          <Trash2 className="size-4 text-neutral-300" />
                         </Button>
                       )}
                     </>
@@ -182,7 +182,7 @@ export function DomainManager({
             className="group relative w-full overflow-hidden border-dashed border-[#1E293B] transition-all hover:border-violet-500/50 hover:bg-violet-500/5 hover:text-violet-400"
             disabled={!canAdd}
           >
-            <Plus className="size-4 transition-transform group-hover:rotate-90" />
+            <Plus className="size-5 transition-transform group-hover:rotate-90" />
             Ajouter un domaine
           </Button>
         </DialogTrigger>

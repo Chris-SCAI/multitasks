@@ -69,22 +69,22 @@ export function EisenhowerMatrix({ analysis, tasks }: EisenhowerMatrixProps) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 25, delay: index * 0.1 }}
             className={cn(
-              "rounded-lg p-4",
+              "rounded-xl p-5",
               config.bg,
               config.border
             )}
           >
             <div className="mb-3 flex items-center justify-between">
-              <h4 className="text-base font-semibold text-white">
+              <h4 className="text-lg font-semibold text-white">
                 {config.title}
               </h4>
-              <span className="rounded-full bg-black/20 px-2 py-0.5 text-sm font-medium text-neutral-300">
+              <span className="rounded-full bg-black/20 px-2.5 py-0.5 text-base font-medium text-neutral-300">
                 {items.length}
               </span>
             </div>
 
             {items.length === 0 ? (
-              <p className="text-sm text-neutral-500">
+              <p className="text-base text-neutral-500">
                 Aucune tâche dans ce quadrant
               </p>
             ) : (
@@ -98,23 +98,23 @@ export function EisenhowerMatrix({ analysis, tasks }: EisenhowerMatrixProps) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ type: "spring", stiffness: 400, damping: 30, delay: index * 0.08 }}
                       className={cn(
-                        "rounded-md bg-black/20 p-2.5",
+                        "rounded-lg bg-black/20 p-3",
                         item.risk_flag && "ring-1 ring-red-400"
                       )}
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <p className="truncate text-base font-medium text-white">
+                        <p className="truncate text-lg font-medium text-white">
                           {item.risk_flag && (
-                            <AlertTriangle className="mr-1 inline size-3.5 animate-pulse text-red-500" />
+                            <AlertTriangle className="mr-1 inline size-4 animate-pulse text-red-500" />
                           )}
                           {task?.title ?? `Tâche ${item.task_id.slice(0, 8)}`}
                         </p>
-                        <span className="flex shrink-0 items-center gap-1 text-sm text-neutral-300">
-                          <Clock className="size-3" />
+                        <span className="flex shrink-0 items-center gap-1.5 text-base text-neutral-300">
+                          <Clock className="size-4" />
                           {item.estimated_duration_minutes}min
                         </span>
                       </div>
-                      <p className="mt-1 text-sm text-neutral-300">
+                      <p className="mt-1 text-base text-neutral-300">
                         {item.next_action}
                       </p>
                     </motion.div>
@@ -126,21 +126,21 @@ export function EisenhowerMatrix({ analysis, tasks }: EisenhowerMatrixProps) {
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-2 rounded-lg border border-[#1E293B] p-3 text-sm text-neutral-300 md:grid-cols-4">
-        <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-red-500" />
+      <div className="grid grid-cols-2 gap-3 rounded-xl border border-[#1E293B] p-4 text-base text-neutral-300 md:grid-cols-4">
+        <div className="flex items-center gap-2">
+          <span className="size-3 rounded-full bg-red-500" />
           Faire tout de suite
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-blue-500" />
+        <div className="flex items-center gap-2">
+          <span className="size-3 rounded-full bg-blue-500" />
           Planifier
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-amber-500" />
+        <div className="flex items-center gap-2">
+          <span className="size-3 rounded-full bg-amber-500" />
           Déléguer
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-neutral-400" />
+        <div className="flex items-center gap-2">
+          <span className="size-3 rounded-full bg-neutral-400" />
           Éliminer
         </div>
       </div>

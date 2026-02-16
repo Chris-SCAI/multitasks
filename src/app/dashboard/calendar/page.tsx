@@ -61,15 +61,15 @@ export default function CalendarPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
-          <Calendar className="size-6 text-white" />
+      <div className="flex items-center gap-4">
+        <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
+          <Calendar className="size-7 text-white" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">
+          <h1 className="text-4xl font-bold tracking-tight text-white">
             Calendrier
           </h1>
-          <p className="text-base text-neutral-300">
+          <p className="text-lg text-neutral-300">
             Visualisez vos tâches par semaine ou par mois
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function CalendarPage() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-24 rounded-full bg-purple-600/8 blur-[40px]" />
           </div>
 
-          <svg className="relative mb-6" width="200" height="160" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg className="relative mb-8 w-[18rem] h-auto" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* Calendar body */}
             <rect x="30" y="30" width="140" height="110" rx="12" stroke="#7C3AED" strokeWidth="2" opacity="0.4" />
             <rect x="30" y="30" width="140" height="28" rx="12" fill="#7C3AED" opacity="0.1" />
@@ -131,7 +131,7 @@ export default function CalendarPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
-            className="relative mb-2 text-xl font-extrabold text-white"
+            className="relative mb-3 text-3xl font-extrabold text-white"
           >
             Aucune deadline cette semaine
           </motion.h3>
@@ -139,7 +139,7 @@ export default function CalendarPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.4 }}
-            className="relative text-sm text-neutral-400"
+            className="relative text-base text-neutral-400"
           >
             Ajoutez des deadlines à vos tâches pour les voir ici
           </motion.p>

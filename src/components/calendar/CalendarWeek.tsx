@@ -78,7 +78,7 @@ function DraggableTask({
             {...listeners}
             {...attributes}
             className={cn(
-              "cursor-grab rounded-md border border-[#1E293B] bg-[#151D2E] p-1.5 text-sm shadow-sm transition-all duration-200 hover:shadow-md hover:border-violet-500/30 hover:shadow-violet-500/5 active:cursor-grabbing",
+              "cursor-grab rounded-md border border-[#1E293B] bg-[#151D2E] p-2 text-base shadow-sm transition-all duration-200 hover:shadow-md hover:border-violet-500/30 hover:shadow-violet-500/5 active:cursor-grabbing",
               isDragging && "opacity-30"
             )}
           >
@@ -86,7 +86,7 @@ function DraggableTask({
             <div className="mt-1 flex flex-wrap items-center gap-1">
               <Badge
                 variant="secondary"
-                className={cn("text-[10px] px-1 py-0", PRIORITY_COLORS[task.priority])}
+                className={cn("text-xs px-1.5 py-0.5", PRIORITY_COLORS[task.priority])}
               >
                 {PRIORITY_LABELS[task.priority]}
               </Badge>
@@ -96,12 +96,12 @@ function DraggableTask({
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs">
           <div className="space-y-1">
-            <p className="font-medium">{task.title}</p>
+            <p className="text-base font-medium">{task.title}</p>
             {task.description && (
-              <p className="text-sm opacity-80">{task.description}</p>
+              <p className="text-base opacity-80">{task.description}</p>
             )}
             {task.estimatedMinutes && (
-              <p className="text-sm opacity-80">
+              <p className="text-base opacity-80">
                 Estimé : {formatMinutes(task.estimatedMinutes)}
               </p>
             )}
@@ -120,12 +120,12 @@ function TaskCardOverlay({
   domain?: Domain;
 }) {
   return (
-    <div className="w-36 scale-105 cursor-grabbing rounded-md border border-[#1E293B] bg-[#151D2E] p-1.5 text-sm shadow-xl shadow-violet-500/20 ring-2 ring-primary/30">
+    <div className="w-40 scale-105 cursor-grabbing rounded-md border border-[#1E293B] bg-[#151D2E] p-2 text-base shadow-xl shadow-violet-500/20 ring-2 ring-primary/30">
       <p className="truncate font-medium leading-tight text-white">{task.title}</p>
       <div className="mt-1 flex flex-wrap items-center gap-1">
         <Badge
           variant="secondary"
-          className={cn("text-[10px] px-1 py-0", PRIORITY_COLORS[task.priority])}
+          className={cn("text-xs px-1.5 py-0.5", PRIORITY_COLORS[task.priority])}
         >
           {PRIORITY_LABELS[task.priority]}
         </Badge>
@@ -173,7 +173,7 @@ function DroppableDay({
         <div className="flex items-center gap-1">
           <span
             className={cn(
-              "text-sm",
+              "text-base",
               day.isToday
                 ? "font-bold text-primary"
                 : "font-medium text-neutral-300"
@@ -183,10 +183,10 @@ function DroppableDay({
           </span>
           <span
             className={cn(
-              "flex items-center justify-center rounded-full text-sm",
+              "flex items-center justify-center rounded-full text-base",
               day.isToday
-                ? "size-7 bg-primary font-bold text-white shadow-sm shadow-primary/50"
-                : "size-6 font-medium text-white"
+                ? "size-8 bg-primary font-bold text-white shadow-sm shadow-primary/50"
+                : "size-7 font-medium text-white"
             )}
           >
             {day.dayNumber}
@@ -214,7 +214,7 @@ function DroppableDay({
       {dayLoad > 0 && (
         <div className="border-t border-[#1E293B]/50 px-2 py-1">
           <span className={cn(
-            "text-xs font-medium",
+            "text-sm font-medium",
             dayLoad > 480 ? "text-red-400" : dayLoad > 240 ? "text-amber-400" : "text-neutral-300"
           )}>
             {formatMinutes(dayLoad)}

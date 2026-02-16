@@ -59,8 +59,8 @@ export function AnalysisLauncher({
           <Sparkles className="size-7 text-white" />
         </div>
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-white">Analyse IA</h2>
-          <p className="mt-1 text-base text-neutral-300">
+          <h2 className="text-4xl font-bold tracking-tight text-white">Analyse IA</h2>
+          <p className="mt-1 text-lg text-neutral-300">
             Sélectionnez les tâches à analyser pour obtenir une priorisation
             Eisenhower.
           </p>
@@ -97,10 +97,10 @@ export function AnalysisLauncher({
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600/20 to-blue-600/20">
               <Sparkles className="size-8 text-violet-400" />
             </div>
-            <p className="mb-1 text-lg font-semibold text-white">
+            <p className="mb-2 text-2xl font-semibold text-white">
               Aucune tâche à analyser
             </p>
-            <p className="text-base text-neutral-300">
+            <p className="text-lg text-neutral-300">
               Ajoutez des tâches d&apos;abord pour lancer une analyse IA.
             </p>
           </div>
@@ -124,15 +124,15 @@ export function AnalysisLauncher({
                   type="checkbox"
                   checked={selectedIds.has(task.id)}
                   onChange={() => toggleTask(task.id)}
-                  className="size-4 shrink-0 rounded border-[#1E293B] text-violet-600 focus:ring-violet-500"
+                  className="size-5 shrink-0 rounded border-[#1E293B] text-violet-600 focus:ring-violet-500"
                 />
-                <span className="truncate text-base font-medium text-white">
+                <span className="truncate text-lg font-medium text-white">
                   {task.title}
                 </span>
                 {task.priority && (
                   <span
                     className={cn(
-                      "ml-auto shrink-0 rounded-full px-2 py-0.5 text-sm font-medium",
+                      "ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-base font-medium",
                       task.priority === "urgent" &&
                         "bg-red-900/30 text-red-400",
                       task.priority === "high" &&
@@ -160,7 +160,7 @@ export function AnalysisLauncher({
       >
         <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
         <span className="relative flex items-center justify-center gap-2">
-          <Sparkles className="size-5" />
+          <Sparkles className="size-6" />
           {quotaExhausted
             ? "Quota épuisé"
             : `Analyser avec l'IA (${selectedIds.size} tâche${selectedIds.size > 1 ? "s" : ""})`}
