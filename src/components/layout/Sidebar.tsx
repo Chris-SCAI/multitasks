@@ -19,7 +19,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const { theme, setTheme, sidebarOpen } = useUIStore();
 
-  const isDark = theme === "dark";
+  const isDark = theme !== "light";
 
   function toggleTheme() {
     setTheme(isDark ? "light" : "dark");

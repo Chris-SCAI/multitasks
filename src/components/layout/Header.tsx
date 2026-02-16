@@ -50,7 +50,7 @@ export function Header({
   }, []);
 
   const title = pageTitles[pathname] ?? "Multitasks";
-  const isDark = theme === "dark";
+  const isDark = theme !== "light";
   const now = new Date();
   const hour = now.getHours();
   const greeting = hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir";
