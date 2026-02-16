@@ -3,34 +3,36 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { isAdminEmail } from "@/lib/admin/admin-config";
+import { useAuth } from "@/hooks/useAuth";
 
 export function useAdminGuard() {
   const router = useRouter();
+  const { email: authEmail, isLoading: authLoading } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
+
     const admins = process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "";
 
     if (admins.includes("*")) {
       setIsAdmin(true);
-      setUserEmail("*");
       setIsLoading(false);
       return;
     }
 
-    const storedEmail = localStorage.getItem("multitasks-user-email");
-    setUserEmail(storedEmail);
+    // Priorité : email Supabase > localStorage
+    const email = authEmail ?? localStorage.getItem("multitasks-user-email");
 
-    if (isAdminEmail(storedEmail)) {
+    if (isAdminEmail(email)) {
       setIsAdmin(true);
     } else {
       router.push("/dashboard");
     }
 
     setIsLoading(false);
-  }, [router]);
+  }, [authEmail, authLoading, router]);
 
-  return { isAdmin, isLoading, userEmail };
+  return { isAdmin, isLoading, userEmail: authEmail };
 }

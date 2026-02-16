@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield } from "lucide-react";
+import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui-store";
@@ -16,7 +17,13 @@ const navItems = [
   { href: "/dashboard/settings", label: "Paramètres", icon: Settings },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onSignOut?: () => Promise<void>;
+  userEmail?: string | null;
+  userDisplayName?: string | null;
+}
+
+export function Sidebar({ onSignOut, userEmail, userDisplayName }: SidebarProps) {
   const pathname = usePathname();
   const { sidebarOpen } = useUIStore();
 
@@ -82,9 +89,7 @@ export function Sidebar() {
             {isAdminEmail(
               process.env.NEXT_PUBLIC_ADMIN_EMAILS?.includes("*")
                 ? "*"
-                : typeof window !== "undefined"
-                  ? localStorage.getItem("multitasks-user-email")
-                  : null
+                : userEmail ?? null
             ) && (
               <Link
                 href="/dashboard/admin"
@@ -111,6 +116,32 @@ export function Sidebar() {
 
           {/* Séparateur décoratif gradient */}
           <div className="mx-7 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+          {/* Section utilisateur */}
+          {userEmail && (
+            <div className="px-5 py-3 space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white">
+                  {(userDisplayName ?? userEmail)[0].toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-foreground">{userDisplayName ?? "Utilisateur"}</p>
+                  <p className="truncate text-xs text-muted-foreground">{userEmail}</p>
+                </div>
+              </div>
+              {onSignOut && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onSignOut}
+                  className="w-full justify-start gap-2 text-muted-foreground hover:text-red-400"
+                >
+                  <LogOut className="size-4" />
+                  Déconnexion
+                </Button>
+              )}
+            </div>
+          )}
 
           {/* Footer version badge */}
           <div className="p-5">

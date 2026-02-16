@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Plus, CheckSquare, Calendar, Tags, Settings, Bell } from "lucide-react";
+import { Menu, Plus, CheckSquare, Calendar, Tags, Settings, Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -11,7 +11,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "Tâches",
@@ -32,20 +32,23 @@ function isActive(pathname: string, href: string) {
   return pathname.startsWith(href);
 }
 
+interface HeaderProps {
+  onAddTask?: () => void;
+  pendingReminders?: number;
+  displayName?: string | null;
+  onSignOut?: () => Promise<void>;
+  isAuthenticated?: boolean;
+}
+
 export function Header({
   onAddTask,
   pendingReminders = 0,
-}: {
-  onAddTask?: () => void;
-  pendingReminders?: number;
-}) {
+  displayName,
+  onSignOut,
+  isAuthenticated,
+}: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [displayName, setDisplayName] = useState<string | null>(null);
-
-  useEffect(() => {
-    setDisplayName(localStorage.getItem("displayName"));
-  }, []);
 
   const title = pageTitles[pathname] ?? "Multitasks";
   const now = new Date();
@@ -103,6 +106,18 @@ export function Header({
         )}
       </Button>
 
+      {isAuthenticated && onSignOut && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onSignOut}
+          className="text-foreground hover:bg-muted hover:text-red-400"
+          aria-label="Se déconnecter"
+        >
+          <LogOut className="size-5" />
+        </Button>
+      )}
+
       {onAddTask && (
         <Button
           onClick={onAddTask}
@@ -151,6 +166,21 @@ export function Header({
                 );
               })}
             </nav>
+            {isAuthenticated && onSignOut && (
+              <div className="border-t border-border px-4 py-4">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 text-xl font-semibold text-foreground hover:text-red-400"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onSignOut();
+                  }}
+                >
+                  <LogOut className="size-6" />
+                  Déconnexion
+                </Button>
+              </div>
+            )}
           </div>
         </SheetContent>
       </Sheet>

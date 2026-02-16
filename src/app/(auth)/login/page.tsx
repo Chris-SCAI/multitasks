@@ -38,7 +38,7 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -48,6 +48,13 @@ export default function LoginPage() {
           ? "Email ou mot de passe incorrect."
           : "Une erreur de connexion est survenue. Veuillez réessayer.");
         return;
+      }
+
+      // Sync immédiate pour que le Header affiche le nom dès le premier rendu
+      if (data.user) {
+        const name = data.user.user_metadata?.display_name;
+        if (name) localStorage.setItem("displayName", name);
+        if (data.user.email) localStorage.setItem("multitasks-user-email", data.user.email);
       }
 
       router.push("/dashboard");

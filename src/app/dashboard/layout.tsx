@@ -9,6 +9,7 @@ import { useDomainStore } from "@/stores/domain-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useReminders } from "@/hooks/useReminders";
 import { useVIPCheck } from "@/hooks/useVIPCheck";
+import { useAuth } from "@/hooks/useAuth";
 
 
 export default function DashboardLayout({
@@ -16,11 +17,12 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { email, displayName, signOut, isAuthenticated } = useAuth();
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const loadDomains = useDomainStore((s) => s.loadDomains);
   const loadTasks = useTaskStore((s) => s.loadTasks);
   const { pendingCount } = useReminders();
-  useVIPCheck(null);
+  useVIPCheck(email);
 
   useEffect(() => {
     loadDomains();
@@ -29,7 +31,7 @@ export default function DashboardLayout({
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
-      <Sidebar />
+      <Sidebar onSignOut={signOut} userEmail={email} userDisplayName={displayName} />
       <div
         className={`flex min-h-screen flex-col transition-[margin] duration-250 ease-in-out ${
           sidebarOpen ? "md:ml-80" : ""
@@ -43,7 +45,12 @@ export default function DashboardLayout({
             backgroundSize: "32px 32px",
           }}
         />
-        <Header pendingReminders={pendingCount} />
+        <Header
+          pendingReminders={pendingCount}
+          displayName={displayName}
+          onSignOut={signOut}
+          isAuthenticated={isAuthenticated}
+        />
         <main className="relative flex-1 px-4 py-8 pb-24 md:px-8 md:pb-8 lg:px-12">
           {/* Ambient glow orbs */}
           <div className="pointer-events-none fixed inset-0 overflow-hidden">
