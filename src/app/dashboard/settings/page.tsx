@@ -32,7 +32,6 @@ import { PlanBadge } from "@/components/pricing/PlanBadge";
 import { FeatureGate } from "@/components/pricing/FeatureGate";
 import { QuotaIndicator } from "@/components/analysis/QuotaIndicator";
 import { useDomainStore } from "@/stores/domain-store";
-import { useUIStore } from "@/stores/ui-store";
 import { useSubscriptionStore } from "@/stores/subscription-store";
 import { useAnalysisStore } from "@/stores/analysis-store";
 
@@ -65,7 +64,6 @@ export default function SettingsPage() {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
 
-  const { theme, setTheme } = useUIStore();
   const { domains, createDomain, updateDomain, deleteDomain } =
     useDomainStore();
   const { currentPlan, setPlan } = useSubscriptionStore();
@@ -204,25 +202,6 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold text-white">Thème</Label>
-                  <Select
-                    value={theme}
-                    onValueChange={(v) =>
-                      setTheme(v as "light" | "dark" | "system")
-                    }
-                  >
-                    <SelectTrigger className="w-full border-[#1E293B] bg-[#0B1120] text-white focus:ring-2 focus:ring-violet-500/20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="border-[#1E293B] bg-[#151D2E]">
-                      <SelectItem value="light">Clair</SelectItem>
-                      <SelectItem value="dark">Sombre</SelectItem>
-                      <SelectItem value="system">Système</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
                   <Label className="text-base font-semibold text-white">Langue</Label>
                   <Select value={language} onValueChange={setLanguage}>
                     <SelectTrigger className="w-full border-[#1E293B] bg-[#0B1120] text-white focus:ring-2 focus:ring-violet-500/20">
@@ -334,14 +313,14 @@ export default function SettingsPage() {
             transition={{ duration: 0.3 }}
           >
             <GradientCard>
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">
-                  Export de données
-                </h3>
-                <p className="text-lg text-neutral-300">
-                  Exportez vos tâches et analyses dans le format de votre choix.
-                </p>
-                <FeatureGate feature="export">
+              <FeatureGate feature="export">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white">
+                    Export de données
+                  </h3>
+                  <p className="text-lg text-neutral-300">
+                    Exportez vos tâches et analyses dans le format de votre choix.
+                  </p>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <Button
                       variant="outline"
@@ -360,8 +339,8 @@ export default function SettingsPage() {
                       Export PDF
                     </Button>
                   </div>
-                </FeatureGate>
-              </div>
+                </div>
+              </FeatureGate>
             </GradientCard>
           </motion.div>
         </TabsContent>
