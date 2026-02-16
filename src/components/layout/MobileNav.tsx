@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CheckSquare, Calendar, Tags, Settings, Sparkles } from "lucide-react";
+import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isAdminEmail } from "@/lib/admin/admin-config";
 
 const navItems = [
   { href: "/dashboard", label: "Tâches", icon: CheckSquare },
@@ -51,6 +52,27 @@ export function MobileNav() {
             </Link>
           );
         })}
+        {/* Admin link — conditionnel */}
+        {isAdminEmail(
+          process.env.NEXT_PUBLIC_ADMIN_EMAILS?.includes("*")
+            ? "*"
+            : typeof window !== "undefined"
+              ? localStorage.getItem("multitasks-user-email")
+              : null
+        ) && (
+          <Link
+            href="/dashboard/admin"
+            className={cn(
+              "flex min-h-[48px] min-w-[48px] flex-col items-center justify-center gap-1 rounded-lg px-3 py-2 text-base font-semibold transition-colors",
+              isActive("/dashboard/admin")
+                ? "text-red-400"
+                : "text-muted-foreground"
+            )}
+          >
+            <Shield className={cn("size-6", isActive("/dashboard/admin") && "stroke-[2.5]")} />
+            <span>Admin</span>
+          </Link>
+        )}
       </div>
     </nav>
   );

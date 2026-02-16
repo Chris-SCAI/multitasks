@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CheckSquare, Calendar, Tags, Settings, Sparkles } from "lucide-react";
+import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui-store";
+import { isAdminEmail } from "@/lib/admin/admin-config";
 
 const navItems = [
   { href: "/dashboard", label: "Tâches", icon: CheckSquare },
@@ -77,6 +78,35 @@ export function Sidebar() {
                 </Link>
               );
             })}
+            {/* Admin link — conditionnel */}
+            {isAdminEmail(
+              process.env.NEXT_PUBLIC_ADMIN_EMAILS?.includes("*")
+                ? "*"
+                : typeof window !== "undefined"
+                  ? localStorage.getItem("multitasks-user-email")
+                  : null
+            ) && (
+              <Link
+                href="/dashboard/admin"
+                className={cn(
+                  "relative flex items-center gap-3.5 rounded-xl px-4 py-3 text-xl font-semibold transition-all duration-200",
+                  isActive("/dashboard/admin")
+                    ? "bg-gradient-to-r from-red-500/15 to-transparent text-red-400"
+                    : "text-foreground hover:bg-muted hover:translate-x-0.5"
+                )}
+              >
+                {isActive("/dashboard/admin") && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-7 rounded-full bg-gradient-to-b from-red-500 to-orange-500 shadow-[0_0_12px_rgba(239,68,68,0.4)]" />
+                )}
+                <Shield
+                  className={cn(
+                    "size-6",
+                    isActive("/dashboard/admin") && "text-red-400"
+                  )}
+                />
+                Admin
+              </Link>
+            )}
           </nav>
 
           {/* Séparateur décoratif gradient */}

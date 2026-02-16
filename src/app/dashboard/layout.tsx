@@ -8,6 +8,7 @@ import { useUIStore } from "@/stores/ui-store";
 import { useDomainStore } from "@/stores/domain-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useReminders } from "@/hooks/useReminders";
+import { useVIPCheck } from "@/hooks/useVIPCheck";
 
 
 export default function DashboardLayout({
@@ -19,6 +20,7 @@ export default function DashboardLayout({
   const loadDomains = useDomainStore((s) => s.loadDomains);
   const loadTasks = useTaskStore((s) => s.loadTasks);
   const { pendingCount } = useReminders();
+  useVIPCheck(null);
 
   useEffect(() => {
     loadDomains();
