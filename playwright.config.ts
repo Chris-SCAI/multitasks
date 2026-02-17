@@ -22,6 +22,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     env: {
       NEXT_PUBLIC_E2E_TEST: "true",
+      NEXT_PUBLIC_ADMIN_EMAILS: "*",
     },
   },
 });

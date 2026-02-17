@@ -6,9 +6,10 @@ test.describe("Admin VIP", () => {
   }) => {
     await page.goto("/dashboard/admin");
 
-    // Cliquer sur l'onglet VIP (3e onglet — le texte peut être masqué sur mobile)
-    const vipTab = page.getByRole("tab").nth(2);
-    await vipTab.click();
+    // Attendre que les onglets soient chargés (le texte "VIP" est masqué sur mobile, cibler le 3e onglet)
+    const tabs = page.getByRole("tab");
+    await expect(tabs.first()).toBeVisible({ timeout: 15000 });
+    await tabs.nth(2).click();
 
     // Remplir le formulaire
     await page.getByPlaceholder("vip@example.com").fill("test@multitasks.fr");
@@ -34,7 +35,9 @@ test.describe("Admin VIP", () => {
 
     // Recharger la page et vérifier la persistance
     await page.reload();
-    await page.getByRole("tab").nth(2).click();
+    const tabsAfterReload = page.getByRole("tab");
+    await expect(tabsAfterReload.first()).toBeVisible({ timeout: 15000 });
+    await tabsAfterReload.nth(2).click();
     await expect(page.getByText("test@multitasks.fr")).toBeVisible();
 
     // Supprimer l'email VIP
