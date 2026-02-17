@@ -29,19 +29,23 @@ const sections = [
     id: "premiers-pas",
     icon: Rocket,
     title: "Premiers pas",
-    description: "Inscription, connexion et prise en main",
+    description: "Créez votre compte et découvrez votre espace de travail",
     content: [
       {
-        subtitle: "Créer un compte",
-        text: "Rendez-vous sur la page d'inscription. Entrez votre email et un mot de passe (8 caractères minimum avec majuscule, chiffre et caractère spécial). Vous pouvez aussi vous inscrire via Google en un clic.",
+        subtitle: "Créer votre compte",
+        text: "Rendez-vous sur la page d'inscription et saisissez votre adresse email ainsi qu'un mot de passe sécurisé (8 caractères minimum, incluant au moins une majuscule, un chiffre et un caractère spécial). Votre compte est prêt en quelques secondes, sans carte bancaire.",
       },
       {
         subtitle: "Se connecter",
-        text: "Utilisez votre email et mot de passe, ou connectez-vous via Google. Un lien magique (magic link) peut aussi vous être envoyé par email pour une connexion sans mot de passe.",
+        text: "Deux options s'offrent à vous : la connexion classique par email et mot de passe, ou le lien magique. Ce dernier vous envoie un lien de connexion unique par email, valable 10 minutes, pour accéder à votre compte sans mot de passe.",
+      },
+      {
+        subtitle: "Mot de passe oublié",
+        text: "Depuis la page de connexion, cliquez sur \"Mot de passe oublié\". Un email de réinitialisation vous sera envoyé. Le lien est à usage unique et expire au bout d'une heure pour des raisons de sécurité.",
       },
       {
         subtitle: "Découvrir l'interface",
-        text: "Après connexion, vous arrivez sur le tableau de bord. La barre latérale (desktop) ou la navigation en bas (mobile) vous permet d'accéder aux Tâches, au Calendrier, à l'Analyse IA, aux Domaines et aux Paramètres.",
+        text: "Après connexion, vous accédez au tableau de bord. Sur ordinateur, la barre latérale gauche vous donne accès aux cinq sections principales : Tâches, Calendrier, Analyse IA, Domaines et Paramètres. Sur mobile, cette navigation se retrouve en bas de l'écran pour un accès rapide du pouce.",
       },
     ],
   },
@@ -49,27 +53,31 @@ const sections = [
     id: "gestion-taches",
     icon: CheckSquare,
     title: "Gestion des tâches",
-    description: "Créer, modifier et organiser vos tâches",
+    description: "Créez, organisez et suivez toutes vos tâches au quotidien",
     content: [
       {
-        subtitle: "Créer une tâche",
-        text: "Cliquez sur le bouton \"+\" ou \"Ajouter une tâche\". Renseignez le titre, une description optionnelle, le domaine associé, la deadline, la durée estimée et la priorité.",
+        subtitle: "Ajouter une tâche",
+        text: "Cliquez sur le bouton d'ajout pour ouvrir le formulaire de création. Renseignez un titre (obligatoire), puis enrichissez votre tâche avec une description, un domaine, une deadline, une durée estimée et un niveau de priorité. Plus vos tâches sont détaillées, plus l'analyse IA sera pertinente.",
       },
       {
-        subtitle: "Modifier une tâche",
-        text: "Cliquez sur une tâche pour ouvrir le détail. Modifiez n'importe quel champ : titre, description, domaine, deadline, durée, priorité ou statut.",
+        subtitle: "Modifier ou compléter une tâche",
+        text: "Cliquez sur une tâche pour ouvrir sa fiche détaillée. Chaque champ est modifiable : titre, description, domaine, deadline, durée, priorité et statut. Les modifications sont sauvegardées instantanément.",
       },
       {
-        subtitle: "Statuts disponibles",
-        text: "Chaque tâche passe par les statuts : À faire → En cours → Terminée. Vous pouvez aussi annuler une tâche. Cochez la case pour marquer une tâche comme terminée rapidement.",
+        subtitle: "Suivre l'avancement avec les statuts",
+        text: "Chaque tâche progresse à travers trois statuts : \"À faire\" pour les tâches planifiées, \"En cours\" pour celles sur lesquelles vous travaillez activement, et \"Terminée\" une fois accomplies. Pour marquer rapidement une tâche comme terminée, cochez directement sa case depuis la liste.",
       },
       {
-        subtitle: "Réorganiser par drag & drop",
-        text: "Maintenez et glissez une tâche pour changer son ordre. L'ordre est sauvegardé automatiquement.",
+        subtitle: "Réorganiser par glisser-déposer",
+        text: "Maintenez une tâche enfoncée puis glissez-la pour modifier son ordre dans la liste. La nouvelle position est sauvegardée automatiquement. Cette fonctionnalité vous permet de placer visuellement vos priorités du jour en haut de liste.",
+      },
+      {
+        subtitle: "Filtrer et rechercher",
+        text: "Utilisez les filtres pour afficher uniquement les tâches d'un statut, d'une priorité ou d'un domaine spécifique. La barre de recherche permet de retrouver une tâche par son titre ou sa description.",
       },
       {
         subtitle: "Supprimer une tâche",
-        text: "Ouvrez le détail de la tâche et cliquez sur Supprimer. Une confirmation vous sera demandée avant la suppression définitive.",
+        text: "Depuis la fiche détaillée, cliquez sur le bouton de suppression. Une confirmation vous est demandée pour éviter toute suppression accidentelle. Cette action est irréversible.",
       },
     ],
   },
@@ -77,23 +85,27 @@ const sections = [
     id: "domaines",
     icon: Tags,
     title: "Domaines",
-    description: "Organiser vos tâches par catégorie",
+    description: "Structurez vos tâches par sphères de responsabilité",
     content: [
       {
-        subtitle: "Qu'est-ce qu'un domaine ?",
-        text: "Les domaines sont des catégories pour regrouper vos tâches : Pro, Perso, Urgent, etc. Chaque domaine a un nom, une couleur et une icône personnalisables.",
+        subtitle: "Le principe des domaines",
+        text: "Les domaines vous permettent de catégoriser vos tâches par sphère de vie ou de responsabilité. Chaque domaine possède un nom, une couleur distinctive et une icône, pour identifier en un coup d'oeil à quel contexte appartient chaque tâche.",
       },
       {
-        subtitle: "Créer un domaine",
-        text: "Allez dans l'onglet Domaines. Cliquez sur \"Ajouter un domaine\", choisissez un nom, une couleur et une icône parmi la bibliothèque Lucide.",
+        subtitle: "Domaines par défaut",
+        text: "À la création de votre compte, trois domaines sont prêts à l'emploi : Personnel, Professionnel et Études. Vous pouvez les renommer, en modifier les couleurs et icônes, ou les supprimer selon vos besoins.",
       },
       {
-        subtitle: "Assigner un domaine à une tâche",
-        text: "Lors de la création ou modification d'une tâche, sélectionnez le domaine dans le menu déroulant. Un badge coloré apparaît sur la carte de la tâche.",
+        subtitle: "Créer et personnaliser un domaine",
+        text: "Depuis la section Domaines, cliquez sur \"Ajouter un domaine\". Choisissez un nom explicite, une couleur parmi la palette proposée et une icône dans la bibliothèque intégrée. Le badge coloré apparaîtra ensuite sur chaque tâche associée.",
       },
       {
-        subtitle: "Limites par plan",
-        text: "Le plan gratuit inclut 3 domaines. Les plans payants (IA Quotidienne et Pro Sync) offrent un nombre illimité de domaines.",
+        subtitle: "Associer un domaine à une tâche",
+        text: "Lors de la création ou de la modification d'une tâche, sélectionnez le domaine dans le menu déroulant. Un badge coloré s'affiche sur la carte de la tâche, facilitant le repérage visuel dans votre liste.",
+      },
+      {
+        subtitle: "Limites selon votre plan",
+        text: "Le plan Gratuit permet de créer jusqu'à 3 domaines. Les plans IA Quotidienne et Pro Sync vous offrent un nombre illimité de domaines pour une organisation sans contrainte.",
       },
     ],
   },
@@ -101,27 +113,27 @@ const sections = [
     id: "analyse-ia",
     icon: Sparkles,
     title: "Analyse IA",
-    description: "Priorisez vos tâches avec l'intelligence artificielle",
+    description: "Laissez l'intelligence artificielle prioriser vos tâches en 10 secondes",
     content: [
       {
-        subtitle: "Sélectionner les tâches",
-        text: "Dans la section Analyse IA, cochez jusqu'à 20 tâches que vous souhaitez prioriser. Plus vous fournissez de contexte (deadlines, durées, descriptions), meilleure sera l'analyse.",
+        subtitle: "Préparer l'analyse",
+        text: "Depuis la section Analyse IA, cochez les tâches que vous souhaitez prioriser (jusqu'à 20 par analyse). Pour des résultats optimaux, assurez-vous que vos tâches comportent un titre clair, une deadline si applicable et une durée estimée. L'IA exploite ces informations pour évaluer l'urgence et l'importance de chaque tâche.",
       },
       {
         subtitle: "Lancer l'analyse",
-        text: "Cliquez sur \"Analyser\". L'IA traite vos tâches en moins de 10 secondes et les classe selon la matrice d'Eisenhower (urgent/important).",
+        text: "Cliquez sur le bouton \"Analyser\". L'IA traite vos tâches en quelques secondes et les classe selon la matrice d'Eisenhower. Une animation de progression vous accompagne pendant le traitement : analyse de l'urgence, estimation des durées, puis classification finale.",
       },
       {
-        subtitle: "Comprendre la matrice d'Eisenhower",
-        text: "Les tâches sont réparties en 4 quadrants : Urgent & Important (faire maintenant), Important & Non urgent (planifier), Urgent & Non important (déléguer), Ni urgent ni important (éliminer).",
+        subtitle: "Lire la matrice d'Eisenhower",
+        text: "Vos tâches sont réparties en quatre quadrants. \"Urgent et Important\" : à traiter immédiatement. \"Important, Non urgent\" : à planifier avec soin. \"Urgent, Non important\" : à déléguer si possible. \"Ni urgent, Ni important\" : à reconsidérer ou éliminer. Les tâches comportant un risque (deadline imminente ou surcharge) sont signalées par un indicateur rouge.",
       },
       {
         subtitle: "Appliquer les recommandations",
-        text: "Cliquez sur \"Appliquer\" pour mettre à jour automatiquement les priorités, durées estimées et prochaines actions suggérées par l'IA sur vos tâches.",
+        text: "Cliquez sur \"Appliquer\" pour mettre à jour automatiquement vos tâches avec les priorités, durées estimées et prochaines actions suggérées par l'IA. L'ordre de vos tâches est également réorganisé selon le plan d'action recommandé.",
       },
       {
-        subtitle: "Quotas d'analyses",
-        text: "Plan Gratuit : 2 analyses à vie. Plan IA Quotidienne : 8 analyses par mois. Plan Pro Sync : 3 analyses par jour. Des packs supplémentaires sont disponibles à l'achat.",
+        subtitle: "Quotas d'analyses par plan",
+        text: "Le plan Gratuit inclut 2 analyses offertes à vie pour découvrir la fonctionnalité. Le plan IA Quotidienne offre 8 analyses par mois, renouvelées automatiquement. Le plan Pro Sync donne accès à 3 analyses par jour pour une priorisation au fil de l'eau.",
       },
     ],
   },
@@ -129,23 +141,23 @@ const sections = [
     id: "calendrier",
     icon: Calendar,
     title: "Calendrier",
-    description: "Visualisez vos deadlines et planifiez votre semaine",
+    description: "Visualisez votre charge et anticipez les conflits de planning",
     content: [
       {
         subtitle: "Vue semaine",
-        text: "La vue semaine affiche vos tâches jour par jour avec leurs deadlines. Disponible sur tous les plans.",
+        text: "La vue semaine affiche vos tâches jour par jour en fonction de leurs deadlines. Naviguez entre les semaines pour anticiper votre charge de travail. Cette vue est disponible sur tous les plans, y compris le plan Gratuit.",
       },
       {
         subtitle: "Vue mois",
-        text: "La vue mois offre une vision globale de votre charge. Chaque jour affiche un indicateur du nombre de tâches. Disponible sur les plans payants.",
+        text: "La vue mois offre une vision d'ensemble de votre planning. Chaque jour affiche un indicateur de charge reflétant le nombre de tâches et le temps estimé. Disponible sur les plans IA Quotidienne et Pro Sync.",
       },
       {
-        subtitle: "Détecter les conflits",
-        text: "Un badge d'alerte apparaît quand 2 tâches ou plus ont la même deadline, ou quand la charge dépasse 8h dans une journée. Réorganisez pour éviter la surcharge.",
+        subtitle: "Détection automatique des conflits",
+        text: "Multitasks identifie automatiquement les journées problématiques : un badge d'alerte apparaît lorsque deux tâches ou plus partagent la même deadline, ou lorsque la charge estimée dépasse 8 heures dans une journée. Cet indicateur visuel vous aide à rééquilibrer votre planning avant qu'il ne soit trop tard.",
       },
       {
-        subtitle: "Déplacer par drag & drop",
-        text: "Glissez une tâche d'un jour à l'autre dans le calendrier pour modifier sa deadline rapidement.",
+        subtitle: "Réorganiser par glisser-déposer",
+        text: "Déplacez directement une tâche d'un jour à l'autre dans le calendrier pour ajuster sa deadline. La modification est enregistrée instantanément et la détection de conflits se met à jour en conséquence.",
       },
     ],
   },
@@ -153,23 +165,23 @@ const sections = [
     id: "rappels",
     icon: Bell,
     title: "Rappels",
-    description: "Ne manquez plus jamais une deadline",
+    description: "Recevez des notifications avant chaque deadline importante",
     content: [
       {
-        subtitle: "Rappels automatiques",
-        text: "Si votre tâche a une deadline et une durée estimée, le rappel se déclenche automatiquement : deadline - durée - 30 minutes. Si seule la deadline est définie, le rappel est envoyé 24h avant.",
+        subtitle: "Rappels intelligents",
+        text: "Multitasks calcule automatiquement le moment idéal pour vous rappeler une tâche. Si votre tâche a une deadline et une durée estimée, le rappel se déclenche selon la formule : deadline moins durée moins 30 minutes de marge. Si seule la deadline est renseignée, le rappel est envoyé 24 heures avant l'échéance.",
       },
       {
-        subtitle: "Rappels manuels",
-        text: "Vous pouvez définir une date et heure de rappel personnalisées pour n'importe quelle tâche, indépendamment de la deadline.",
+        subtitle: "Rappels personnalisés",
+        text: "Vous pouvez également définir manuellement une date et une heure de rappel pour n'importe quelle tâche, indépendamment de sa deadline. Utile pour les tâches sans échéance fixe que vous ne voulez pas oublier.",
       },
       {
-        subtitle: "Notifications",
-        text: "Les rappels utilisent les notifications du navigateur. Autorisez les notifications à la première demande pour les recevoir. Sur mobile (PWA), les notifications push sont supportées.",
+        subtitle: "Activer les notifications",
+        text: "Les rappels s'affichent via les notifications de votre navigateur. Lors de la première utilisation, autorisez les notifications lorsque le navigateur vous le demande. Les rappels sont envoyés tant que l'application est ouverte dans un onglet de votre navigateur.",
       },
       {
-        subtitle: "Limites par plan",
-        text: "Plan Gratuit : 1 rappel par jour. Plan IA Quotidienne : 5 rappels par jour. Plan Pro Sync : rappels illimités.",
+        subtitle: "Limites selon votre plan",
+        text: "Le plan Gratuit permet 1 rappel par jour. Le plan IA Quotidienne monte à 5 rappels par jour. Le plan Pro Sync offre des rappels illimités pour ne jamais rien laisser passer.",
       },
     ],
   },
@@ -177,27 +189,23 @@ const sections = [
     id: "plans-tarifs",
     icon: CreditCard,
     title: "Plans & Tarifs",
-    description: "Choisissez le plan adapté à vos besoins",
+    description: "Trois formules pour s'adapter à chaque besoin, de l'essentiel au complet",
     content: [
       {
-        subtitle: "Plan Gratuit — 0\u00a0\u20ac",
-        text: "3 domaines, 60 tâches, 2 analyses IA à vie, 1 rappel/jour, vue semaine, stockage local. Idéal pour découvrir l'application. Aucune carte bancaire requise.",
+        subtitle: "Plan Gratuit",
+        text: "Commencez sans engagement : 3 domaines, jusqu'à 60 tâches, 2 analyses IA offertes à vie, 1 rappel par jour et la vue calendrier semaine. Toutes vos données sont stockées localement sur votre appareil. Aucune carte bancaire requise.",
       },
       {
-        subtitle: "Plan IA Quotidienne — 5,90\u00a0\u20ac/mois ou 49\u00a0\u20ac/an",
-        text: "Domaines illimités, tâches illimitées, 8 analyses IA/mois, 5 rappels/jour, calendrier complet (semaine + mois), stockage local.",
+        subtitle: "Plan IA Quotidienne \u2014 5,90\u00a0\u20ac/mois ou 49\u00a0\u20ac/an",
+        text: "Passez à la vitesse supérieure : domaines et tâches illimités, 8 analyses IA par mois (renouvelées automatiquement), 5 rappels par jour et le calendrier complet avec vues semaine et mois. Vos données restent stockées localement.",
       },
       {
-        subtitle: "Plan Pro Sync — 12,90\u00a0\u20ac/mois ou 99\u00a0\u20ac/an",
-        text: "Tout illimité : 3 analyses IA/jour, rappels illimités, synchronisation cloud multi-appareil, export CSV et PDF, support prioritaire.",
+        subtitle: "Plan Pro Sync \u2014 12,90\u00a0\u20ac/mois ou 99\u00a0\u20ac/an",
+        text: "L'expérience complète : tout est illimité, avec 3 analyses IA par jour, des rappels sans restriction, la synchronisation cloud entre tous vos appareils, l'export de vos données en CSV et PDF, et un support prioritaire. Le choix des professionnels exigeants.",
       },
       {
-        subtitle: "Changer de plan",
-        text: "Rendez-vous dans Paramètres > Abonnement pour upgrader ou changer de formule. La différence est calculée au prorata. Annulation en 2 clics, satisfait ou remboursé 30 jours.",
-      },
-      {
-        subtitle: "Packs d'analyses supplémentaires",
-        text: "Besoin de plus d'analyses ? Achetez des packs : 10 analyses pour 4,90\u00a0\u20ac ou 30 analyses pour 9,90\u00a0\u20ac. Utilisables sans limite de temps.",
+        subtitle: "Changer de plan ou annuler",
+        text: "Depuis Paramètres > Abonnement, vous pouvez upgrader votre plan à tout moment. L'annulation se fait en deux clics, sans engagement. Tous les plans payants bénéficient de la garantie satisfait ou remboursé pendant 30 jours.",
       },
     ],
   },
@@ -205,23 +213,23 @@ const sections = [
     id: "synchronisation-export",
     icon: Cloud,
     title: "Synchronisation & Export",
-    description: "Accédez à vos données partout",
+    description: "Retrouvez vos données sur tous vos appareils et exportez-les facilement",
     content: [
       {
-        subtitle: "Synchronisation multi-appareil",
-        text: "Avec le plan Pro Sync, vos tâches et domaines sont synchronisés automatiquement entre tous vos appareils (ordinateur, tablette, téléphone). La synchronisation est incrémentale et en temps réel.",
+        subtitle: "Architecture local-first",
+        text: "Multitasks stocke vos données en priorité sur votre appareil grâce à IndexedDB. L'application reste pleinement fonctionnelle même sans connexion internet : vos tâches, domaines et analyses sont toujours accessibles localement.",
       },
       {
-        subtitle: "Fonctionnement local-first",
-        text: "Multitasks fonctionne d'abord en local (IndexedDB). Vos données sont disponibles même sans connexion internet. La synchronisation cloud se fait en arrière-plan quand la connexion est rétablie.",
+        subtitle: "Synchronisation cloud (Pro Sync)",
+        text: "Avec le plan Pro Sync, synchronisez vos données entre votre ordinateur, votre tablette et votre téléphone. Depuis Paramètres > Synchronisation, lancez la synchronisation pour mettre à jour vos appareils. Le système utilise un mécanisme incrémental basé sur la date de dernière modification de chaque élément.",
       },
       {
         subtitle: "Export CSV",
-        text: "Exportez toutes vos tâches au format CSV pour les analyser dans Excel, Google Sheets ou tout autre tableur. Inclut toutes les métadonnées : domaine, statut, priorité, deadline, etc.",
+        text: "Exportez l'ensemble de vos tâches au format CSV depuis Paramètres > Données. Le fichier inclut toutes les informations : titre, description, domaine, statut, priorité, deadline, durée estimée et dates de création. Compatible avec Excel, Google Sheets et tout tableur.",
       },
       {
         subtitle: "Export PDF",
-        text: "Générez un rapport PDF de votre dernière analyse IA, incluant la matrice d'Eisenhower et les recommandations. Idéal pour le partager ou l'imprimer.",
+        text: "Générez un rapport PDF structuré à partir de votre dernière analyse IA. Le document inclut la matrice d'Eisenhower, les recommandations de priorisation et le plan d'action. Pratique pour le partager avec un manager ou le conserver comme référence.",
       },
     ],
   },
@@ -229,23 +237,23 @@ const sections = [
     id: "installation-mobile",
     icon: Smartphone,
     title: "Installation mobile",
-    description: "Installez Multitasks comme une application native",
+    description: "Utilisez Multitasks comme une application native sur votre téléphone",
     content: [
       {
-        subtitle: "Qu'est-ce qu'une PWA ?",
-        text: "Multitasks est une Progressive Web App (PWA). Cela signifie que vous pouvez l'installer sur votre téléphone comme une application native, sans passer par l'App Store ou Google Play.",
+        subtitle: "Une application web progressive (PWA)",
+        text: "Multitasks est conçu comme une Progressive Web App : vous pouvez l'installer directement sur l'écran d'accueil de votre téléphone, sans passer par l'App Store ni le Google Play Store. L'application se lance en plein écran, comme une application native.",
       },
       {
-        subtitle: "Installer sur iOS (Safari)",
-        text: "Ouvrez multitasks.fr dans Safari. Appuyez sur le bouton Partager (carré avec flèche), puis \"Sur l'écran d'accueil\". L'icône Multitasks apparaît sur votre écran d'accueil.",
+        subtitle: "Installer sur iPhone (Safari)",
+        text: "Ouvrez multitasks.fr dans Safari. Appuyez sur le bouton de partage (l'icône carré avec une flèche vers le haut), puis sélectionnez \"Sur l'écran d'accueil\". Confirmez en appuyant sur \"Ajouter\". L'icône Multitasks apparaît alors sur votre écran d'accueil.",
       },
       {
         subtitle: "Installer sur Android (Chrome)",
-        text: "Ouvrez multitasks.fr dans Chrome. Un bandeau \"Installer Multitasks\" apparaît automatiquement. Sinon, appuyez sur le menu ⋮ puis \"Installer l'application\".",
+        text: "Ouvrez multitasks.fr dans Chrome. Une bannière d'installation s'affiche automatiquement en bas de l'écran. Si elle n'apparaît pas, appuyez sur le menu (trois points verticaux en haut à droite) puis sur \"Installer l'application\" ou \"Ajouter à l'écran d'accueil\".",
       },
       {
-        subtitle: "Mode hors-ligne",
-        text: "Une fois installée, l'application fonctionne même sans connexion internet. Vos tâches sont stockées localement et se synchronisent automatiquement à la reconnexion (plan Pro Sync).",
+        subtitle: "Utilisation hors connexion",
+        text: "Vos tâches et domaines sont stockés localement sur votre appareil. Vous pouvez donc consulter et modifier vos données même en l'absence de connexion internet. Les abonnés Pro Sync pourront synchroniser leurs modifications une fois la connexion rétablie.",
       },
     ],
   },
@@ -311,8 +319,8 @@ export default function GuidePage() {
               Guide d&apos;utilisation
             </h1>
             <p className="mt-1 text-lg text-neutral-400">
-              Tout ce qu&apos;il faut savoir pour tirer le meilleur de
-              Multitasks.
+              Maîtrisez chaque fonctionnalité pour organiser, prioriser et
+              avancer efficacement.
             </p>
           </div>
         </motion.div>
@@ -401,10 +409,11 @@ export default function GuidePage() {
             <div className="relative overflow-hidden rounded-2xl bg-[#151D2E] px-8 py-12">
               <div className="pointer-events-none absolute -right-20 -top-20 size-40 rounded-full bg-violet-600 opacity-[0.05] blur-3xl" />
               <h2 className="relative mb-3 text-2xl font-bold text-white sm:text-3xl">
-                Prêt à gagner du temps ?
+                Prêt à reprendre le contrôle de vos priorités ?
               </h2>
               <p className="relative mb-8 text-lg text-neutral-400">
-                Commencez gratuitement avec 2 analyses IA offertes.
+                Créez votre compte en 30 secondes et recevez 2 analyses IA
+                offertes.
               </p>
               <Button
                 asChild
