@@ -95,12 +95,10 @@ export default function RegisterPage() {
           transition={{ duration: 0.5, delay: 0.1, type: "spring", stiffness: 200 }}
           className="mb-4 flex items-center gap-2.5"
         >
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30">
-            <Sparkles className="size-6 text-white" />
-          </div>
+          <Sparkles className="size-10 text-yellow-400" />
           <span className="text-4xl font-bold">
-            <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">Multi</span>
-            <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">Tasks</span>
+            <span className="text-white">Multi</span>
+            <span className="text-violet-400">Tasks</span>
           </span>
         </motion.div>
         <motion.p

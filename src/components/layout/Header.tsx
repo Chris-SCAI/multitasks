@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Plus, CheckSquare, Calendar, Tags, Settings, Bell, LogOut } from "lucide-react";
+import { Menu, Plus, CheckSquare, Calendar, Tags, Settings, Bell, LogOut, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -287,9 +287,11 @@ export function Header({
             <SheetTitle>Navigation</SheetTitle>
           </SheetHeader>
           <div className="flex h-full flex-col">
-            <div className="flex h-20 items-center border-b border-border px-7">
-              <span className="text-3xl font-bold text-foreground">
-                Multitasks
+            <div className="flex h-20 items-center gap-3 border-b border-border px-7">
+              <Sparkles className="size-8 text-yellow-400" />
+              <span className="text-3xl font-bold">
+                <span className="text-white">Multi</span>
+                <span className="text-violet-400">Tasks</span>
               </span>
             </div>
             <nav className="flex-1 space-y-1.5 px-4 py-6">

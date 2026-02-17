@@ -48,11 +48,10 @@ export function Sidebar({ onSignOut, userEmail, userDisplayName }: SidebarProps)
           {/* Logo premium */}
           <div className="relative flex h-20 items-center px-7">
             <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30">
-                <CheckSquare className="size-6 text-white" />
-              </div>
-              <span className="text-3xl font-bold tracking-tight text-foreground dark:text-transparent dark:bg-gradient-to-r dark:from-white dark:to-blue-200 dark:bg-clip-text">
-                Multitasks
+              <Sparkles className="size-8 text-yellow-400" />
+              <span className="text-3xl font-bold tracking-tight">
+                <span className="text-white">Multi</span>
+                <span className="text-violet-400">Tasks</span>
               </span>
             </Link>
           </div>
