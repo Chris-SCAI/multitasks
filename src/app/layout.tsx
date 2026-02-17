@@ -30,6 +30,9 @@ export const metadata: Metadata = {
     "matrice Eisenhower",
     "todo list",
     "priorisation",
+    "app productivité",
+    "priorisation tâches",
+    "organisation",
   ],
   authors: [{ name: "Multitasks" }],
   creator: "Multitasks",
@@ -49,20 +52,23 @@ export const metadata: Metadata = {
     siteName: "Multitasks",
     title: "Multitasks - Gestion de tâches avec priorisation IA",
     description:
-      "Organise tes tâches par domaines et laisse l'IA les prioriser. 2 analyses gratuites.",
+      "Organise tes tâches par domaines et laisse l'IA les prioriser avec la matrice d'Eisenhower. Gratuit pour commencer.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Multitasks - Priorisation IA",
+        alt: "Multitasks - Gestion de tâches avec priorisation IA",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Multitasks - Gestion de tâches avec priorisation IA",
-    description: "Organise tes tâches par domaines et laisse l'IA les prioriser.",
+    description: "Organise tes tâches par domaines et laisse l'IA les prioriser avec la matrice d'Eisenhower.",
+  },
+  alternates: {
+    canonical: "https://multitasks.fr",
   },
   robots: {
     index: true,

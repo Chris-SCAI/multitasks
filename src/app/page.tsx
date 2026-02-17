@@ -37,14 +37,22 @@ export default function Home() {
             name: "Multitasks",
             applicationCategory: "ProductivityApplication",
             operatingSystem: "Web",
+            availableOnDevice: "Desktop, Mobile",
+            inLanguage: "fr",
+            author: {
+              "@type": "Organization",
+              name: "Multitasks",
+              url: "https://multitasks.fr",
+            },
             offers: [
               { "@type": "Offer", price: "0", priceCurrency: "EUR", name: "Gratuit" },
               { "@type": "Offer", price: "5.90", priceCurrency: "EUR", name: "IA Quotidienne" },
               { "@type": "Offer", price: "12.90", priceCurrency: "EUR", name: "Pro Sync" },
             ],
             description:
-              "Gestion de tâches avec priorisation IA via la matrice d'Eisenhower",
+              "Gestion de tâches avec priorisation IA via la matrice d'Eisenhower. Organise tes tâches par domaines et laisse l'IA les prioriser.",
             url: "https://multitasks.fr",
+            image: "https://multitasks.fr/opengraph-image",
           }),
         }}
       />

@@ -2,9 +2,13 @@
 
 import { motion } from "framer-motion";
 
+// noindex metadata is set via a separate metadata file (not possible in "use client")
+// robots.txt already disallows /login and /register
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-[#0B1120] px-4">
+      <meta name="robots" content="noindex, nofollow" />
       {/* Multiple animated background orbs */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <motion.div

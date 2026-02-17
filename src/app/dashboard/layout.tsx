@@ -33,6 +33,7 @@ export default function DashboardLayout({
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
+      <meta name="robots" content="noindex, nofollow" />
       <Sidebar onSignOut={signOut} userEmail={email} userDisplayName={displayName} />
       <div
         className={`flex min-h-screen flex-col transition-[margin] duration-250 ease-in-out ${
