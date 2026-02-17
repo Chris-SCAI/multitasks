@@ -68,9 +68,11 @@ export default function RegisterPage() {
       });
 
       if (signUpError) {
-        setError(signUpError.message === "User already registered"
-          ? "Un compte existe déjà avec cet email."
-          : "Une erreur est survenue. Veuillez réessayer.");
+        if (signUpError.message === "User already registered") {
+          setError("Un compte existe déjà avec cet email.");
+        } else {
+          setError(`Une erreur est survenue : ${signUpError.message}`);
+        }
         return;
       }
 

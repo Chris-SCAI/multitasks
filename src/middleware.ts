@@ -263,20 +263,38 @@ export async function middleware(request: NextRequest) {
     });
 
     // Rafraîchir la session (rotation des tokens)
-    const { data: { user } } = await supabase.auth.getUser();
+    // En cas d'erreur réseau vers Supabase, on laisse passer (fail-open)
+    // pour éviter une boucle de redirection login ↔ dashboard.
+    let user = null;
+    try {
+      const { data } = await supabase.auth.getUser();
+      user = data.user;
+    } catch {
+      // Supabase injoignable — on laisse passer sans bloquer
+    }
 
     // Route protégée sans session → redirection login (désactivé en E2E)
     if (!user && isProtectedRoute(pathname) && !process.env.NEXT_PUBLIC_E2E_TEST) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
-      return NextResponse.redirect(loginUrl);
+      const redirectResponse = NextResponse.redirect(loginUrl);
+      // Transférer les cookies rafraîchis sur la réponse de redirection
+      response.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value);
+      });
+      return redirectResponse;
     }
 
     // Route auth-only avec session → redirection dashboard
     if (user && isAuthOnlyRoute(pathname)) {
       const dashboardUrl = request.nextUrl.clone();
       dashboardUrl.pathname = "/dashboard";
-      return NextResponse.redirect(dashboardUrl);
+      const redirectResponse = NextResponse.redirect(dashboardUrl);
+      // Transférer les cookies rafraîchis sur la réponse de redirection
+      response.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value);
+      });
+      return redirectResponse;
     }
   }
 

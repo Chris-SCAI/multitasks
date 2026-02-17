@@ -45,9 +45,14 @@ export default function LoginPage() {
       });
 
       if (signInError) {
-        setError(signInError.message === "Invalid login credentials"
-          ? "Email ou mot de passe incorrect."
-          : "Une erreur de connexion est survenue. Veuillez réessayer.");
+        const msg = signInError.message;
+        if (msg === "Invalid login credentials") {
+          setError("Email ou mot de passe incorrect.");
+        } else if (msg === "Email not confirmed") {
+          setError("Votre email n'est pas encore confirmé. Vérifiez votre boîte de réception.");
+        } else {
+          setError(`Une erreur est survenue : ${msg}`);
+        }
         return;
       }
 
@@ -94,9 +99,11 @@ export default function LoginPage() {
       });
 
       if (otpError) {
-        setError(otpError.message.startsWith("For security purposes")
-          ? "Veuillez patienter 60 secondes avant de renvoyer un lien."
-          : "Impossible d'envoyer le magic link. Veuillez réessayer.");
+        if (otpError.message.startsWith("For security purposes")) {
+          setError("Veuillez patienter 60 secondes avant de renvoyer un lien.");
+        } else {
+          setError(`Impossible d'envoyer le magic link : ${otpError.message}`);
+        }
         return;
       }
 
@@ -130,9 +137,11 @@ export default function LoginPage() {
       });
 
       if (resetError) {
-        setError(resetError.message.startsWith("For security purposes")
-          ? "Veuillez patienter avant de renvoyer un email."
-          : "Impossible d'envoyer l'email de réinitialisation.");
+        if (resetError.message.startsWith("For security purposes")) {
+          setError("Veuillez patienter avant de renvoyer un email.");
+        } else {
+          setError(`Impossible d'envoyer l'email de réinitialisation : ${resetError.message}`);
+        }
         return;
       }
 
