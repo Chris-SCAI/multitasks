@@ -130,8 +130,9 @@ test.describe("Landing page — responsive 375px", () => {
   });
 
   test("pas de débordement horizontal", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    // Attendre que le contenu soit rendu
+    await page.locator("h1").first().waitFor({ state: "visible", timeout: 15000 });
 
     const overflowDelta = await page.evaluate(() => {
       return document.documentElement.scrollWidth - document.documentElement.clientWidth;
