@@ -17,6 +17,7 @@ interface AuthState {
 export function useAuth(): AuthState {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -27,21 +28,41 @@ export function useAuth(): AuthState {
     }
 
     // Récupérer l'utilisateur initial
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       setUser(user);
-      if (user) syncToLocalStorage(user);
+      if (user) {
+        syncToLocalStorage(user);
+        // Fallback : chercher display_name dans la table profiles
+        const metaName = getMetadataName(user);
+        if (!metaName) {
+          const name = await fetchProfileName(supabase, user.id);
+          if (name) {
+            setProfileName(name);
+            localStorage.setItem("displayName", name);
+          }
+        }
+      }
       setIsLoading(false);
     });
 
     // Écouter les changements d'auth (login, logout, token refresh, magic link)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       const newUser = session?.user ?? null;
       setUser(newUser);
       if (newUser) {
         syncToLocalStorage(newUser);
+        const metaName = getMetadataName(newUser);
+        if (!metaName) {
+          const name = await fetchProfileName(supabase, newUser.id);
+          if (name) {
+            setProfileName(name);
+            localStorage.setItem("displayName", name);
+          }
+        }
       } else {
+        setProfileName(null);
         clearAuthLocalStorage();
       }
     });
@@ -50,14 +71,21 @@ export function useAuth(): AuthState {
   }, []);
 
   const signOut = useCallback(async () => {
-    const supabase = createClient();
-    if (!supabase) return;
-    await supabase.auth.signOut();
+    try {
+      const supabase = createClient();
+      if (!supabase) return;
+      await supabase.auth.signOut();
+    } catch {
+      // Continuer même si signOut échoue côté Supabase
+    }
     clearAuthLocalStorage();
-    router.push("/login");
-  }, [router]);
+    window.location.href = "/login";
+  }, []);
 
-  const displayName = user?.user_metadata?.display_name ?? null;
+  const displayName =
+    getMetadataName(user) ??
+    profileName ??
+    null;
   const email = user?.email ?? null;
 
   return {
@@ -70,8 +98,31 @@ export function useAuth(): AuthState {
   };
 }
 
+function getMetadataName(user: User | null): string | null {
+  if (!user) return null;
+  return (
+    user.user_metadata?.display_name ??
+    user.user_metadata?.full_name ??
+    user.user_metadata?.name ??
+    null
+  );
+}
+
+async function fetchProfileName(
+  supabase: ReturnType<typeof createClient>,
+  userId: string
+): Promise<string | null> {
+  if (!supabase) return null;
+  const { data } = await supabase
+    .from("profiles")
+    .select("display_name")
+    .eq("id", userId)
+    .single();
+  return data?.display_name ?? null;
+}
+
 function syncToLocalStorage(user: User) {
-  const name = user.user_metadata?.display_name;
+  const name = getMetadataName(user);
   if (name) localStorage.setItem("displayName", name);
   if (user.email) localStorage.setItem("multitasks-user-email", user.email);
 }

@@ -11,7 +11,18 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/db/supabase-client";
+
+async function handleSignOut() {
+  try {
+    const supabase = createClient();
+    if (supabase) await supabase.auth.signOut();
+  } catch { /* ignore */ }
+  localStorage.removeItem("displayName");
+  localStorage.removeItem("multitasks-user-email");
+  window.location.href = "/login";
+}
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "Tâches",
@@ -50,15 +61,20 @@ export function Header({
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const title = pageTitles[pathname] ?? "Multitasks";
-  const now = new Date();
-  const hour = now.getHours();
-  const greeting = hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir";
-  const today = now.toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
+  const [greeting, setGreeting] = useState("");
+  const [today, setToday] = useState("");
+
+  useEffect(() => {
+    const now = new Date();
+    const hour = now.getHours();
+    setGreeting(hour < 12 ? "Bonjour" : hour < 18 ? "Bon après-midi" : "Bonsoir");
+    const formatted = now.toLocaleDateString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    });
+    setToday(formatted.charAt(0).toUpperCase() + formatted.slice(1));
+  }, []);
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 bg-background/80 px-4 backdrop-blur-xl md:h-24 md:px-8 lg:px-12 relative">
@@ -79,14 +95,14 @@ export function Header({
               {displayName ? `${greeting}, ${displayName}` : greeting}
             </h1>
             <p className="text-sm text-muted-foreground">
-              {today.charAt(0).toUpperCase() + today.slice(1)}
+              {today}
             </p>
           </>
         ) : (
           <>
             <h1 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">{title}</h1>
             <p className="text-sm text-muted-foreground">
-              {today.charAt(0).toUpperCase() + today.slice(1)}
+              {today}
             </p>
           </>
         )}
@@ -106,16 +122,15 @@ export function Header({
         )}
       </Button>
 
-      {isAuthenticated && onSignOut && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onSignOut}
-          className="text-foreground hover:bg-muted hover:text-red-400"
+      {isAuthenticated && (
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="inline-flex size-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-muted hover:text-red-400"
           aria-label="Se déconnecter"
         >
           <LogOut className="size-5" />
-        </Button>
+        </button>
       )}
 
       {onAddTask && (
@@ -166,19 +181,19 @@ export function Header({
                 );
               })}
             </nav>
-            {isAuthenticated && onSignOut && (
+            {isAuthenticated && (
               <div className="border-t border-border px-4 py-4">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start gap-3 text-xl font-semibold text-foreground hover:text-red-400"
+                <button
+                  type="button"
+                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-xl font-semibold text-foreground transition-colors hover:text-red-400"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    onSignOut();
+                    handleSignOut();
                   }}
                 >
                   <LogOut className="size-6" />
                   Déconnexion
-                </Button>
+                </button>
               </div>
             )}
           </div>

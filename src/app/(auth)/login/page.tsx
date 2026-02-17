@@ -52,7 +52,10 @@ export default function LoginPage() {
 
       // Sync immédiate pour que le Header affiche le nom dès le premier rendu
       if (data.user) {
-        const name = data.user.user_metadata?.display_name;
+        const name =
+          data.user.user_metadata?.display_name ??
+          data.user.user_metadata?.full_name ??
+          data.user.user_metadata?.name;
         if (name) localStorage.setItem("displayName", name);
         if (data.user.email) localStorage.setItem("multitasks-user-email", data.user.email);
       }

@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui-store";
 import { isAdminEmail } from "@/lib/admin/admin-config";
+import { createClient } from "@/lib/db/supabase-client";
 
 const navItems = [
   { href: "/dashboard", label: "Tâches", icon: CheckSquare },
@@ -40,7 +40,7 @@ export function Sidebar({ onSignOut, userEmail, userDisplayName }: SidebarProps)
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -280, opacity: 0 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
-          className="fixed inset-y-0 left-0 z-30 hidden w-80 flex-col border-r border-border bg-background md:flex overflow-hidden"
+          className="fixed inset-y-0 left-0 z-30 hidden w-80 flex-col border-r border-border bg-background md:flex"
         >
           {/* Glow décoratif en haut (dark only) */}
           <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-40 rounded-full bg-violet-600/10 blur-[80px] hidden dark:block" />
@@ -58,7 +58,7 @@ export function Sidebar({ onSignOut, userEmail, userDisplayName }: SidebarProps)
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1.5 px-4 py-6">
+          <nav className="flex-1 overflow-y-auto space-y-1.5 px-4 py-6">
             {navItems.map((item) => {
               const active = isActive(item.href);
               return (
@@ -129,17 +129,22 @@ export function Sidebar({ onSignOut, userEmail, userDisplayName }: SidebarProps)
                   <p className="truncate text-xs text-muted-foreground">{userEmail}</p>
                 </div>
               </div>
-              {onSignOut && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onSignOut}
-                  className="w-full justify-start gap-2 text-muted-foreground hover:text-red-400"
-                >
-                  <LogOut className="size-4" />
-                  Déconnexion
-                </Button>
-              )}
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const supabase = createClient();
+                    if (supabase) await supabase.auth.signOut();
+                  } catch { /* ignore */ }
+                  localStorage.removeItem("displayName");
+                  localStorage.removeItem("multitasks-user-email");
+                  window.location.href = "/login";
+                }}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-red-400 hover:bg-accent"
+              >
+                <LogOut className="size-4" />
+                Déconnexion
+              </button>
             </div>
           )}
 
