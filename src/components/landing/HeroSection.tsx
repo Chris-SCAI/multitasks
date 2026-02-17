@@ -15,10 +15,15 @@ function LandingNav() {
     { label: "Comment ça marche", href: "#how-it-works" },
     { label: "Tarifs", href: "#pricing" },
     { label: "FAQ", href: "#faq" },
+    { label: "Guide", href: "/guide" },
   ];
 
   const scrollTo = (href: string) => {
     setMobileOpen(false);
+    if (!href.startsWith("#")) {
+      window.location.href = href;
+      return;
+    }
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };

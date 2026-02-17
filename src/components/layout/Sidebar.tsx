@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield, LogOut } from "lucide-react";
+import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield, LogOut, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui-store";
@@ -14,6 +14,7 @@ const navItems = [
   { href: "/dashboard/calendar", label: "Calendrier", icon: Calendar },
   { href: "/dashboard/analysis", label: "Analyse IA", icon: Sparkles, badge: "IA" },
   { href: "/dashboard/domains", label: "Domaines", icon: Tags },
+  { href: "/guide", label: "Guide", icon: BookOpen },
   { href: "/dashboard/settings", label: "Paramètres", icon: Settings },
 ];
 
