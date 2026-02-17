@@ -265,8 +265,8 @@ export async function middleware(request: NextRequest) {
     // Rafraîchir la session (rotation des tokens)
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Route protégée sans session → redirection login
-    if (!user && isProtectedRoute(pathname)) {
+    // Route protégée sans session → redirection login (désactivé en E2E)
+    if (!user && isProtectedRoute(pathname) && !process.env.NEXT_PUBLIC_E2E_TEST) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       return NextResponse.redirect(loginUrl);

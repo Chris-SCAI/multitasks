@@ -60,6 +60,7 @@ export function Header({
 }: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const title = pageTitles[pathname] ?? "Multitasks";
 
   const [greeting, setGreeting] = useState("");
   const [today, setToday] = useState("");
