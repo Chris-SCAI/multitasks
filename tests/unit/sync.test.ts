@@ -195,9 +195,9 @@ describe("pushChanges", () => {
       expect.stringContaining("/api/sync/push"),
       expect.objectContaining({
         method: "POST",
+        credentials: "include",
         headers: expect.objectContaining({
           "Content-Type": "application/json",
-          "x-user-id": "user-123",
         }),
       })
     );

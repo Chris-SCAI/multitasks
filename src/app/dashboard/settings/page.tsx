@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, Tags, CreditCard, Download, AlertTriangle, Check, Settings } from "lucide-react";
+import { User, Tags, CreditCard, Cloud, Download, AlertTriangle, Check, Settings, RefreshCw, Loader2 } from "lucide-react";
 import { generateTasksCSV } from "@/lib/export/csv-generator";
 import { generateTasksPDF } from "@/lib/export/pdf-generator";
 import { useTaskStore } from "@/stores/task-store";
@@ -34,6 +34,7 @@ import { QuotaIndicator } from "@/components/analysis/QuotaIndicator";
 import { useDomainStore } from "@/stores/domain-store";
 import { useSubscriptionStore } from "@/stores/subscription-store";
 import { useAnalysisStore } from "@/stores/analysis-store";
+import { useSync } from "@/hooks/useSync";
 
 function GradientCard({
   children,
@@ -71,6 +72,9 @@ export default function SettingsPage() {
   const planId = currentPlan as "free" | "ia_quotidienne" | "pro_sync";
   const isPaid = planId !== "free";
 
+  const { syncStatus, syncNow, isProUser } = useSync();
+  const [isSyncingManual, setIsSyncingManual] = useState(false);
+
   const tasks = useTaskStore((s) => s.tasks);
   const loadTasks = useTaskStore((s) => s.loadTasks);
 
@@ -85,6 +89,15 @@ export default function SettingsPage() {
     localStorage.setItem("multitasks-display-name", displayName);
     setProfileSaved(true);
     setTimeout(() => setProfileSaved(false), 2000);
+  }
+
+  async function handleSyncNow() {
+    setIsSyncingManual(true);
+    try {
+      await syncNow();
+    } finally {
+      setIsSyncingManual(false);
+    }
   }
 
   function handleExportCSV() {
@@ -158,6 +171,10 @@ export default function SettingsPage() {
           <TabsTrigger value="abonnement" aria-label="Abonnement" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
             <CreditCard className="size-5" />
             <span className="hidden sm:inline">Abonnement</span>
+          </TabsTrigger>
+          <TabsTrigger value="sync" aria-label="Sync" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
+            <Cloud className="size-5" />
+            <span className="hidden sm:inline">Sync</span>
           </TabsTrigger>
           <TabsTrigger value="donnees" aria-label="Données" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
             <Download className="size-5" />
@@ -302,6 +319,101 @@ export default function SettingsPage() {
                   )}
                 </div>
               </div>
+            </GradientCard>
+          </motion.div>
+        </TabsContent>
+
+        <TabsContent value="sync" className="mt-6">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GradientCard>
+              <FeatureGate feature="sync">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">
+                      Synchronisation cloud
+                    </h3>
+                    <p className="mt-1 text-lg text-neutral-300">
+                      Synchronisez vos tâches et domaines entre tous vos appareils.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div className="rounded-xl border border-[#1E293B] bg-[#0B1120] p-4">
+                      <p className="text-sm font-medium text-neutral-400">Statut</p>
+                      <p className="mt-1 flex items-center gap-2 text-base font-semibold text-white">
+                        {syncStatus.isSyncing ? (
+                          <>
+                            <Loader2 className="size-4 animate-spin text-violet-400" />
+                            En cours...
+                          </>
+                        ) : syncStatus.error ? (
+                          <>
+                            <span className="size-2 rounded-full bg-red-500" />
+                            Erreur
+                          </>
+                        ) : syncStatus.lastSyncAt ? (
+                          <>
+                            <span className="size-2 rounded-full bg-emerald-500" />
+                            Connecté
+                          </>
+                        ) : (
+                          <>
+                            <span className="size-2 rounded-full bg-neutral-500" />
+                            Non synchronisé
+                          </>
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border border-[#1E293B] bg-[#0B1120] p-4">
+                      <p className="text-sm font-medium text-neutral-400">Dernier sync</p>
+                      <p className="mt-1 text-base font-semibold text-white">
+                        {syncStatus.lastSyncAt
+                          ? new Date(syncStatus.lastSyncAt).toLocaleString("fr-FR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              day: "numeric",
+                              month: "short",
+                            })
+                          : "Jamais"}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl border border-[#1E293B] bg-[#0B1120] p-4">
+                      <p className="text-sm font-medium text-neutral-400">En attente</p>
+                      <p className="mt-1 text-base font-semibold text-white">
+                        {syncStatus.pendingChanges} changement{syncStatus.pendingChanges !== 1 ? "s" : ""}
+                      </p>
+                    </div>
+                  </div>
+
+                  {syncStatus.error && (
+                    <div className="rounded-lg border border-red-900/50 bg-red-900/10 p-3 text-sm text-red-400">
+                      {syncStatus.error}
+                    </div>
+                  )}
+
+                  <Button
+                    className="group relative overflow-hidden bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/40"
+                    onClick={handleSyncNow}
+                    disabled={isSyncingManual || syncStatus.isSyncing}
+                  >
+                    <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                    <span className="relative flex items-center gap-2">
+                      {isSyncingManual ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="size-4" />
+                      )}
+                      {isSyncingManual ? "Synchronisation..." : "Synchroniser maintenant"}
+                    </span>
+                  </Button>
+                </div>
+              </FeatureGate>
             </GradientCard>
           </motion.div>
         </TabsContent>

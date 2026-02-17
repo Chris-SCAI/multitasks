@@ -15,11 +15,6 @@ export interface SyncResult {
   resolvedBy: "local" | "remote";
 }
 
-interface SyncConfig {
-  apiBaseUrl: string;
-  userId: string;
-}
-
 let syncIntervalId: number | null = null;
 let currentSyncStatus: SyncStatus = {
   lastSyncAt: null,
@@ -102,10 +97,7 @@ function resolveConflict<T extends { updatedAt: string }>(
  * Envoie les changements locaux vers Supabase
  */
 export async function pushChanges(userId: string): Promise<SyncResult> {
-  const config: SyncConfig = {
-    apiBaseUrl: process.env.NEXT_PUBLIC_APP_URL || "",
-    userId,
-  };
+  const apiBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
 
   currentSyncStatus.isSyncing = true;
   currentSyncStatus.error = null;
@@ -137,13 +129,13 @@ export async function pushChanges(userId: string): Promise<SyncResult> {
       };
     }
 
-    // Envoyer les changements vers le serveur
-    const response = await fetch(`${config.apiBaseUrl}/api/sync/push`, {
+    // Envoyer les changements vers le serveur (cookies de session)
+    const response = await fetch(`${apiBaseUrl}/api/sync/push`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": userId,
       },
+      credentials: "include",
       body: JSON.stringify({
         tasks,
         domains,
@@ -184,10 +176,7 @@ export async function pushChanges(userId: string): Promise<SyncResult> {
  * Récupère les changements depuis Supabase
  */
 export async function pullChanges(userId: string): Promise<SyncResult> {
-  const config: SyncConfig = {
-    apiBaseUrl: process.env.NEXT_PUBLIC_APP_URL || "",
-    userId,
-  };
+  const apiBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
 
   currentSyncStatus.isSyncing = true;
   currentSyncStatus.error = null;
@@ -196,13 +185,13 @@ export async function pullChanges(userId: string): Promise<SyncResult> {
   try {
     const lastSyncAt = currentSyncStatus.lastSyncAt;
 
-    // Récupérer les changements depuis le serveur
-    const response = await fetch(`${config.apiBaseUrl}/api/sync/pull`, {
+    // Récupérer les changements depuis le serveur (cookies de session)
+    const response = await fetch(`${apiBaseUrl}/api/sync/pull`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": userId,
       },
+      credentials: "include",
       body: JSON.stringify({
         lastSyncAt,
       }),

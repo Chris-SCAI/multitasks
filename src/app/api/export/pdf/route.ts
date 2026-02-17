@@ -1,46 +1,76 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { createServerSupabaseClient } from "@/lib/db/supabase-server";
+import { getApiUser } from "@/lib/auth/get-api-user";
 import { isFeatureAvailable } from "@/lib/stripe/plans";
 import { generateTasksPDF } from "@/lib/export/pdf-generator";
-import type { Task } from "@/types/task";
-import type { Domain } from "@/types/domain";
+import {
+  mapTaskFromDb,
+  mapDomainFromDb,
+  type DbTask,
+  type DbDomain,
+} from "@/lib/db/field-mapper";
 import type { AnalysisResponse } from "@/lib/ai/response-parser";
-
-const uuidSchema = z.string().uuid();
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    // Vérification de l'utilisateur (stub avec header)
-    const userId = request.headers.get("x-user-id");
-    if (!userId || !uuidSchema.safeParse(userId).success) {
-      return NextResponse.json(
-        { error: "Non authentifié" },
-        { status: 401 }
-      );
-    }
+    // Auth via session Supabase
+    const auth = await getApiUser();
+    if (!auth.ok) return auth.response;
+
+    const { user, supabase, plan } = auth.data;
 
     // Vérification du plan Pro
-    const userPlan = request.headers.get("x-plan") || "free";
-    if (!isFeatureAvailable(userPlan, "export")) {
+    if (!isFeatureAvailable(plan, "export")) {
       return NextResponse.json(
         { error: "Cette fonctionnalité nécessite un abonnement Pro" },
         { status: 403 }
       );
     }
 
-    // Vérifier si Supabase est configuré
-    const supabase = await createServerSupabaseClient();
-    if (!supabase) {
+    // Récupérer les tâches de l'utilisateur
+    const { data: dbTasks, error: taskError } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("sort_order", { ascending: true });
+
+    if (taskError) {
+      console.error(
+        JSON.stringify({
+          action: "pdf_export",
+          error: taskError.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
       return NextResponse.json(
-        { error: "Service d'export non disponible" },
-        { status: 503 }
+        { error: "Erreur lors de la récupération des tâches" },
+        { status: 500 }
       );
     }
 
-    // Stub : données vides car Supabase n'est pas configuré
-    const tasks: Task[] = [];
-    const domains: Domain[] = [];
+    // Récupérer les domaines de l'utilisateur
+    const { data: dbDomains, error: domainError } = await supabase
+      .from("domains")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("sort_order", { ascending: true });
+
+    if (domainError) {
+      console.error(
+        JSON.stringify({
+          action: "pdf_export",
+          error: domainError.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+      return NextResponse.json(
+        { error: "Erreur lors de la récupération des domaines" },
+        { status: 500 }
+      );
+    }
+
+    // Mapper les résultats DB → format client
+    const tasks = (dbTasks as DbTask[]).map(mapTaskFromDb);
+    const domains = (dbDomains as DbDomain[]).map(mapDomainFromDb);
 
     if (tasks.length === 0) {
       return NextResponse.json(
@@ -49,7 +79,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const analysisResult: AnalysisResponse | undefined = undefined;
+    // Récupérer la dernière analyse (optionnelle)
+    let analysisResult: AnalysisResponse | undefined;
+    const { data: latestAnalysis } = await supabase
+      .from("analyses")
+      .select("results")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (latestAnalysis?.results) {
+      analysisResult = latestAnalysis.results as AnalysisResponse;
+    }
 
     // Générer le HTML/PDF
     const html = generateTasksPDF({
@@ -64,7 +106,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const filename = `multitasks-rapport-${dateStr}.html`;
 
     // Retourner le HTML avec les headers appropriés
-    // Le client pourra utiliser window.print() ou une lib PDF côté client
     return new NextResponse(html, {
       status: 200,
       headers: {
@@ -73,7 +114,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       },
     });
   } catch (error) {
-    console.error(JSON.stringify({ action: "pdf_export", error: error instanceof Error ? error.message : "Unknown error", timestamp: new Date().toISOString() }));
+    console.error(
+      JSON.stringify({
+        action: "pdf_export",
+        error: error instanceof Error ? error.message : "Unknown error",
+        timestamp: new Date().toISOString(),
+      })
+    );
     return NextResponse.json(
       { error: "Erreur lors de l'export PDF" },
       { status: 500 }

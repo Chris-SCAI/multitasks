@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createServerSupabaseClient } from "@/lib/db/supabase-server";
+import { getApiUser } from "@/lib/auth/get-api-user";
 import { isFeatureAvailable } from "@/lib/stripe/plans";
-import type { DBTask, DBDomain } from "@/lib/db/local";
+import {
+  mapTaskFromDb,
+  mapDomainFromDb,
+  type DbTask,
+  type DbDomain,
+} from "@/lib/db/field-mapper";
 
 const pullRequestSchema = z.object({
   lastSyncAt: z.string().nullable(),
@@ -10,18 +15,14 @@ const pullRequestSchema = z.object({
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Vérification de l'utilisateur (stub avec header)
-    const userId = request.headers.get("x-user-id");
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Non authentifié" },
-        { status: 401 }
-      );
-    }
+    // Auth via session Supabase
+    const auth = await getApiUser();
+    if (!auth.ok) return auth.response;
+
+    const { user, supabase, plan } = auth.data;
 
     // Vérification du plan Pro
-    const userPlan = request.headers.get("x-plan") || "free";
-    if (!isFeatureAvailable(userPlan, "sync")) {
+    if (!isFeatureAvailable(plan, "sync")) {
       return NextResponse.json(
         { error: "Cette fonctionnalité nécessite un abonnement Pro" },
         { status: 403 }
@@ -32,18 +33,59 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const body: unknown = await request.json();
     const validated = pullRequestSchema.parse(body);
 
-    // Vérifier si Supabase est configuré
-    const supabase = await createServerSupabaseClient();
-    if (!supabase) {
+    // Récupérer les tâches
+    let taskQuery = supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", user.id);
+
+    if (validated.lastSyncAt) {
+      taskQuery = taskQuery.gt("updated_at", validated.lastSyncAt);
+    }
+
+    const { data: dbTasks, error: taskError } = await taskQuery;
+
+    if (taskError) {
+      console.error(
+        JSON.stringify({
+          action: "sync_pull_tasks",
+          error: taskError.message,
+        })
+      );
       return NextResponse.json(
-        { error: "Service de synchronisation non disponible" },
-        { status: 503 }
+        { error: "Erreur lors de la récupération des tâches" },
+        { status: 500 }
       );
     }
 
-    // Stub : retourner des données vides car Supabase n'est pas configuré
-    const domains: DBDomain[] = [];
-    const tasks: DBTask[] = [];
+    // Récupérer les domaines
+    let domainQuery = supabase
+      .from("domains")
+      .select("*")
+      .eq("user_id", user.id);
+
+    if (validated.lastSyncAt) {
+      domainQuery = domainQuery.gt("updated_at", validated.lastSyncAt);
+    }
+
+    const { data: dbDomains, error: domainError } = await domainQuery;
+
+    if (domainError) {
+      console.error(
+        JSON.stringify({
+          action: "sync_pull_domains",
+          error: domainError.message,
+        })
+      );
+      return NextResponse.json(
+        { error: "Erreur lors de la récupération des domaines" },
+        { status: 500 }
+      );
+    }
+
+    // Mapper les résultats DB → format client
+    const tasks = (dbTasks as DbTask[]).map(mapTaskFromDb);
+    const domains = (dbDomains as DbDomain[]).map(mapDomainFromDb);
 
     return NextResponse.json({
       tasks,
