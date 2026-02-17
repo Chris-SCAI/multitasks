@@ -8,6 +8,7 @@ import { useUIStore } from "@/stores/ui-store";
 import { useDomainStore } from "@/stores/domain-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useReminders } from "@/hooks/useReminders";
+import { useReminderStore } from "@/stores/reminder-store";
 import { useVIPCheck } from "@/hooks/useVIPCheck";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -21,7 +22,8 @@ export default function DashboardLayout({
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const loadDomains = useDomainStore((s) => s.loadDomains);
   const loadTasks = useTaskStore((s) => s.loadTasks);
-  const { pendingCount } = useReminders();
+  const { reminders, pendingCount } = useReminders();
+  const removeReminder = useReminderStore((s) => s.removeReminder);
   useVIPCheck(email);
 
   useEffect(() => {
@@ -47,6 +49,8 @@ export default function DashboardLayout({
         />
         <Header
           pendingReminders={pendingCount}
+          reminders={reminders}
+          onDismissReminder={removeReminder}
           displayName={displayName}
           onSignOut={signOut}
           isAuthenticated={isAuthenticated}

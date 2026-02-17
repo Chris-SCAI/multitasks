@@ -11,8 +11,9 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createClient } from "@/lib/db/supabase-client";
+import type { Reminder } from "@/lib/reminders/scheduler";
 
 async function handleSignOut() {
   try {
@@ -43,9 +44,34 @@ function isActive(pathname: string, href: string) {
   return pathname.startsWith(href);
 }
 
+function formatRelativeTime(dateStr: string): string {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffMs = date.getTime() - now.getTime();
+  const absDiffMs = Math.abs(diffMs);
+  const minutes = Math.floor(absDiffMs / 60_000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (diffMs > 0) {
+    // Futur
+    if (minutes < 1) return "dans moins d'1 min";
+    if (minutes < 60) return `dans ${minutes} min`;
+    if (hours < 24) return `dans ${hours}h${minutes % 60 > 0 ? String(minutes % 60).padStart(2, "0") : ""}`;
+    return `dans ${days}j`;
+  }
+  // Passé
+  if (minutes < 1) return "à l'instant";
+  if (minutes < 60) return `il y a ${minutes} min`;
+  if (hours < 24) return `il y a ${hours}h`;
+  return `il y a ${days}j`;
+}
+
 interface HeaderProps {
   onAddTask?: () => void;
   pendingReminders?: number;
+  reminders?: Reminder[];
+  onDismissReminder?: (id: string) => void;
   displayName?: string | null;
   onSignOut?: () => Promise<void>;
   isAuthenticated?: boolean;
@@ -54,12 +80,16 @@ interface HeaderProps {
 export function Header({
   onAddTask,
   pendingReminders = 0,
+  reminders = [],
+  onDismissReminder,
   displayName,
   onSignOut,
   isAuthenticated,
 }: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
   const title = pageTitles[pathname] ?? "Multitasks";
 
   const [greeting, setGreeting] = useState("");
@@ -76,6 +106,27 @@ export function Header({
     });
     setToday(formatted.charAt(0).toUpperCase() + formatted.slice(1));
   }, []);
+
+  // Fermer le panneau au clic extérieur
+  useEffect(() => {
+    if (!notifOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setNotifOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [notifOpen]);
+
+  // Tri : en attente (futur) en premier, puis déclenchés (passé), par date
+  const sortedReminders = [...reminders].sort((a, b) => {
+    const now = Date.now();
+    const aFuture = new Date(a.scheduledAt).getTime() > now;
+    const bFuture = new Date(b.scheduledAt).getTime() > now;
+    if (aFuture !== bFuture) return aFuture ? -1 : 1;
+    return new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime();
+  });
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 bg-background/80 px-4 backdrop-blur-xl md:h-24 md:px-8 lg:px-12 relative">
@@ -109,19 +160,99 @@ export function Header({
         )}
       </div>
 
-      <Button
-        variant="ghost"
-        size="icon"
-        className="relative text-foreground hover:bg-muted"
-        aria-label={`${pendingReminders} rappel${pendingReminders !== 1 ? "s" : ""} en attente`}
-      >
-        <Bell className="size-6" />
-        {pendingReminders > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white animate-pulse">
-            {pendingReminders > 9 ? "9+" : pendingReminders}
-          </span>
+      {/* Notifications */}
+      <div ref={notifRef} className="relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative text-foreground hover:bg-muted"
+          aria-label={`${pendingReminders} rappel${pendingReminders !== 1 ? "s" : ""} en attente`}
+          onClick={() => setNotifOpen((v) => !v)}
+        >
+          <Bell className="size-6" />
+          {pendingReminders > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white animate-pulse">
+              {pendingReminders > 9 ? "9+" : pendingReminders}
+            </span>
+          )}
+        </Button>
+
+        {notifOpen && (
+          <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto rounded-xl border border-border bg-background shadow-xl shadow-black/20 z-50">
+            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+              <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
+              {reminders.length > 0 && (
+                <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-xs font-medium text-violet-400">
+                  {pendingReminders} en attente
+                </span>
+              )}
+            </div>
+
+            {sortedReminders.length === 0 ? (
+              <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
+                <Bell className="size-8 text-muted-foreground/50" />
+                <p className="text-sm font-medium text-muted-foreground">Aucune notification</p>
+                <p className="text-xs text-muted-foreground/70">
+                  Les rappels apparaîtront ici lorsque vos tâches auront une échéance.
+                </p>
+              </div>
+            ) : (
+              <ul className="divide-y divide-border">
+                {sortedReminders.map((reminder) => {
+                  const isPending = !reminder.triggered && new Date(reminder.scheduledAt) > new Date();
+                  const isTriggered = reminder.triggered;
+                  return (
+                    <li
+                      key={reminder.id}
+                      className={cn(
+                        "flex items-start gap-3 px-4 py-3 transition-colors",
+                        isPending && "bg-violet-500/5"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg",
+                          isPending
+                            ? "bg-violet-500/15 text-violet-400"
+                            : isTriggered
+                              ? "bg-green-500/15 text-green-400"
+                              : "bg-amber-500/15 text-amber-400"
+                        )}
+                      >
+                        <Bell className="size-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-foreground">
+                          {reminder.taskTitle}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {isPending
+                            ? formatRelativeTime(reminder.scheduledAt)
+                            : isTriggered
+                              ? `Envoyé ${formatRelativeTime(reminder.scheduledAt)}`
+                              : `Manqué ${formatRelativeTime(reminder.scheduledAt)}`}
+                        </p>
+                      </div>
+                      {onDismissReminder && (
+                        <button
+                          type="button"
+                          onClick={() => onDismissReminder(reminder.id)}
+                          className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                          aria-label="Supprimer la notification"
+                        >
+                          <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M18 6L6 18M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         )}
-      </Button>
+      </div>
 
       {isAuthenticated && (
         <button
