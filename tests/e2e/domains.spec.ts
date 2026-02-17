@@ -19,12 +19,10 @@ test.describe("Gestion des domaines", () => {
       }
     });
     await page.waitForTimeout(2000);
-    await page.reload();
-    await page.waitForLoadState("load");
+    await page.reload({ waitUntil: "domcontentloaded" });
 
     // Naviguer vers domaines
-    await page.goto("/dashboard/domains");
-    await page.waitForLoadState("load");
+    await page.goto("/dashboard/domains", { waitUntil: "domcontentloaded" });
 
     // Attendre que les domaines se chargent
     await expect(page.getByText("Mes domaines")).toBeVisible({ timeout: 15000 });
@@ -53,12 +51,10 @@ test.describe("Gestion des domaines", () => {
       }
     });
     await page.waitForTimeout(2000);
-    await page.reload();
-    await page.waitForLoadState("load");
+    await page.reload({ waitUntil: "domcontentloaded" });
 
     // Naviguer vers domaines
-    await page.goto("/dashboard/domains");
-    await page.waitForLoadState("load");
+    await page.goto("/dashboard/domains", { waitUntil: "domcontentloaded" });
 
     // Attendre le chargement
     await expect(page.getByText("Personnel").first()).toBeVisible({ timeout: 15000 });
