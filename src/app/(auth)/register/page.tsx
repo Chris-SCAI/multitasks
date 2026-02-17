@@ -75,6 +75,8 @@ export default function RegisterPage() {
       }
 
       setSuccess(true);
+    } catch {
+      setError("Impossible de créer le compte. Vérifiez votre connexion internet et réessayez.");
     } finally {
       setLoading(false);
     }

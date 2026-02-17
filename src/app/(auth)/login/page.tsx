@@ -62,6 +62,8 @@ export default function LoginPage() {
       }
 
       router.push("/dashboard");
+    } catch {
+      setError("Impossible de se connecter. Vérifiez votre connexion internet et réessayez.");
     } finally {
       setLoading(false);
     }
@@ -99,6 +101,8 @@ export default function LoginPage() {
       }
 
       setMessage("Un lien de connexion a été envoyé à votre email.");
+    } catch {
+      setError("Impossible d'envoyer le magic link. Vérifiez votre connexion internet.");
     } finally {
       setMagicLinkLoading(false);
     }
@@ -133,6 +137,8 @@ export default function LoginPage() {
       }
 
       setMessage("Un email de réinitialisation a été envoyé. Vérifiez votre boîte de réception.");
+    } catch {
+      setError("Impossible d'envoyer l'email. Vérifiez votre connexion internet.");
     } finally {
       setResetLoading(false);
     }

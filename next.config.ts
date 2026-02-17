@@ -14,8 +14,15 @@ const nextConfig: NextConfig = {
         },
         {
           key: "Content-Security-Policy",
-          value:
-            "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://api.openai.com https://api.stripe.com; frame-src https://js.stripe.com;",
+          value: [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' https://js.stripe.com https://va.vercel-scripts.com",
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+            "font-src 'self' https://cdn.jsdelivr.net",
+            "img-src 'self' data: https:",
+            "connect-src 'self' https://*.supabase.co https://api.openai.com https://api.stripe.com https://va.vercel-scripts.com",
+            "frame-src https://js.stripe.com",
+          ].join("; "),
         },
         {
           key: "Strict-Transport-Security",
