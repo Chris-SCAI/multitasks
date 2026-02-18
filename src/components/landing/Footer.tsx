@@ -39,7 +39,7 @@ export function Footer() {
               Contact
             </Link>
             <Link
-              href="/guide"
+              href="/dashboard/guide"
               className="text-neutral-500 transition-colors hover:text-neutral-300"
             >
               Guide

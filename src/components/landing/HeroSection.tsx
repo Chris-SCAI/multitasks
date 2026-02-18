@@ -15,7 +15,7 @@ function LandingNav() {
     { label: "Comment ça marche", href: "#how-it-works" },
     { label: "Tarifs", href: "#pricing" },
     { label: "FAQ", href: "#faq" },
-    { label: "Guide", href: "/guide" },
+    { label: "Guide", href: "/dashboard/guide" },
   ];
 
   const scrollTo = (href: string) => {

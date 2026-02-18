@@ -14,7 +14,7 @@ const navItems = [
   { href: "/dashboard/calendar", label: "Calendrier", icon: Calendar },
   { href: "/dashboard/analysis", label: "Analyse IA", icon: Sparkles, badge: "IA" },
   { href: "/dashboard/domains", label: "Domaines", icon: Tags },
-  { href: "/guide", label: "Guide", icon: BookOpen },
+  { href: "/dashboard/guide", label: "Guide", icon: BookOpen },
   { href: "/dashboard/settings", label: "Paramètres", icon: Settings },
 ];
 

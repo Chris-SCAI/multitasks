@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${baseUrl}/guide`,
+      url: `${baseUrl}/dashboard/guide`,
       lastModified: new Date("2026-02-17"),
       changeFrequency: "monthly",
       priority: 0.6,

@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/accordion";
 import {
   BookOpen,
-  ArrowLeft,
   ArrowRight,
   Rocket,
   CheckSquare,
@@ -257,49 +256,8 @@ const sections = [
 
 export default function GuidePage() {
   return (
-    <div className="relative min-h-screen bg-[#0B1120] px-6 py-20 text-neutral-100 sm:px-8 lg:px-12">
-      {/* Animated background orbs */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <motion.div
-          animate={{ x: [0, 20, -15, 0], y: [0, -15, 10, 0] }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute left-1/2 top-20 -translate-x-1/2"
-        >
-          <div className="h-[400px] w-[600px] rounded-full bg-violet-600/8 blur-[120px]" />
-        </motion.div>
-        <motion.div
-          animate={{ x: [0, -25, 15, 0], y: [0, 10, -20, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
-          className="absolute -right-20 top-1/2"
-        >
-          <div className="h-[300px] w-[300px] rounded-full bg-blue-600/8 blur-[100px]" />
-        </motion.div>
-      </div>
-
-      {/* Grid dot pattern */}
-      <div
-        className="pointer-events-none fixed inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }}
-      />
-
+    <div className="relative">
       <div className="relative mx-auto max-w-4xl">
-        {/* Back link */}
-        <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-        >
-          <Link
-            href="/"
-            className="mb-8 inline-flex items-center gap-1.5 text-sm text-neutral-400 transition-colors hover:text-white"
-          >
-            <ArrowLeft className="size-4" />
-            Retour
-          </Link>
-        </motion.div>
-
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -431,3 +389,4 @@ export default function GuidePage() {
     </div>
   );
 }
+
