@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { z } from "zod";
+import Stripe from "stripe";
 import { getStripeClient } from "@/lib/stripe/client";
 import { PLANS } from "@/lib/stripe/plans";
+import { getApiUser } from "@/lib/auth/get-api-user";
 
 const checkoutSchema = z.object({
   planId: z.string().min(1),
@@ -13,7 +15,7 @@ export async function POST(request: NextRequest) {
   const stripe = getStripeClient();
   if (!stripe) {
     return NextResponse.json(
-      { error: "Stripe not configured" },
+      { error: "Stripe non configuré. Contactez le support." },
       { status: 503 }
     );
   }
@@ -44,15 +46,43 @@ export async function POST(request: NextRequest) {
     }
 
     const idempotencyKey = `checkout_${planId}_${billing}_${randomUUID()}`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+    // Try to get authenticated user for customer_email and metadata
+    const authResult = await getApiUser();
+
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+      mode: "subscription",
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${appUrl}/dashboard/settings?checkout=success`,
+      cancel_url: `${appUrl}/dashboard/pricing`,
+      metadata: { planId },
+    };
+
+    if (authResult.ok) {
+      const { user, supabase } = authResult.data;
+
+      // Add userId to metadata for webhook mapping
+      sessionParams.metadata!.userId = user.id;
+
+      // Check if user already has a stripe_customer_id
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("stripe_customer_id")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.stripe_customer_id) {
+        // Existing Stripe customer — reuse
+        sessionParams.customer = profile.stripe_customer_id;
+      } else if (user.email) {
+        // New customer — pass email for Stripe to create one
+        sessionParams.customer_email = user.email;
+      }
+    }
 
     const session = await stripe.checkout.sessions.create(
-      {
-        mode: "subscription",
-        line_items: [{ price: priceId, quantity: 1 }],
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/dashboard/settings?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/dashboard/settings`,
-        metadata: { planId },
-      },
+      sessionParams,
       { idempotencyKey },
     );
 

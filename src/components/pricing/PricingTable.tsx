@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, X, Sparkles, GraduationCap, Users } from "lucide-react";
+import { Check, X, Sparkles, GraduationCap, Users, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ interface PricingTableProps {
   billingPeriod: "monthly" | "annual";
   onSelectPlan: (planId: string) => void;
   onToggleBilling: (period: "monthly" | "annual") => void;
+  loadingPlan?: string | null;
 }
 
 const allFeatures = [
@@ -91,6 +92,7 @@ export function PricingTable({
   billingPeriod,
   onSelectPlan,
   onToggleBilling,
+  loadingPlan,
 }: PricingTableProps) {
   const isAnnual = billingPeriod === "annual";
 
@@ -273,15 +275,27 @@ export function PricingTable({
                 <Button
                   className="w-full bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-lg transition-shadow hover:from-violet-600 hover:to-blue-600 hover:shadow-xl"
                   onClick={() => onSelectPlan(planId)}
+                  disabled={!!loadingPlan}
                 >
-                  Choisir
+                  {loadingPlan === planId ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    "Choisir"
+                  )}
                 </Button>
               ) : (
                 <Button
                   className="w-full"
                   onClick={() => onSelectPlan(planId)}
+                  disabled={!!loadingPlan}
                 >
-                  {planId === "free" ? "Commencer" : "Choisir"}
+                  {loadingPlan === planId ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : planId === "free" ? (
+                    "Commencer"
+                  ) : (
+                    "Choisir"
+                  )}
                 </Button>
               )}
             </motion.div>

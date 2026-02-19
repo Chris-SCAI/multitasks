@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck } from "lucide-react";
 import {
@@ -41,13 +41,38 @@ const faqItems = [
 ];
 
 export default function PricingPage() {
-  const router = useRouter();
   const { currentPlan, billingPeriod, setBillingPeriod } = useSubscriptionStore();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSelectPlan(planId: string) {
-    if (planId === "free") return;
-    // In a real app, this would redirect to Stripe checkout
-    router.push(`/dashboard/settings?tab=abonnement&plan=${planId}`);
+  async function handleSelectPlan(planId: string) {
+    if (planId === "free" || planId === currentPlan) return;
+
+    setLoadingPlan(planId);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId, billing: billingPeriod }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error ?? "Une erreur est survenue");
+        return;
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch {
+      setError("Impossible de contacter le serveur. Réessayez plus tard.");
+    } finally {
+      setLoadingPlan(null);
+    }
   }
 
   return (
@@ -66,11 +91,22 @@ export default function PricingPage() {
         </p>
       </motion.div>
 
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mx-auto max-w-md rounded-xl border border-red-900/50 bg-red-900/20 p-4 text-center text-sm text-red-400"
+        >
+          {error}
+        </motion.div>
+      )}
+
       <PricingTable
         currentPlan={currentPlan}
         billingPeriod={billingPeriod}
         onSelectPlan={handleSelectPlan}
         onToggleBilling={setBillingPeriod}
+        loadingPlan={loadingPlan}
       />
 
       {/* Guarantee */}

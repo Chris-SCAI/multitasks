@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, Bell, Tags, CreditCard, Cloud, Download, AlertTriangle, Check, Settings, RefreshCw, Loader2, Play } from "lucide-react";
+import { User, Bell, Tags, CreditCard, Cloud, Download, AlertTriangle, Check, Settings, RefreshCw, Loader2, Play, ExternalLink } from "lucide-react";
 import { generateTasksCSV } from "@/lib/export/csv-generator";
 import { generateTasksPDF } from "@/lib/export/pdf-generator";
 import { useTaskStore } from "@/stores/task-store";
@@ -33,6 +33,7 @@ import { FeatureGate } from "@/components/pricing/FeatureGate";
 import { QuotaIndicator } from "@/components/analysis/QuotaIndicator";
 import { useDomainStore } from "@/stores/domain-store";
 import { useSubscriptionStore } from "@/stores/subscription-store";
+import { CheckoutSuccess } from "./checkout-success";
 import { useAnalysisStore } from "@/stores/analysis-store";
 import { useSync } from "@/hooks/useSync";
 import { useUIStore } from "@/stores/ui-store";
@@ -73,7 +74,8 @@ export default function SettingsPage() {
 
   const { domains, createDomain, updateDomain, deleteDomain } =
     useDomainStore();
-  const { currentPlan, setPlan } = useSubscriptionStore();
+  const { currentPlan, setPlan, stripeCustomerId } = useSubscriptionStore();
+  const [isPortalLoading, setIsPortalLoading] = useState(false);
   const quotaInfo = useAnalysisStore((s) => s.quotaInfo);
   const planId = currentPlan as "free" | "etudiant" | "pro" | "equipe";
   const isPaid = planId !== "free";
@@ -146,6 +148,24 @@ export default function SettingsPage() {
     }
   }
 
+  async function handleOpenPortal() {
+    setIsPortalLoading(true);
+    try {
+      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        // Fallback: show local cancel dialog if portal unavailable
+        setShowCancelDialog(true);
+      }
+    } catch {
+      setShowCancelDialog(true);
+    } finally {
+      setIsPortalLoading(false);
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -10 }}
@@ -153,6 +173,10 @@ export default function SettingsPage() {
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
+      <Suspense fallback={null}>
+        <CheckoutSuccess />
+      </Suspense>
+
       <div className="flex items-center gap-4">
         <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30">
           <Settings className="size-7 text-white" />
@@ -378,9 +402,22 @@ export default function SettingsPage() {
                     <Button
                       variant="outline"
                       className="flex-1 border-red-900/50 text-red-400 hover:bg-red-900/10 hover:text-red-300"
-                      onClick={() => setShowCancelDialog(true)}
+                      onClick={stripeCustomerId ? handleOpenPortal : () => setShowCancelDialog(true)}
+                      disabled={isPortalLoading}
                     >
-                      Annuler l&apos;abonnement
+                      {isPortalLoading ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="size-4 animate-spin" />
+                          Redirection...
+                        </span>
+                      ) : stripeCustomerId ? (
+                        <span className="flex items-center gap-2">
+                          Gérer l&apos;abonnement
+                          <ExternalLink className="size-3.5" />
+                        </span>
+                      ) : (
+                        "Annuler l\u0027abonnement"
+                      )}
                     </Button>
                   )}
                 </div>
