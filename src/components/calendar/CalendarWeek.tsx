@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { motion } from "framer-motion";
 import {
   DndContext,
   DragOverlay,
@@ -13,6 +14,7 @@ import {
   type DragStartEvent,
   type DragEndEvent,
 } from "@dnd-kit/core";
+import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -78,7 +80,7 @@ function DraggableTask({
             {...listeners}
             {...attributes}
             className={cn(
-              "cursor-grab rounded-md border border-[#1E293B] bg-[#151D2E] p-2 text-base shadow-sm transition-all duration-200 hover:shadow-md hover:border-violet-500/30 hover:shadow-violet-500/5 active:cursor-grabbing",
+              "cursor-grab rounded-md border border-[#1E293B] bg-[#151D2E] p-2 text-base shadow-sm transition-all duration-200 hover:bg-[#1C2640] hover:shadow-md hover:border-violet-500/30 hover:shadow-violet-500/5 active:cursor-grabbing",
               isDragging && "opacity-30"
             )}
           >
@@ -156,19 +158,22 @@ function DroppableDay({
   });
 
   return (
-    <div
-      ref={setNodeRef}
-      className={cn(
-        "flex min-h-[140px] flex-col rounded-lg border transition-colors sm:min-h-[200px]",
-        day.isToday
-          ? "border-primary bg-primary/15 shadow-md shadow-primary/10"
-          : "border-[#1E293B] bg-[#151D2E]",
-        tasks.length === 0 &&
-          !day.isToday &&
-          "bg-[#0B1120]/50",
-        isOver && "border-primary bg-primary/10 ring-2 ring-primary/20"
+    <div ref={setNodeRef} className="relative">
+      {day.isToday && (
+        <div className="absolute -inset-1 rounded-xl bg-primary/5 blur-xl pointer-events-none" />
       )}
-    >
+      <div
+        className={cn(
+          "relative flex min-h-[140px] flex-col rounded-lg border transition-all duration-200 sm:min-h-[200px]",
+          day.isToday
+            ? "border-primary bg-primary/15 shadow-md shadow-primary/10"
+            : "border-[#1E293B] bg-[#151D2E] hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/5",
+          tasks.length === 0 &&
+            !day.isToday &&
+            "bg-[#0B1120]/50",
+          isOver && "border-primary bg-primary/10 ring-2 ring-primary/20"
+        )}
+      >
       <div className="flex items-center justify-between border-b border-[#1E293B]/50 px-2 py-1.5">
         <div className="flex items-center gap-1">
           <span
@@ -214,13 +219,22 @@ function DroppableDay({
       {dayLoad > 0 && (
         <div className="border-t border-[#1E293B]/50 px-2 py-1">
           <span className={cn(
-            "text-sm font-medium",
-            dayLoad > 480 ? "text-red-400" : dayLoad > 240 ? "text-amber-400" : "text-neutral-300"
+            "inline-flex items-center gap-1 text-sm font-medium bg-clip-text text-transparent",
+            dayLoad > 480
+              ? "bg-gradient-to-r from-red-400 to-red-500"
+              : dayLoad > 240
+                ? "bg-gradient-to-r from-amber-400 to-orange-400"
+                : "bg-gradient-to-r from-emerald-400 to-green-400"
           )}>
+            <Clock className={cn(
+              "size-3",
+              dayLoad > 480 ? "text-red-400" : dayLoad > 240 ? "text-amber-400" : "text-emerald-400"
+            )} />
             {formatMinutes(dayLoad)}
           </span>
         </div>
       )}
+      </div>
     </div>
   );
 }
@@ -288,7 +302,12 @@ export function CalendarWeek({
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <div className="grid grid-cols-7 gap-1.5 overflow-x-auto sm:gap-2">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="grid grid-cols-7 gap-1.5 overflow-x-auto sm:gap-2"
+      >
         {days.map((day) => (
           <DroppableDay
             key={day.date}
@@ -300,7 +319,7 @@ export function CalendarWeek({
             isOver={overId === day.date}
           />
         ))}
-      </div>
+      </motion.div>
 
       <DragOverlay dropAnimation={null}>
         {activeTask ? (

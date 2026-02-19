@@ -61,7 +61,12 @@ export default function CalendarPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="flex items-center gap-4"
+      >
         <div className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/25">
           <Calendar className="size-7 text-white" />
         </div>
@@ -73,7 +78,7 @@ export default function CalendarPage() {
             Visualisez vos tâches par semaine ou par mois
           </p>
         </div>
-      </div>
+      </motion.div>
 
       <CalendarHeader
         view={view}

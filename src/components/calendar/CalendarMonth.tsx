@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -53,7 +54,7 @@ function LoadIndicator({ taskCount }: { taskCount: number }) {
   if (taskCount <= 2) {
     return (
       <div className="flex gap-0.5">
-        <span className="size-2 rounded-full bg-emerald-500" />
+        <span className="size-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" />
       </div>
     );
   }
@@ -61,8 +62,8 @@ function LoadIndicator({ taskCount }: { taskCount: number }) {
   if (taskCount <= 4) {
     return (
       <div className="flex gap-0.5">
-        <span className="size-2 rounded-full bg-orange-500" />
-        <span className="size-2 rounded-full bg-orange-500" />
+        <span className="size-2 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50" />
+        <span className="size-2 rounded-full bg-orange-500 shadow-sm shadow-orange-500/50" />
       </div>
     );
   }
@@ -109,7 +110,7 @@ export function CalendarMonth({
           {WEEKDAY_HEADERS.map((header, i) => (
             <div
               key={i}
-              className="bg-[#0B1120] py-3 text-center text-sm font-semibold uppercase tracking-wider text-neutral-500"
+              className="bg-[#0B1120] py-3 text-center text-sm font-semibold uppercase tracking-wider text-violet-400/60"
             >
               {header}
             </div>
@@ -128,7 +129,7 @@ export function CalendarMonth({
                   "flex min-h-[52px] flex-col items-center gap-1 p-1.5 transition-all duration-200 hover:bg-[#1C2640] hover:shadow-inner sm:min-h-[80px] sm:items-start sm:p-2",
                   !day.isCurrentMonth && "opacity-40",
                   day.isToday
-                    ? "bg-primary/10 ring-2 ring-inset ring-primary"
+                    ? "bg-primary/10 ring-2 ring-inset ring-primary shadow-md shadow-primary/20"
                     : taskCount > 0
                       ? "bg-[#151D2E]"
                       : "bg-[#0F1629]"
@@ -176,12 +177,25 @@ export function CalendarMonth({
           </DialogHeader>
 
           {selectedTasks.length > 0 && (
-            <div className="space-y-2">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.06 } },
+              }}
+              className="space-y-2"
+            >
               {selectedTasks.map((task) => {
                 const domain = domains.find((d) => d.id === task.domainId);
                 return (
-                  <div
+                  <motion.div
                     key={task.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 10 },
+                      visible: { opacity: 1, y: 0 },
+                    }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
                     className="rounded-lg border border-[#1E293B] bg-[#151D2E] p-3 shadow-sm hover:border-violet-500/30 transition-colors duration-200"
                   >
                     <p className="text-lg font-medium text-white">{task.title}</p>
@@ -207,10 +221,10 @@ export function CalendarMonth({
                         </span>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
           )}
         </DialogContent>
       </Dialog>
