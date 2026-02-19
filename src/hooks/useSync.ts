@@ -29,7 +29,14 @@ export function useSync(): UseSyncReturn {
   const currentPlan = useSubscriptionStore((s) => s.currentPlan);
   const isProUser = isFeatureAvailable(currentPlan, "sync");
 
-  const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus());
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(() =>
+    typeof window !== "undefined" ? getSyncStatus() : {
+      lastSyncAt: null,
+      isSyncing: false,
+      error: null,
+      pendingChanges: 0,
+    }
+  );
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoSyncActiveRef = useRef(false);
 
