@@ -13,7 +13,7 @@ import type { NotificationSound } from "@/lib/reminders/sounds";
 // --- Timer Circle SVG ---
 
 function TimerCircle({ progress, sessionType }: { progress: number; sessionType: string }) {
-  const radius = 120;
+  const radius = 140;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - progress);
 
@@ -25,7 +25,7 @@ function TimerCircle({ progress, sessionType }: { progress: number; sessionType:
         : "url(#breakGradient)";
 
   return (
-    <svg width="280" height="280" viewBox="0 0 280 280" className="drop-shadow-lg">
+    <svg width="320" height="320" viewBox="0 0 320 320" className="drop-shadow-lg">
       <defs>
         <linearGradient id="focusGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#10b981" />
@@ -42,26 +42,26 @@ function TimerCircle({ progress, sessionType }: { progress: number; sessionType:
       </defs>
       {/* Background circle */}
       <circle
-        cx="140"
-        cy="140"
+        cx="160"
+        cy="160"
         r={radius}
         fill="none"
         stroke="currentColor"
         strokeWidth="6"
-        className="text-border"
+        className="text-[#1E293B]"
       />
       {/* Progress arc */}
       <circle
-        cx="140"
-        cy="140"
+        cx="160"
+        cy="160"
         r={radius}
         fill="none"
         stroke={strokeColor}
-        strokeWidth="8"
+        strokeWidth="10"
         strokeLinecap="round"
         strokeDasharray={circumference}
         strokeDashoffset={offset}
-        transform="rotate(-90 140 140)"
+        transform="rotate(-90 160 160)"
         className="transition-all duration-1000 ease-linear"
       />
     </svg>
@@ -105,7 +105,7 @@ function ProgressDots({ current, total }: { current: number; total: number }) {
             "size-2.5 rounded-full transition-all duration-300",
             i < current
               ? "bg-emerald-400 scale-110"
-              : "bg-border"
+              : "bg-[#1E293B]"
           )}
         />
       ))}
@@ -124,7 +124,7 @@ function SettingsPanel() {
   const longBreakOptions = [10, 15, 20, 30];
 
   return (
-    <div className="rounded-xl border border-border bg-card">
+    <div className="rounded-xl border border-[#1E293B] bg-[#151D2E]">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -146,7 +146,7 @@ function SettingsPanel() {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="space-y-4 border-t border-border px-5 pb-5 pt-4">
+            <div className="space-y-4 border-t border-[#1E293B] px-5 pb-5 pt-4">
               {/* Duree travail */}
               <div>
                 <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
@@ -162,7 +162,7 @@ function SettingsPanel() {
                         "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
                         settings.workDuration === v
                           ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                          : "bg-muted text-muted-foreground hover:text-foreground"
+                          : "bg-[#1C2640] text-muted-foreground hover:text-foreground"
                       )}
                     >
                       {v}
@@ -186,7 +186,7 @@ function SettingsPanel() {
                         "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
                         settings.breakDuration === v
                           ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                          : "bg-muted text-muted-foreground hover:text-foreground"
+                          : "bg-[#1C2640] text-muted-foreground hover:text-foreground"
                       )}
                     >
                       {v}
@@ -210,7 +210,7 @@ function SettingsPanel() {
                         "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
                         settings.longBreakDuration === v
                           ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                          : "bg-muted text-muted-foreground hover:text-foreground"
+                          : "bg-[#1C2640] text-muted-foreground hover:text-foreground"
                       )}
                     >
                       {v}
@@ -238,7 +238,7 @@ function SettingsPanel() {
                         "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
                         settings.timerSound === key
                           ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                          : "bg-muted text-muted-foreground hover:text-foreground"
+                          : "bg-[#1C2640] text-muted-foreground hover:text-foreground"
                       )}
                     >
                       {SOUND_LABELS[key]}
@@ -256,7 +256,7 @@ function SettingsPanel() {
                     onClick={() => updateSettings({ autoStartBreak: !settings.autoStartBreak })}
                     className={cn(
                       "relative h-6 w-11 rounded-full transition-colors",
-                      settings.autoStartBreak ? "bg-emerald-500" : "bg-muted"
+                      settings.autoStartBreak ? "bg-emerald-500" : "bg-[#1C2640]"
                     )}
                   >
                     <span
@@ -274,7 +274,7 @@ function SettingsPanel() {
                     onClick={() => updateSettings({ autoStartWork: !settings.autoStartWork })}
                     className={cn(
                       "relative h-6 w-11 rounded-full transition-colors",
-                      settings.autoStartWork ? "bg-emerald-500" : "bg-muted"
+                      settings.autoStartWork ? "bg-emerald-500" : "bg-[#1C2640]"
                     )}
                   >
                     <span
@@ -299,26 +299,35 @@ function SettingsPanel() {
 function WeekChart({ sessions }: { sessions: { date: string; minutes: number }[] }) {
   const max = Math.max(...sessions.map((s) => s.minutes), 1);
   const dayLabels = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const todayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
   return (
-    <div className="flex items-end justify-between gap-2 h-24">
+    <div className="flex items-end justify-between gap-2 h-28">
       {sessions.map((s, i) => (
         <div key={s.date} className="flex flex-1 flex-col items-center gap-1">
-          <div className="relative w-full flex justify-center">
+          <div className="relative w-full flex flex-col items-center gap-1">
+            {s.minutes > 0 && (
+              <span className="text-[10px] font-medium text-emerald-400/80">{s.minutes}</span>
+            )}
             <motion.div
               initial={{ height: 0 }}
               animate={{ height: max > 0 ? `${(s.minutes / max) * 64}px` : "2px" }}
               transition={{ duration: 0.5, delay: i * 0.05 }}
               className={cn(
-                "w-5 rounded-t-md",
+                "w-7 rounded-md",
                 s.minutes > 0
                   ? "bg-gradient-to-t from-emerald-500 to-teal-400"
-                  : "bg-border"
+                  : "bg-[#1E293B]"
               )}
               style={{ minHeight: "2px" }}
             />
           </div>
-          <span className="text-[10px] text-muted-foreground">{dayLabels[i]}</span>
+          <span className={cn(
+            "text-[10px]",
+            i === todayIndex ? "text-emerald-400 font-medium" : "text-muted-foreground"
+          )}>{dayLabels[i]}</span>
         </div>
       ))}
     </div>
@@ -419,138 +428,197 @@ export default function FocusPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-6 pb-28 md:pb-6">
       {/* Header */}
-      <div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
         <h1 className="text-2xl font-bold text-foreground">Mode Focus</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Concentre-toi avec la technique Pomodoro
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         {/* Left: Timer */}
         <div className="space-y-6">
-          {/* Timer card */}
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-8">
-            {/* Glow decoratif */}
-            <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 h-32 w-32 rounded-full bg-emerald-500/10 blur-[60px] dark:block hidden" />
+          {/* Timer card — premium style */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+            className="rounded-2xl p-[1px] bg-gradient-to-b from-emerald-500/20 via-teal-500/10 to-transparent"
+          >
+            <div className="relative overflow-hidden rounded-2xl bg-[#0B1120] p-8">
+              {/* Glow decoratif haut */}
+              <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 size-64 rounded-full bg-emerald-500 blur-3xl opacity-10" />
+              {/* Glow decoratif bas-droite */}
+              <div className="pointer-events-none absolute -bottom-16 -right-16 size-48 rounded-full bg-teal-500 blur-3xl opacity-[0.07]" />
 
-            <div className="flex flex-col items-center gap-6">
-              {/* Session badge */}
-              <SessionBadge type={sessionType} />
+              <div className="relative flex flex-col items-center gap-6">
+                {/* Session badge */}
+                <SessionBadge type={sessionType} />
 
-              {/* Timer circle */}
-              <div className="relative">
-                <motion.div
-                  animate={isRunning ? { scale: [1, 1.01, 1] } : {}}
-                  transition={isRunning ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {}}
-                >
-                  <TimerCircle progress={progress} sessionType={sessionType} />
-                </motion.div>
-                {/* Time display overlaid */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-5xl font-bold tabular-nums text-foreground">
-                    {formatTime(timeRemaining)}
-                  </span>
-                  {hasActiveSession && (
-                    <span className="mt-2 max-w-[180px] truncate text-sm text-muted-foreground">
-                      {activeTaskTitle}
+                {/* Timer circle */}
+                <div className="relative">
+                  <motion.div
+                    animate={isRunning ? { scale: [1, 1.01, 1] } : {}}
+                    transition={isRunning ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {}}
+                  >
+                    <TimerCircle progress={progress} sessionType={sessionType} />
+                  </motion.div>
+                  {/* Time display overlaid */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-6xl font-extrabold tracking-tight tabular-nums text-foreground">
+                      {formatTime(timeRemaining)}
                     </span>
+                    {hasActiveSession && (
+                      <span className="mt-2 max-w-[200px] truncate text-sm text-muted-foreground">
+                        {activeTaskTitle}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Progress dots */}
+                <ProgressDots
+                  current={workSessionCount % settings.sessionsBeforeLongBreak}
+                  total={settings.sessionsBeforeLongBreak}
+                />
+
+                {/* Controls */}
+                <div className="flex items-center gap-4">
+                  {/* Stop */}
+                  {hasActiveSession && (
+                    <motion.button
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                      type="button"
+                      onClick={stop}
+                      className="flex size-14 items-center justify-center rounded-full bg-[#151D2E] border border-[#1E293B] text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive hover:border-destructive/30"
+                      title="Arreter"
+                    >
+                      <Square className="size-5" />
+                    </motion.button>
+                  )}
+
+                  {/* Play/Pause */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!hasActiveSession) return;
+                      if (isRunning) pause();
+                      else resume();
+                    }}
+                    disabled={!hasActiveSession}
+                    className={cn(
+                      "group relative flex size-[72px] items-center justify-center rounded-full text-white transition-all overflow-hidden",
+                      hasActiveSession
+                        ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-xl shadow-emerald-500/30"
+                        : "bg-[#151D2E] border border-[#1E293B] text-muted-foreground cursor-not-allowed"
+                    )}
+                  >
+                    {/* Shimmer overlay */}
+                    {hasActiveSession && (
+                      <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                      </div>
+                    )}
+                    <AnimatePresence mode="wait">
+                      {isRunning ? (
+                        <motion.div key="pause" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                          <Pause className="size-7" />
+                        </motion.div>
+                      ) : (
+                        <motion.div key="play" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                          <Play className="size-7 ml-0.5" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </button>
+
+                  {/* Skip */}
+                  {hasActiveSession && (
+                    <motion.button
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                      type="button"
+                      onClick={skipSession}
+                      className="flex size-14 items-center justify-center rounded-full bg-[#151D2E] border border-[#1E293B] text-muted-foreground transition-colors hover:bg-[#1C2640] hover:text-foreground"
+                      title="Passer"
+                    >
+                      <SkipForward className="size-5" />
+                    </motion.button>
                   )}
                 </div>
               </div>
-
-              {/* Progress dots */}
-              <ProgressDots
-                current={workSessionCount % settings.sessionsBeforeLongBreak}
-                total={settings.sessionsBeforeLongBreak}
-              />
-
-              {/* Controls */}
-              <div className="flex items-center gap-3">
-                {/* Stop */}
-                {hasActiveSession && (
-                  <motion.button
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    type="button"
-                    onClick={stop}
-                    className="flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive"
-                    title="Arreter"
-                  >
-                    <Square className="size-5" />
-                  </motion.button>
-                )}
-
-                {/* Play/Pause */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!hasActiveSession) return;
-                    if (isRunning) pause();
-                    else resume();
-                  }}
-                  disabled={!hasActiveSession}
-                  className={cn(
-                    "flex size-16 items-center justify-center rounded-full text-white transition-all",
-                    hasActiveSession
-                      ? "bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-500/20"
-                      : "bg-muted text-muted-foreground cursor-not-allowed"
-                  )}
-                >
-                  <AnimatePresence mode="wait">
-                    {isRunning ? (
-                      <motion.div key="pause" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                        <Pause className="size-6" />
-                      </motion.div>
-                    ) : (
-                      <motion.div key="play" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
-                        <Play className="size-6 ml-0.5" />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </button>
-
-                {/* Skip */}
-                {hasActiveSession && (
-                  <motion.button
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    type="button"
-                    onClick={skipSession}
-                    className="flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                    title="Passer"
-                  >
-                    <SkipForward className="size-5" />
-                  </motion.button>
-                )}
-              </div>
             </div>
+          </motion.div>
+
+          {/* Stats du jour — mini StatCards */}
+          <div className="grid grid-cols-2 gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+              className="relative rounded-2xl p-[1px] bg-gradient-to-b from-emerald-500/20 via-emerald-500/5 to-transparent"
+            >
+              <div className="relative overflow-hidden rounded-2xl bg-[#0B1120] p-5">
+                <div className="pointer-events-none absolute -top-8 -right-8 size-32 rounded-full bg-emerald-500 blur-3xl opacity-[0.07]" />
+                <div className="relative flex items-center gap-4">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
+                    <Flame className="size-6 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-4xl font-extrabold tracking-tight text-white">{todaySessions}</p>
+                    <p className="text-xs font-medium text-slate-400">Sessions</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3, ease: "easeOut" }}
+              className="relative rounded-2xl p-[1px] bg-gradient-to-b from-teal-500/20 via-teal-500/5 to-transparent"
+            >
+              <div className="relative overflow-hidden rounded-2xl bg-[#0B1120] p-5">
+                <div className="pointer-events-none absolute -top-8 -right-8 size-32 rounded-full bg-teal-500 blur-3xl opacity-[0.07]" />
+                <div className="relative flex items-center gap-4">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 shadow-lg">
+                    <Clock className="size-6 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-4xl font-extrabold tracking-tight text-white">
+                      {todayMinutes}<span className="text-lg font-normal text-slate-500"> min</span>
+                    </p>
+                    <p className="text-xs font-medium text-slate-400">Temps focus</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Stats du jour */}
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <h2 className="mb-4 text-sm font-semibold text-foreground">Stats du jour</h2>
-            <div className="mb-6 grid grid-cols-2 gap-4">
-              <div className="rounded-xl bg-muted/50 p-4 text-center">
-                <p className="text-2xl font-bold text-emerald-400">{todaySessions}</p>
-                <p className="text-xs text-muted-foreground">Sessions</p>
-              </div>
-              <div className="rounded-xl bg-muted/50 p-4 text-center">
-                <p className="text-2xl font-bold text-teal-400">{todayMinutes}<span className="text-base font-normal"> min</span></p>
-                <p className="text-xs text-muted-foreground">Temps focus</p>
-              </div>
-            </div>
-
-            <h3 className="mb-3 text-xs font-medium text-muted-foreground">Cette semaine</h3>
+          {/* Graphique semaine */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.4, ease: "easeOut" }}
+            className="rounded-2xl border border-[#1E293B] bg-[#151D2E] p-6"
+          >
+            <h3 className="mb-4 text-sm font-semibold text-foreground">Cette semaine</h3>
             <WeekChart sessions={weekData} />
-          </div>
+          </motion.div>
         </div>
 
         {/* Right: Task selection + Settings */}
         <div className="space-y-4">
           {/* Task list */}
-          <div className="rounded-2xl border border-border bg-card">
-            <div className="border-b border-border px-5 py-4">
+          <div className="rounded-2xl border border-[#1E293B] bg-[#151D2E]">
+            <div className="border-b border-[#1E293B] px-5 py-4">
               <h2 className="text-sm font-semibold text-foreground">Choisir une tache</h2>
               {/* Domain filter */}
               {domains.length > 0 && (
@@ -593,7 +661,7 @@ export default function FocusPage() {
                   <p className="mt-2 text-sm text-muted-foreground">Aucune tache disponible</p>
                 </div>
               ) : (
-                <div className="divide-y divide-border">
+                <div className="divide-y divide-[#1E293B]">
                   {availableTasks.map((task) => {
                     const isSelected = activeTaskId === task.id;
                     const domain = domains.find((d) => d.id === task.domainId);
@@ -608,10 +676,10 @@ export default function FocusPage() {
                         }}
                         disabled={isRunning}
                         className={cn(
-                          "flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors",
+                          "flex w-full items-center gap-3 px-5 py-3.5 text-left transition-all border border-transparent",
                           isSelected
-                            ? "bg-emerald-500/10"
-                            : "hover:bg-muted/50",
+                            ? "bg-emerald-500/10 border-emerald-500/20"
+                            : "hover:bg-[#1C2640] hover:border-emerald-500/20",
                           isRunning && !isSelected && "opacity-50 cursor-not-allowed"
                         )}
                       >

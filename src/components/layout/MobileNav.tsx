@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield, Timer } from "lucide-react";
@@ -17,6 +18,14 @@ const navItems = [
 
 export function MobileNav() {
   const pathname = usePathname();
+  const [showAdmin, setShowAdmin] = useState(false);
+
+  useEffect(() => {
+    const email = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.includes("*")
+      ? "*"
+      : localStorage.getItem("multitasks-user-email");
+    setShowAdmin(isAdminEmail(email));
+  }, []);
 
   function isActive(href: string) {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -54,13 +63,7 @@ export function MobileNav() {
           );
         })}
         {/* Admin link — conditionnel */}
-        {isAdminEmail(
-          process.env.NEXT_PUBLIC_ADMIN_EMAILS?.includes("*")
-            ? "*"
-            : typeof window !== "undefined"
-              ? localStorage.getItem("multitasks-user-email")
-              : null
-        ) && (
+        {showAdmin && (
           <Link
             href="/dashboard/admin"
             className={cn(

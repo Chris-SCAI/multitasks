@@ -99,29 +99,74 @@ function playBowl() {
   const ctx = getAudioContext();
   const now = ctx.currentTime;
 
-  // Fondamentale + harmoniques d'un bol tibétain (résonance riche, decay très long)
-  const harmonics = [
-    { freq: 220, gain: 0.12, decay: 2.5 },
-    { freq: 440, gain: 0.08, decay: 2.0 },
-    { freq: 660, gain: 0.04, decay: 1.5 },
-    { freq: 885, gain: 0.02, decay: 1.2 },
+  // Partiels inharmoniques d'un bol tibétain réaliste
+  // Chaque partiel a 2 oscillateurs légèrement désaccordés pour créer le battement
+  const partials = [
+    { freq: 245, detune: 0.8, gain: 0.10, decay: 5.0 },   // Fondamentale chaude
+    { freq: 518, detune: 1.2, gain: 0.07, decay: 4.0 },   // Partiel ~2x (inharmonique)
+    { freq: 812, detune: 1.5, gain: 0.04, decay: 3.0 },   // Partiel ~3.3x
+    { freq: 1135, detune: 1.8, gain: 0.02, decay: 2.2 },  // Partiel haut
   ];
 
-  for (const h of harmonics) {
-    const osc = ctx.createOscillator();
-    const gainNode = ctx.createGain();
+  // Master gain pour contrôler le volume global
+  const masterGain = ctx.createGain();
+  masterGain.gain.setValueAtTime(1, now);
+  masterGain.connect(ctx.destination);
 
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(h.freq, now);
-    // Légère modulation de fréquence pour le côté "vivant" du bol
-    osc.frequency.linearRampToValueAtTime(h.freq * 0.998, now + h.decay);
-    gainNode.gain.setValueAtTime(h.gain, now);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + h.decay);
+  // Transitoire d'attaque — bruit bref simulant le frappé du maillet
+  const strikeLen = 0.06;
+  const bufferSize = ctx.sampleRate * strikeLen;
+  const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const noiseData = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    noiseData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.15));
+  }
+  const strikeSource = ctx.createBufferSource();
+  strikeSource.buffer = noiseBuffer;
+  const strikeFilter = ctx.createBiquadFilter();
+  strikeFilter.type = "bandpass";
+  strikeFilter.frequency.setValueAtTime(800, now);
+  strikeFilter.Q.setValueAtTime(1.5, now);
+  const strikeGain = ctx.createGain();
+  strikeGain.gain.setValueAtTime(0.25, now);
+  strikeGain.gain.exponentialRampToValueAtTime(0.001, now + strikeLen);
+  strikeSource.connect(strikeFilter);
+  strikeFilter.connect(strikeGain);
+  strikeGain.connect(masterGain);
+  strikeSource.start(now);
+  strikeSource.stop(now + strikeLen);
 
-    osc.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + h.decay);
+  // Partiels résonnants — paires désaccordées pour le battement caractéristique
+  for (const p of partials) {
+    for (const sign of [-1, 1]) {
+      const osc = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      osc.type = "sine";
+      const f = p.freq + sign * p.detune;
+      osc.frequency.setValueAtTime(f, now);
+      // Vibrato subtil — ondulation lente typique du métal
+      const vibrato = ctx.createOscillator();
+      const vibratoGain = ctx.createGain();
+      vibrato.frequency.setValueAtTime(3.5 + sign * 0.5, now);
+      vibratoGain.gain.setValueAtTime(f * 0.002, now);
+      vibratoGain.gain.linearRampToValueAtTime(0, now + p.decay);
+      vibrato.connect(vibratoGain);
+      vibratoGain.connect(osc.frequency);
+      vibrato.start(now);
+      vibrato.stop(now + p.decay);
+
+      // Enveloppe : attaque douce + decay exponentiel long
+      const vol = p.gain * 0.5;
+      gainNode.gain.setValueAtTime(0.001, now);
+      gainNode.gain.linearRampToValueAtTime(vol, now + 0.015);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + p.decay);
+
+      osc.connect(gainNode);
+      gainNode.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + p.decay);
+    }
   }
 }
 
