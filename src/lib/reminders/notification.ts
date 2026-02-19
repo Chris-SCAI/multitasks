@@ -1,3 +1,8 @@
+import {
+  type NotificationSound,
+  playNotificationSound,
+} from "@/lib/reminders/sounds";
+
 /**
  * Demande la permission de notification au navigateur
  */
@@ -15,6 +20,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 export function sendReminderNotification(
   taskTitle: string,
   scheduledAt: string,
+  sound?: NotificationSound,
 ): void {
   if (
     typeof window === "undefined" ||
@@ -28,4 +34,8 @@ export function sendReminderNotification(
     icon: "/favicon.ico",
     tag: `reminder-${scheduledAt}`, // evite les doublons
   });
+
+  if (sound) {
+    playNotificationSound(sound);
+  }
 }

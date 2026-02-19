@@ -3,6 +3,7 @@
 import { useEffect, useCallback, useRef } from "react";
 import { useReminderStore } from "@/stores/reminder-store";
 import { useTaskStore } from "@/stores/task-store";
+import { useUIStore } from "@/stores/ui-store";
 import { getTriggeredReminders } from "@/lib/reminders/scheduler";
 import {
   requestNotificationPermission,
@@ -42,8 +43,9 @@ export function useReminders() {
   useEffect(() => {
     const checkReminders = () => {
       const triggered = getTriggeredReminders(reminders);
+      const sound = useUIStore.getState().notificationSound;
       for (const reminder of triggered) {
-        sendReminderNotification(reminder.taskTitle, reminder.scheduledAt);
+        sendReminderNotification(reminder.taskTitle, reminder.scheduledAt, sound);
         markTriggered(reminder.id);
       }
     };

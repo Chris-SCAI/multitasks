@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, Tags, CreditCard, Cloud, Download, AlertTriangle, Check, Settings, RefreshCw, Loader2 } from "lucide-react";
+import { User, Bell, Tags, CreditCard, Cloud, Download, AlertTriangle, Check, Settings, RefreshCw, Loader2, Play } from "lucide-react";
 import { generateTasksCSV } from "@/lib/export/csv-generator";
 import { generateTasksPDF } from "@/lib/export/pdf-generator";
 import { useTaskStore } from "@/stores/task-store";
@@ -35,6 +35,12 @@ import { useDomainStore } from "@/stores/domain-store";
 import { useSubscriptionStore } from "@/stores/subscription-store";
 import { useAnalysisStore } from "@/stores/analysis-store";
 import { useSync } from "@/hooks/useSync";
+import { useUIStore } from "@/stores/ui-store";
+import {
+  type NotificationSound,
+  SOUND_LABELS,
+  playNotificationSound,
+} from "@/lib/reminders/sounds";
 
 function GradientCard({
   children,
@@ -71,6 +77,9 @@ export default function SettingsPage() {
   const quotaInfo = useAnalysisStore((s) => s.quotaInfo);
   const planId = currentPlan as "free" | "ia_quotidienne" | "pro_sync";
   const isPaid = planId !== "free";
+
+  const notificationSound = useUIStore((s) => s.notificationSound);
+  const setNotificationSound = useUIStore((s) => s.setNotificationSound);
 
   const { syncStatus, syncNow, isProUser } = useSync();
   const [isSyncingManual, setIsSyncingManual] = useState(false);
@@ -164,6 +173,10 @@ export default function SettingsPage() {
             <User className="size-5" />
             <span className="hidden sm:inline">Profil</span>
           </TabsTrigger>
+          <TabsTrigger value="notifications" aria-label="Notifications" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
+            <Bell className="size-5" />
+            <span className="hidden sm:inline">Notifications</span>
+          </TabsTrigger>
           <TabsTrigger value="domaines" aria-label="Domaines" className="gap-1.5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-600/20 data-[state=active]:to-blue-600/20 data-[state=active]:text-violet-400">
             <Tags className="size-5" />
             <span className="hidden sm:inline">Domaines</span>
@@ -245,6 +258,59 @@ export default function SettingsPage() {
                     ) : (
                       "Sauvegarder"
                     )}
+                  </span>
+                </Button>
+              </div>
+            </GradientCard>
+          </motion.div>
+        </TabsContent>
+
+        <TabsContent value="notifications" className="mt-6">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <GradientCard>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">
+                    Notifications
+                  </h3>
+                  <p className="mt-1 text-lg text-neutral-300">
+                    Choisissez le son joué lors des rappels de tâches.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-base font-semibold text-white">Son de notification</Label>
+                  <Select
+                    value={notificationSound}
+                    onValueChange={(v) => setNotificationSound(v as NotificationSound)}
+                  >
+                    <SelectTrigger className="w-full border-[#1E293B] bg-[#0B1120] text-white focus:ring-2 focus:ring-violet-500/20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="border-[#1E293B] bg-[#151D2E]">
+                      {(Object.entries(SOUND_LABELS) as [NotificationSound, string][]).map(
+                        ([value, label]) => (
+                          <SelectItem key={value} value={value} className="text-white hover:bg-[#1C2640] focus:bg-[#1C2640] focus:text-white">
+                            {label}
+                          </SelectItem>
+                        ),
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button
+                  className="group/btn relative overflow-hidden rounded-full bg-gradient-to-r from-violet-500 to-blue-500 text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/40"
+                  onClick={() => playNotificationSound(notificationSound)}
+                >
+                  <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover/btn:translate-x-full" />
+                  <span className="relative flex items-center gap-2">
+                    <Play className="size-4" />
+                    Tester
                   </span>
                 </Button>
               </div>

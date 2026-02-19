@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { NotificationSound } from "@/lib/reminders/sounds";
 
 type Theme = "light" | "dark" | "system";
 type View = "list" | "board";
@@ -9,12 +10,14 @@ interface UIState {
   sidebarOpen: boolean;
   currentView: View;
   showCompletedTasks: boolean;
+  notificationSound: NotificationSound;
 
   setTheme: (theme: Theme) => void;
   toggleSidebar: () => void;
   setSidebarOpen: (open: boolean) => void;
   setCurrentView: (view: View) => void;
   toggleShowCompleted: () => void;
+  setNotificationSound: (sound: NotificationSound) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -24,6 +27,7 @@ export const useUIStore = create<UIState>()(
       sidebarOpen: true,
       currentView: "list",
       showCompletedTasks: true,
+      notificationSound: "bell",
 
       setTheme: (theme) => set({ theme }),
       toggleSidebar: () =>
@@ -32,6 +36,7 @@ export const useUIStore = create<UIState>()(
       setCurrentView: (view) => set({ currentView: view }),
       toggleShowCompleted: () =>
         set((state) => ({ showCompletedTasks: !state.showCompletedTasks })),
+      setNotificationSound: (sound) => set({ notificationSound: sound }),
     }),
     {
       name: "multitasks-ui",
