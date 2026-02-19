@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, Square, SkipForward, Settings2, Clock, Flame, Coffee, ChevronDown } from "lucide-react";
+import { Play, Pause, Square, SkipForward, Settings2, Clock, Flame, Coffee, ChevronDown, Volume2 } from "lucide-react";
 import { usePomodoroStore } from "@/stores/pomodoro-store";
 import { useTaskStore } from "@/stores/task-store";
 import { useDomainStore } from "@/stores/domain-store";
 import { cn } from "@/lib/utils";
+import { SOUND_LABELS, playNotificationSound } from "@/lib/reminders/sounds";
+import type { NotificationSound } from "@/lib/reminders/sounds";
 
 // --- Timer Circle SVG ---
 
@@ -212,6 +214,34 @@ function SettingsPanel() {
                       )}
                     >
                       {v}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Son de fin */}
+              <div>
+                <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                  <Volume2 className="size-3.5" />
+                  Son de fin de session
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {(Object.keys(SOUND_LABELS) as NotificationSound[]).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => {
+                        updateSettings({ timerSound: key });
+                        if (key !== "none") playNotificationSound(key);
+                      }}
+                      className={cn(
+                        "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                        settings.timerSound === key
+                          ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                          : "bg-muted text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {SOUND_LABELS[key]}
                     </button>
                   ))}
                 </div>

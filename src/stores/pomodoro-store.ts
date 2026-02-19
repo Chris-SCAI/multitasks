@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useTaskStore } from "./task-store";
-import { playTimerEndSound } from "@/lib/reminders/sounds";
+import type { NotificationSound } from "@/lib/reminders/sounds";
+import { playNotificationSound } from "@/lib/reminders/sounds";
 
 interface PomodoroSession {
   id: string;
@@ -19,6 +20,7 @@ interface PomodoroSettings {
   sessionsBeforeLongBreak: number;
   autoStartBreak: boolean;
   autoStartWork: boolean;
+  timerSound: NotificationSound;
 }
 
 interface PomodoroState {
@@ -74,6 +76,7 @@ export const usePomodoroStore = create<PomodoroState>()(
         sessionsBeforeLongBreak: 4,
         autoStartBreak: true,
         autoStartWork: false,
+        timerSound: "bell",
       },
 
       startSession: (taskId, taskTitle) => {
@@ -116,7 +119,7 @@ export const usePomodoroStore = create<PomodoroState>()(
         const state = get();
         const { sessionType, activeTaskId, activeTaskTitle, settings, workSessionCount } = state;
 
-        playTimerEndSound();
+        playNotificationSound(state.settings.timerSound);
 
         const session: PomodoroSession = {
           id: crypto.randomUUID(),
