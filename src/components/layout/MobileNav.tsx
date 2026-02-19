@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield } from "lucide-react";
+import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield, Timer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isAdminEmail } from "@/lib/admin/admin-config";
 
 const navItems = [
   { href: "/dashboard", label: "Tâches", icon: CheckSquare },
   { href: "/dashboard/calendar", label: "Calendrier", icon: Calendar },
+  { href: "/dashboard/focus", label: "Focus", icon: Timer },
   { href: "/dashboard/analysis", label: "Analyse IA", icon: Sparkles, badge: "IA" },
   { href: "/dashboard/domains", label: "Domaines", icon: Tags },
   { href: "/dashboard/settings", label: "Paramètres", icon: Settings },

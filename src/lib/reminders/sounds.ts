@@ -125,6 +125,33 @@ function playBowl() {
   }
 }
 
+export function playTimerEndSound(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+
+    // Double bip : 2x chirp espaces de 200ms
+    for (const offset of [0, 0.25]) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(600, now + offset);
+      osc.frequency.exponentialRampToValueAtTime(1200, now + offset + 0.15);
+      gain.gain.setValueAtTime(0.3, now + offset);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.2);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + offset);
+      osc.stop(now + offset + 0.2);
+    }
+  } catch {
+    // AudioContext non supporte ou bloque
+  }
+}
+
 export function playNotificationSound(sound: NotificationSound): void {
   if (sound === "none" || typeof window === "undefined") return;
 

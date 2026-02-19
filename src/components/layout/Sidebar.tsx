@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield, LogOut, BookOpen } from "lucide-react";
+import { CheckSquare, Calendar, Tags, Settings, Sparkles, Shield, LogOut, BookOpen, Timer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui-store";
@@ -12,6 +12,7 @@ import { createClient } from "@/lib/db/supabase-client";
 const navItems = [
   { href: "/dashboard", label: "Tâches", icon: CheckSquare },
   { href: "/dashboard/calendar", label: "Calendrier", icon: Calendar },
+  { href: "/dashboard/focus", label: "Focus", icon: Timer },
   { href: "/dashboard/analysis", label: "Analyse IA", icon: Sparkles, badge: "IA" },
   { href: "/dashboard/domains", label: "Domaines", icon: Tags },
   { href: "/dashboard/guide", label: "Guide", icon: BookOpen },
