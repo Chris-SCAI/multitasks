@@ -274,6 +274,19 @@ export function getSyncStatus(): SyncStatus {
 }
 
 /**
+ * Réinitialise le statut de sync (supprime les erreurs stales)
+ */
+export function clearSyncStatus(): void {
+  currentSyncStatus = {
+    lastSyncAt: null,
+    isSyncing: false,
+    error: null,
+    pendingChanges: 0,
+  };
+  saveSyncStatus();
+}
+
+/**
  * Démarre le sync automatique avec debounce
  */
 export async function startAutoSync(

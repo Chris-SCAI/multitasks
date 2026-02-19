@@ -7,6 +7,7 @@ import {
   pullChanges,
   startAutoSync,
   stopAutoSync,
+  clearSyncStatus,
   type SyncStatus,
 } from "@/lib/db/sync-engine";
 import { useAuth } from "./useAuth";
@@ -22,7 +23,13 @@ interface UseSyncReturn {
 }
 
 const AUTO_SYNC_INTERVAL_MS = 30_000; // 30 secondes
-const DEBOUNCE_MS = 5_000; // 5 secondes
+
+const CLEAN_STATUS: SyncStatus = {
+  lastSyncAt: null,
+  isSyncing: false,
+  error: null,
+  pendingChanges: 0,
+};
 
 export function useSync(): UseSyncReturn {
   const { user, isAuthenticated } = useAuth();
@@ -30,23 +37,27 @@ export function useSync(): UseSyncReturn {
   const isProUser = isFeatureAvailable(currentPlan, "sync");
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>(() =>
-    typeof window !== "undefined" ? getSyncStatus() : {
-      lastSyncAt: null,
-      isSyncing: false,
-      error: null,
-      pendingChanges: 0,
-    }
+    typeof window !== "undefined" ? getSyncStatus() : CLEAN_STATUS
   );
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoSyncActiveRef = useRef(false);
 
-  // Rafraîchir le statut périodiquement
+  // Nettoyer les erreurs stales quand l'utilisateur n'est pas Pro
   useEffect(() => {
+    if (!isProUser) {
+      clearSyncStatus();
+      setSyncStatus(CLEAN_STATUS);
+    }
+  }, [isProUser]);
+
+  // Rafraîchir le statut périodiquement (seulement si Pro)
+  useEffect(() => {
+    if (!isProUser) return;
     const interval = setInterval(() => {
       setSyncStatus(getSyncStatus());
     }, 2_000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isProUser]);
 
   // Sync manuelle immédiate
   const syncNow = useCallback(async () => {
@@ -57,8 +68,12 @@ export function useSync(): UseSyncReturn {
       await pullChanges(user.id);
       setSyncStatus(getSyncStatus());
     } catch (error) {
-      console.error("Manual sync failed:", error);
       setSyncStatus(getSyncStatus());
+      // Si le serveur rejette avec 403, arrêter le sync
+      if (error instanceof Error && error.message.includes("403")) {
+        stopAutoSync();
+        autoSyncActiveRef.current = false;
+      }
     }
   }, [isAuthenticated, user, isProUser]);
 
