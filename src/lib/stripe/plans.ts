@@ -1,5 +1,5 @@
 export interface PlanConfig {
-  id: "free" | "ia_quotidienne" | "pro_sync";
+  id: "free" | "etudiant" | "pro" | "equipe";
   name: string;
   description: string;
   priceMonthly: number;
@@ -9,7 +9,7 @@ export interface PlanConfig {
     domains: number | null;
     tasks: number | null;
     analysesPerPeriod: number;
-    analysisPeriod: "lifetime" | "monthly" | "daily";
+    analysisPeriod: "monthly";
     remindersPerDay: number | null;
     calendarViews: ("week" | "month")[];
     sync: boolean;
@@ -18,6 +18,8 @@ export interface PlanConfig {
   stripePriceIdMonthly: string | null;
   stripePriceIdAnnual: string | null;
   recommended: boolean;
+  perUser?: boolean;
+  requiresVerification?: boolean;
 }
 
 export const PLANS: Record<string, PlanConfig> = {
@@ -28,18 +30,19 @@ export const PLANS: Record<string, PlanConfig> = {
     priceMonthly: 0,
     priceAnnual: 0,
     features: [
-      "3 domaines",
-      "60 tâches",
-      "2 analyses IA (à vie)",
+      "Tâches illimitées",
+      "5 domaines",
+      "5 analyses IA / mois",
+      "3 rappels / jour",
       "Vue semaine",
       "Stockage local",
     ],
     limits: {
-      domains: 3,
-      tasks: 60,
-      analysesPerPeriod: 2,
-      analysisPeriod: "lifetime",
-      remindersPerDay: 1,
+      domains: 5,
+      tasks: null,
+      analysesPerPeriod: 5,
+      analysisPeriod: "monthly",
+      remindersPerDay: 3,
       calendarViews: ["week"],
       sync: false,
       export: false,
@@ -48,44 +51,47 @@ export const PLANS: Record<string, PlanConfig> = {
     stripePriceIdAnnual: null,
     recommended: false,
   },
-  ia_quotidienne: {
-    id: "ia_quotidienne",
-    name: "IA Quotidienne",
-    description: "Pour les utilisateurs réguliers",
-    priceMonthly: 5.9,
-    priceAnnual: 49,
+  etudiant: {
+    id: "etudiant",
+    name: "Étudiant",
+    description: "Pour les étudiants vérifiés",
+    priceMonthly: 2.99,
+    priceAnnual: 29,
     features: [
-      "Domaines illimités",
       "Tâches illimitées",
-      "8 analyses IA / mois",
-      "5 rappels / jour",
+      "Domaines illimités",
+      "30 analyses IA / mois",
+      "Rappels illimités",
       "Calendrier complet",
       "Stockage local",
     ],
     limits: {
       domains: null,
       tasks: null,
-      analysesPerPeriod: 8,
+      analysesPerPeriod: 30,
       analysisPeriod: "monthly",
-      remindersPerDay: 5,
+      remindersPerDay: null,
       calendarViews: ["week", "month"],
       sync: false,
       export: false,
     },
-    stripePriceIdMonthly: process.env.STRIPE_PRICE_IA_MONTHLY ?? null,
-    stripePriceIdAnnual: process.env.STRIPE_PRICE_IA_ANNUAL ?? null,
+    stripePriceIdMonthly: process.env.STRIPE_PRICE_STUDENT_MONTHLY ?? null,
+    stripePriceIdAnnual: process.env.STRIPE_PRICE_STUDENT_ANNUAL ?? null,
     recommended: false,
+    requiresVerification: true,
   },
-  pro_sync: {
-    id: "pro_sync",
-    name: "Pro Sync",
-    description: "Pour les professionnels exigeants",
-    priceMonthly: 12.9,
-    priceAnnual: 99,
+  pro: {
+    id: "pro",
+    name: "Pro",
+    description: "Pour les professionnels",
+    priceMonthly: 7.99,
+    priceAnnual: 59,
     features: [
-      "Tout illimité",
-      "3 analyses IA / jour",
+      "Tâches illimitées",
+      "Domaines illimités",
+      "100 analyses IA / mois",
       "Rappels illimités",
+      "Calendrier complet",
       "Sync cloud multi-appareils",
       "Export CSV + PDF",
       "Support prioritaire",
@@ -93,8 +99,8 @@ export const PLANS: Record<string, PlanConfig> = {
     limits: {
       domains: null,
       tasks: null,
-      analysesPerPeriod: 3,
-      analysisPeriod: "daily",
+      analysesPerPeriod: 100,
+      analysisPeriod: "monthly",
       remindersPerDay: null,
       calendarViews: ["week", "month"],
       sync: true,
@@ -103,6 +109,37 @@ export const PLANS: Record<string, PlanConfig> = {
     stripePriceIdMonthly: process.env.STRIPE_PRICE_PRO_MONTHLY ?? null,
     stripePriceIdAnnual: process.env.STRIPE_PRICE_PRO_ANNUAL ?? null,
     recommended: true,
+  },
+  equipe: {
+    id: "equipe",
+    name: "Équipe",
+    description: "Pour les PME et équipes",
+    priceMonthly: 12.99,
+    priceAnnual: 99,
+    features: [
+      "Tâches illimitées",
+      "Domaines illimités",
+      "Analyses IA illimitées",
+      "Rappels illimités",
+      "Calendrier complet",
+      "Sync cloud multi-appareils",
+      "Export CSV + PDF",
+      "Support dédié",
+    ],
+    limits: {
+      domains: null,
+      tasks: null,
+      analysesPerPeriod: 9999,
+      analysisPeriod: "monthly",
+      remindersPerDay: null,
+      calendarViews: ["week", "month"],
+      sync: true,
+      export: true,
+    },
+    stripePriceIdMonthly: process.env.STRIPE_PRICE_TEAM_MONTHLY ?? null,
+    stripePriceIdAnnual: process.env.STRIPE_PRICE_TEAM_ANNUAL ?? null,
+    recommended: false,
+    perUser: true,
   },
 };
 
@@ -131,10 +168,3 @@ export const ANALYSIS_PACKS = [
   { id: "pack_10", name: "10 analyses", price: 4.9, analyses: 10 },
   { id: "pack_30", name: "30 analyses", price: 9.9, analyses: 30 },
 ];
-
-export const STUDENT_DISCOUNT = {
-  percentOff: 50,
-  couponId: process.env.STRIPE_STUDENT_COUPON_ID ?? null,
-  eligiblePlans: ["pro_sync"] as const,
-  annualPriceWithDiscount: 49,
-};

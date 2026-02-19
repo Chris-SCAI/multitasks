@@ -21,17 +21,17 @@ const faqs = [
   {
     question: "Puis-je utiliser Multitasks sans payer ?",
     answer:
-      "Absolument. Le plan gratuit inclut 3 domaines, 60 tâches et 2 analyses IA à vie. Pas de carte bancaire requise.",
+      "Absolument. Le plan gratuit inclut 5 domaines, des tâches illimitées et 5 analyses IA par mois. Pas de carte bancaire requise.",
   },
   {
     question: "Quelle est la différence entre les plans ?",
     answer:
-      "Le plan IA Quotidienne (5,90\u00a0\u20ac/mois) offre 8 analyses par mois et un calendrier complet. Le plan Pro Sync (12,90\u00a0\u20ac/mois) ajoute la synchronisation cloud, l'export et 3 analyses par jour.",
+      "Le plan Étudiant (2,99\u00a0\u20ac/mois) offre 30 analyses par mois et un calendrier complet. Le plan Pro (5,99\u00a0\u20ac/mois en annuel) ajoute la sync cloud, l'export et 100 analyses par mois. Le plan Équipe (9,99\u00a0\u20ac/user/mois en annuel) inclut des analyses illimitées et un support dédié.",
   },
   {
     question: "Y a-t-il une offre étudiante ?",
     answer:
-      "Oui ! Les étudiants bénéficient de 50\u00a0% de réduction sur le plan Pro Sync annuel, soit 49\u00a0\u20ac/an au lieu de 99\u00a0\u20ac.",
+      "Oui ! Le plan Étudiant à 2,99\u00a0\u20ac/mois (29\u00a0\u20ac/an) donne accès à toutes les fonctionnalités premium. Vérification par email .edu ou .ac.fr.",
   },
   {
     question: "Puis-je annuler à tout moment ?",

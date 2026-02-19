@@ -1,5 +1,5 @@
 export const VIP_STORAGE_KEY = "multitasks-admin-vip";
-export const VIP_PLAN = "pro_sync";
+export const VIP_PLAN = "pro";
 
 export function getAdminEmails(): string[] {
   const raw = process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? "";

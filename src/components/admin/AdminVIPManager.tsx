@@ -52,7 +52,7 @@ export function AdminVIPManager() {
                   Comptes VIP
                 </h3>
                 <p className="text-sm text-neutral-400">
-                  Les comptes VIP reçoivent automatiquement le plan Pro Sync
+                  Les comptes VIP reçoivent automatiquement le plan Pro
                   gratuitement.
                 </p>
               </div>

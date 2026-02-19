@@ -46,8 +46,9 @@ export default function Home() {
             },
             offers: [
               { "@type": "Offer", price: "0", priceCurrency: "EUR", name: "Gratuit" },
-              { "@type": "Offer", price: "5.90", priceCurrency: "EUR", name: "IA Quotidienne" },
-              { "@type": "Offer", price: "12.90", priceCurrency: "EUR", name: "Pro Sync" },
+              { "@type": "Offer", price: "2.99", priceCurrency: "EUR", name: "Étudiant" },
+              { "@type": "Offer", price: "7.99", priceCurrency: "EUR", name: "Pro" },
+              { "@type": "Offer", price: "12.99", priceCurrency: "EUR", name: "Équipe" },
             ],
             description:
               "Gestion de tâches avec priorisation IA via la matrice d'Eisenhower. Organise tes tâches par domaines et laisse l'IA les prioriser.",

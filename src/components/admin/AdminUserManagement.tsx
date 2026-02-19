@@ -171,8 +171,9 @@ export function AdminUserManagement() {
             </SelectTrigger>
             <SelectContent className="border-[#1E293B] bg-[#151D2E]">
               <SelectItem value="free">Gratuit</SelectItem>
-              <SelectItem value="ia_quotidienne">IA Quotidienne</SelectItem>
-              <SelectItem value="pro_sync">Pro Sync</SelectItem>
+              <SelectItem value="etudiant">Étudiant</SelectItem>
+              <SelectItem value="pro">Pro</SelectItem>
+              <SelectItem value="equipe">Équipe</SelectItem>
             </SelectContent>
           </Select>
           <DialogFooter>

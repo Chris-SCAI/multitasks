@@ -75,7 +75,7 @@ export default function SettingsPage() {
     useDomainStore();
   const { currentPlan, setPlan } = useSubscriptionStore();
   const quotaInfo = useAnalysisStore((s) => s.quotaInfo);
-  const planId = currentPlan as "free" | "ia_quotidienne" | "pro_sync";
+  const planId = currentPlan as "free" | "etudiant" | "pro" | "equipe";
   const isPaid = planId !== "free";
 
   const notificationSound = useUIStore((s) => s.notificationSound);

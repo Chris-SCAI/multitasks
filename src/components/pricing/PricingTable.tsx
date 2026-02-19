@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, X, Sparkles } from "lucide-react";
+import { Check, X, Sparkles, GraduationCap, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { PLANS, STUDENT_DISCOUNT, type PlanConfig } from "@/lib/stripe/plans";
+import { PLANS, type PlanConfig } from "@/lib/stripe/plans";
 import { PlanBadge } from "./PlanBadge";
 
 interface PricingTableProps {
@@ -24,7 +24,7 @@ const allFeatures = [
   { key: "calendar", label: "Calendrier" },
   { key: "sync", label: "Sync cloud" },
   { key: "export", label: "Export CSV + PDF" },
-  { key: "support", label: "Support prioritaire" },
+  { key: "support", label: "Support" },
 ] as const;
 
 function getFeatureValue(
@@ -40,18 +40,15 @@ function getFeatureValue(
     case "tasks":
       return {
         available: true,
-        label: plan.limits.tasks ? `${plan.limits.tasks} tâches` : "Illimitées",
+        label: "Illimitées",
       };
     case "analyses": {
-      const periodLabel =
-        plan.limits.analysisPeriod === "lifetime"
-          ? "à vie"
-          : plan.limits.analysisPeriod === "monthly"
-            ? "/ mois"
-            : "/ jour";
+      if (plan.limits.analysesPerPeriod >= 9999) {
+        return { available: true, label: "Illimitées" };
+      }
       return {
         available: true,
-        label: `${plan.limits.analysesPerPeriod} ${periodLabel}`,
+        label: `${plan.limits.analysesPerPeriod} / mois`,
       };
     }
     case "reminders":
@@ -73,16 +70,21 @@ function getFeatureValue(
     case "export":
       return { available: plan.limits.export, label: plan.limits.export ? "CSV + PDF" : "" };
     case "support":
-      return {
-        available: plan.id === "pro_sync",
-        label: plan.id === "pro_sync" ? "Prioritaire" : "",
-      };
+      if (plan.id === "equipe") return { available: true, label: "Dédié" };
+      if (plan.id === "pro") return { available: true, label: "Prioritaire" };
+      if (plan.id === "etudiant") return { available: true, label: "Email" };
+      return { available: false, label: "" };
     default:
       return { available: false, label: "" };
   }
 }
 
-const planOrder: PlanConfig["id"][] = ["free", "ia_quotidienne", "pro_sync"];
+const planOrder: PlanConfig["id"][] = ["free", "etudiant", "pro", "equipe"];
+
+const planIcons: Record<string, React.ReactNode> = {
+  etudiant: <GraduationCap className="size-4" />,
+  equipe: <Users className="size-4" />,
+};
 
 export function PricingTable({
   currentPlan,
@@ -142,10 +144,10 @@ export function PricingTable({
       </motion.div>
 
       {/* Plans */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {planOrder.map((planId, index) => {
           const plan = PLANS[planId];
-          const isPro = planId === "pro_sync";
+          const isPro = planId === "pro";
           const isCurrent = currentPlan === planId;
           const price = isAnnual ? plan.priceAnnual : plan.priceMonthly;
           const monthlyEquivalent = isAnnual
@@ -173,12 +175,12 @@ export function PricingTable({
                 <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[#151D2E]" style={{ zIndex: -1, margin: "1px" }} />
               )}
 
-              {/* Badge "Meilleur choix" */}
+              {/* Badge "Populaire" */}
               {isPro && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                   <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-violet-500 to-blue-500 px-3 py-1 text-sm font-semibold text-white shadow-md">
                     <Sparkles className="size-3" />
-                    Meilleur choix
+                    Populaire
                   </span>
                 </div>
               )}
@@ -186,6 +188,9 @@ export function PricingTable({
               {/* Header */}
               <div className="mb-6 space-y-2">
                 <div className="flex items-center gap-2">
+                  {planIcons[planId] && (
+                    <span className="text-neutral-400">{planIcons[planId]}</span>
+                  )}
                   <h3 className="text-xl font-semibold text-white">
                     {plan.name}
                   </h3>
@@ -214,7 +219,7 @@ export function PricingTable({
                     {price === 0 ? "0" : isAnnual ? `${price}` : `${price.toFixed(2).replace(".", ",")}`}
                   </motion.span>
                   <span className="text-xl font-medium text-neutral-400">
-                    {price === 0 ? "€" : isAnnual ? "€/an" : "€/mois"}
+                    {price === 0 ? "€" : isAnnual ? `€/an${plan.perUser ? " /user" : ""}` : `€/mois${plan.perUser ? " /user" : ""}`}
                   </span>
                 </div>
                 {isAnnual && price > 0 && (
@@ -227,9 +232,9 @@ export function PricingTable({
                     </p>
                   </div>
                 )}
-                {isPro && (
-                  <p className="mt-2 text-sm font-medium text-violet-400">
-                    {STUDENT_DISCOUNT.annualPriceWithDiscount}€/an (offre étudiante)
+                {plan.requiresVerification && (
+                  <p className="mt-2 text-sm font-medium text-emerald-400">
+                    Vérification .edu / .ac.fr requise
                   </p>
                 )}
               </div>
@@ -276,7 +281,7 @@ export function PricingTable({
                   className="w-full"
                   onClick={() => onSelectPlan(planId)}
                 >
-                  Choisir
+                  {planId === "free" ? "Commencer" : "Choisir"}
                 </Button>
               )}
             </motion.div>

@@ -100,7 +100,7 @@ const sections = [
       },
       {
         subtitle: "Limites selon votre plan",
-        text: "Le plan Gratuit permet jusqu'à 3 domaines. Les plans IA Quotidienne et Pro Sync offrent des domaines illimités.",
+        text: "Le plan Gratuit permet jusqu'à 5 domaines. Les plans Étudiant, Pro et Équipe offrent des domaines illimités.",
       },
     ],
   },
@@ -128,7 +128,7 @@ const sections = [
       },
       {
         subtitle: "Quotas d'analyses",
-        text: "L'indicateur de quota affiche vos analyses restantes (ex : \"2/2 analyses restantes\"). Plan Gratuit : 2 analyses offertes à vie. Plan IA Quotidienne : 8 analyses par mois, renouvelées automatiquement. Plan Pro Sync : 3 analyses par jour.",
+        text: "L'indicateur de quota affiche vos analyses restantes (ex : \"3/5 analyses restantes\"). Plan Gratuit : 5 analyses par mois. Plan Étudiant : 30 par mois. Plan Pro : 100 par mois. Plan Équipe : illimitées. Tous les quotas se renouvellent chaque mois.",
       },
     ],
   },
@@ -144,7 +144,7 @@ const sections = [
       },
       {
         subtitle: "Vue Mois",
-        text: "L'onglet \"Mois\" offre une vue d'ensemble de votre planning. Chaque jour affiche un indicateur de charge avec le nombre de tâches et le temps estimé. Disponible sur les plans IA Quotidienne et Pro Sync.",
+        text: "L'onglet \"Mois\" offre une vue d'ensemble de votre planning. Chaque jour affiche un indicateur de charge avec le nombre de tâches et le temps estimé. Disponible sur les plans Étudiant, Pro et Équipe.",
       },
       {
         subtitle: "Détection des conflits",
@@ -176,7 +176,7 @@ const sections = [
       },
       {
         subtitle: "Limites selon votre plan",
-        text: "Plan Gratuit : 1 rappel par jour. Plan IA Quotidienne : 5 rappels par jour. Plan Pro Sync : rappels illimités.",
+        text: "Plan Gratuit : 3 rappels par jour. Plans Étudiant, Pro et Équipe : rappels illimités.",
       },
     ],
   },
@@ -188,15 +188,19 @@ const sections = [
     content: [
       {
         subtitle: "Plan Gratuit",
-        text: "\"Pour découvrir Multitasks\" : 3 domaines, 60 tâches, 2 analyses IA (à vie), vue semaine et stockage local. Aucune carte bancaire requise.",
+        text: "\"Pour découvrir Multitasks\" : tâches illimitées, 5 domaines, 5 analyses IA par mois, 3 rappels par jour, vue semaine et stockage local. Aucune carte bancaire requise.",
       },
       {
-        subtitle: "Plan IA Quotidienne \u2014 5,90\u00a0\u20ac/mois ou 49\u00a0\u20ac/an",
-        text: "\"Pour les utilisateurs réguliers\" : domaines illimités, tâches illimitées, 8 analyses IA par mois, 5 rappels par jour, calendrier complet (Semaine + Mois), stockage local. En tarif annuel, soit 4,08\u00a0\u20ac/mois.",
+        subtitle: "Plan Étudiant \u2014 2,99\u00a0\u20ac/mois ou 29\u00a0\u20ac/an",
+        text: "\"Pour les étudiants vérifiés\" : domaines illimités, 30 analyses IA par mois, rappels illimités, calendrier complet. Vérification par email .edu ou .ac.fr. En tarif annuel, soit 2,42\u00a0\u20ac/mois.",
       },
       {
-        subtitle: "Plan Pro Sync \u2014 12,90\u00a0\u20ac/mois ou 99\u00a0\u20ac/an",
-        text: "\"Pour les professionnels exigeants\" \u2014 badge \"Meilleur choix\" : tout illimité, 3 analyses IA par jour, rappels illimités, synchronisation cloud multi-appareils, export CSV + PDF et support prioritaire. En tarif annuel, soit 8,25\u00a0\u20ac/mois. Offre \u00e9tudiante : 49\u00a0\u20ac/an.",
+        subtitle: "Plan Pro \u2014 7,99\u00a0\u20ac/mois ou 59\u00a0\u20ac/an",
+        text: "\"Pour les professionnels\" \u2014 badge \"Populaire\" : 100 analyses IA par mois, rappels illimités, sync cloud multi-appareils, export CSV + PDF et support prioritaire. En tarif annuel, soit 4,92\u00a0\u20ac/mois.",
+      },
+      {
+        subtitle: "Plan Équipe \u2014 12,99\u00a0\u20ac/user/mois ou 99\u00a0\u20ac/user/an",
+        text: "\"Pour les PME et équipes\" : analyses IA illimitées, sync cloud, export, support dédié. En tarif annuel, soit 8,25\u00a0\u20ac/user/mois.",
       },
       {
         subtitle: "Gérer votre abonnement",
@@ -215,16 +219,16 @@ const sections = [
         text: "Multitasks stocke toutes vos données en local sur votre appareil. L'application fonctionne pleinement sans connexion internet : vos tâches, domaines et analyses restent accessibles en permanence.",
       },
       {
-        subtitle: "Synchronisation cloud (Pro Sync)",
-        text: "Avec le plan Pro Sync, retrouvez vos données sur tous vos appareils. Depuis Paramètres > onglet Sync, consultez le statut de connexion (\"Connecté\" ou \"Non synchronisé\"), la date du dernier sync et le nombre de changements en attente. Cliquez sur \"Synchroniser maintenant\" pour lancer la synchronisation.",
+        subtitle: "Synchronisation cloud (Pro / Équipe)",
+        text: "Avec les plans Pro et Équipe, retrouvez vos données sur tous vos appareils. Depuis Paramètres > onglet Sync, consultez le statut de connexion (\"Connecté\" ou \"Non synchronisé\"), la date du dernier sync et le nombre de changements en attente. Cliquez sur \"Synchroniser maintenant\" pour lancer la synchronisation.",
       },
       {
         subtitle: "Export CSV",
-        text: "Depuis Paramètres > onglet Données, cliquez sur \"Export CSV\". Le fichier téléchargé contient l'ensemble de vos tâches avec toutes les informations : titre, description, domaine, statut, priorité, échéance, durée estimée et dates. Compatible Excel, Google Sheets et tout tableur. Réservé au plan Pro Sync.",
+        text: "Depuis Paramètres > onglet Données, cliquez sur \"Export CSV\". Le fichier téléchargé contient l'ensemble de vos tâches avec toutes les informations : titre, description, domaine, statut, priorité, échéance, durée estimée et dates. Compatible Excel, Google Sheets et tout tableur. Réservé aux plans Pro et Équipe.",
       },
       {
         subtitle: "Export PDF",
-        text: "Cliquez sur \"Export PDF\" pour générer un rapport structuré incluant vos tâches et votre dernière analyse IA avec la matrice d'Eisenhower. Réservé au plan Pro Sync.",
+        text: "Cliquez sur \"Export PDF\" pour générer un rapport structuré incluant vos tâches et votre dernière analyse IA avec la matrice d'Eisenhower. Réservé aux plans Pro et Équipe.",
       },
     ],
   },
@@ -248,7 +252,7 @@ const sections = [
       },
       {
         subtitle: "Utilisation hors connexion",
-        text: "Vos tâches et domaines sont stockés localement. Vous pouvez consulter et modifier vos données sans connexion internet. Les abonnés Pro Sync pourront synchroniser leurs modifications au retour de la connexion via le bouton \"Synchroniser maintenant\" dans les paramètres.",
+        text: "Vos tâches et domaines sont stockés localement. Vous pouvez consulter et modifier vos données sans connexion internet. Les abonnés Pro et Équipe pourront synchroniser leurs modifications au retour de la connexion via le bouton \"Synchroniser maintenant\" dans les paramètres.",
       },
     ],
   },

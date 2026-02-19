@@ -1,4 +1,4 @@
-type Plan = "free" | "ia_quotidienne" | "pro_sync";
+type Plan = "free" | "etudiant" | "pro" | "equipe";
 
 interface QuotaState {
   plan: Plan;
@@ -8,14 +8,15 @@ interface QuotaState {
 }
 
 interface QuotaLimit {
-  type: "lifetime" | "monthly" | "daily";
+  type: "monthly";
   limit: number;
 }
 
 const QUOTA_LIMITS: Record<Plan, QuotaLimit> = {
-  free: { type: "lifetime", limit: 2 },
-  ia_quotidienne: { type: "monthly", limit: 8 },
-  pro_sync: { type: "daily", limit: 3 },
+  free: { type: "monthly", limit: 5 },
+  etudiant: { type: "monthly", limit: 30 },
+  pro: { type: "monthly", limit: 100 },
+  equipe: { type: "monthly", limit: 9999 },
 };
 
 const QUOTA_STORAGE_KEY = "multitasks_quota";
@@ -40,8 +41,12 @@ function loadQuotaState(): QuotaState {
       return getDefaultQuotaState();
     }
     const parsed = JSON.parse(stored) as QuotaState;
+    // Migration: map old plan IDs to new ones
+    let plan = parsed.plan ?? "free";
+    if (plan === ("ia_quotidienne" as string)) plan = "pro";
+    if (plan === ("pro_sync" as string)) plan = "pro";
     return {
-      plan: parsed.plan ?? "free",
+      plan,
       analysesUsedTotal: parsed.analysesUsedTotal ?? 0,
       analysesUsedPeriod: parsed.analysesUsedPeriod ?? 0,
       periodResetAt: parsed.periodResetAt ?? null,
@@ -62,12 +67,6 @@ function saveQuotaState(state: QuotaState): void {
 }
 
 function shouldResetPeriod(state: QuotaState): boolean {
-  const limit = QUOTA_LIMITS[state.plan];
-
-  if (limit.type === "lifetime") {
-    return false;
-  }
-
   if (!state.periodResetAt) {
     return true;
   }
@@ -75,40 +74,17 @@ function shouldResetPeriod(state: QuotaState): boolean {
   const resetAt = new Date(state.periodResetAt);
   const now = new Date();
 
-  if (limit.type === "monthly") {
-    return (
-      now.getFullYear() > resetAt.getFullYear() ||
-      (now.getFullYear() === resetAt.getFullYear() &&
-        now.getMonth() > resetAt.getMonth())
-    );
-  }
-
-  if (limit.type === "daily") {
-    const nowDate = now.toISOString().split("T")[0];
-    const resetDate = resetAt.toISOString().split("T")[0];
-    return nowDate !== resetDate;
-  }
-
-  return false;
+  return (
+    now.getFullYear() > resetAt.getFullYear() ||
+    (now.getFullYear() === resetAt.getFullYear() &&
+      now.getMonth() > resetAt.getMonth())
+  );
 }
 
-function getNextResetDate(plan: Plan): string {
+function getNextResetDate(): string {
   const now = new Date();
-  const limit = QUOTA_LIMITS[plan];
-
-  if (limit.type === "monthly") {
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    return nextMonth.toISOString();
-  }
-
-  if (limit.type === "daily") {
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    return tomorrow.toISOString();
-  }
-
-  return now.toISOString();
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  return nextMonth.toISOString();
 }
 
 function ensureResetIfNeeded(state: QuotaState): QuotaState {
@@ -116,7 +92,7 @@ function ensureResetIfNeeded(state: QuotaState): QuotaState {
     const updated: QuotaState = {
       ...state,
       analysesUsedPeriod: 0,
-      periodResetAt: getNextResetDate(state.plan),
+      periodResetAt: getNextResetDate(),
     };
     saveQuotaState(updated);
     return updated;
@@ -133,31 +109,24 @@ export function checkQuota(): {
   const state = ensureResetIfNeeded(rawState);
   const limit = QUOTA_LIMITS[state.plan];
 
-  if (limit.type === "lifetime") {
-    const remaining = Math.max(0, limit.limit - state.analysesUsedTotal);
+  const remaining = Math.max(0, limit.limit - state.analysesUsedPeriod);
+  const isUnlimited = state.plan === "equipe";
+
+  if (isUnlimited) {
     return {
-      allowed: remaining > 0,
-      remaining,
-      message:
-        remaining > 0
-          ? `${remaining} analyse(s) restante(s) sur ${limit.limit}`
-          : "Quota d'analyses gratuit épuisé. Passez au plan IA Quotidienne pour continuer.",
+      allowed: true,
+      remaining: 9999,
+      message: "Analyses illimitées",
     };
   }
 
-  const remaining = Math.max(0, limit.limit - state.analysesUsedPeriod);
-  const periodLabel = limit.type === "monthly" ? "ce mois" : "aujourd'hui";
   return {
     allowed: remaining > 0,
     remaining,
     message:
       remaining > 0
-        ? `${remaining} analyse(s) restante(s) ${periodLabel}`
-        : `Quota d'analyses épuisé pour ${periodLabel}. ${
-            limit.type === "monthly"
-              ? "Renouvellement au début du mois prochain."
-              : "Renouvellement demain."
-          }`,
+        ? `${remaining} analyse(s) restante(s) ce mois`
+        : "Quota d'analyses épuisé pour ce mois. Renouvellement au début du mois prochain.",
   };
 }
 
@@ -169,7 +138,7 @@ export function incrementQuota(): void {
     ...state,
     analysesUsedTotal: state.analysesUsedTotal + 1,
     analysesUsedPeriod: state.analysesUsedPeriod + 1,
-    periodResetAt: state.periodResetAt ?? getNextResetDate(state.plan),
+    periodResetAt: state.periodResetAt ?? getNextResetDate(),
   };
 
   saveQuotaState(updated);
@@ -185,21 +154,11 @@ export function getQuotaInfo(): {
   const state = ensureResetIfNeeded(rawState);
   const quotaLimit = QUOTA_LIMITS[state.plan];
 
-  const used =
-    quotaLimit.type === "lifetime"
-      ? state.analysesUsedTotal
-      : state.analysesUsedPeriod;
+  const used = state.analysesUsedPeriod;
 
-  let resetInfo: string;
-  if (quotaLimit.type === "lifetime") {
-    resetInfo = "Quota à vie (non renouvelable)";
-  } else if (quotaLimit.type === "monthly") {
-    resetInfo = state.periodResetAt
-      ? `Renouvellement le ${new Date(state.periodResetAt).toLocaleDateString("fr-FR")}`
-      : "Renouvellement au début du mois prochain";
-  } else {
-    resetInfo = "Renouvellement quotidien";
-  }
+  const resetInfo = state.periodResetAt
+    ? `Renouvellement le ${new Date(state.periodResetAt).toLocaleDateString("fr-FR")}`
+    : "Renouvellement au début du mois prochain";
 
   return {
     used,

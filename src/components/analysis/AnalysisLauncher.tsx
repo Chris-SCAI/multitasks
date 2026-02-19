@@ -24,7 +24,7 @@ export function AnalysisLauncher({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const maxSelection = 20;
   const remaining = Math.max(0, quotaInfo.limit - quotaInfo.used);
-  const quotaExhausted = remaining === 0 && quotaInfo.plan !== "pro_sync";
+  const quotaExhausted = remaining === 0 && quotaInfo.plan !== "equipe";
 
   function toggleTask(id: string) {
     setSelectedIds((prev) => {

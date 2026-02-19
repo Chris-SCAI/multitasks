@@ -14,10 +14,10 @@ interface UpgradeNudgeProps {
 }
 
 const featureMessages: Record<NudgeFeature, { label: string; plan: string }> = {
-  sync: { label: "la sync cloud", plan: "Pro Sync" },
-  export: { label: "les exports", plan: "Pro Sync" },
-  month_calendar: { label: "la vue mensuelle", plan: "IA Quotidienne" },
-  analyses: { label: "les analyses IA illimitées", plan: "IA Quotidienne" },
+  sync: { label: "la sync cloud", plan: "Pro" },
+  export: { label: "les exports", plan: "Pro" },
+  month_calendar: { label: "la vue mensuelle", plan: "Étudiant" },
+  analyses: { label: "plus d'analyses IA", plan: "Pro" },
 };
 
 export function UpgradeNudge({

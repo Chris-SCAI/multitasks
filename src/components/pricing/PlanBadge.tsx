@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 
 interface PlanBadgeProps {
-  planId: "free" | "ia_quotidienne" | "pro_sync";
+  planId: "free" | "etudiant" | "pro" | "equipe" | string;
   size?: "sm" | "md";
 }
 
@@ -24,7 +24,21 @@ export function PlanBadge({ planId, size = "sm" }: PlanBadgeProps) {
     );
   }
 
-  if (planId === "ia_quotidienne") {
+  if (planId === "etudiant") {
+    return (
+      <span
+        className={cn(
+          "inline-flex items-center rounded-full font-semibold",
+          "bg-emerald-900/30 text-emerald-400",
+          sizeClasses
+        )}
+      >
+        Étudiant
+      </span>
+    );
+  }
+
+  if (planId === "equipe") {
     return (
       <span
         className={cn(
@@ -33,11 +47,12 @@ export function PlanBadge({ planId, size = "sm" }: PlanBadgeProps) {
           sizeClasses
         )}
       >
-        IA Quotidienne
+        Équipe
       </span>
     );
   }
 
+  // Pro (default for pro and any unknown)
   return (
     <span
       className={cn(

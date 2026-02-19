@@ -12,7 +12,7 @@ interface AnalysisMetadata {
 export interface QuotaInfo {
   used: number;
   limit: number;
-  plan: "free" | "ia_quotidienne" | "pro_sync";
+  plan: "free" | "etudiant" | "pro" | "equipe";
   resetInfo: string;
 }
 

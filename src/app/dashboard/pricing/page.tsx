@@ -21,7 +21,7 @@ const faqItems = [
   {
     question: "Comment fonctionne l'offre étudiante ?",
     answer:
-      "L'offre étudiante vous donne accès au plan Pro Sync à 49€/an (50% de réduction). Pour en bénéficier, envoyez un justificatif étudiant valide (carte étudiante ou certificat de scolarité). Le coupon est appliqué manuellement après vérification.",
+      "Le plan Étudiant à 2,99\u00a0€/mois (29\u00a0€/an) offre toutes les fonctionnalités premium : domaines illimités, 30 analyses IA/mois, calendrier complet. Vérification par email académique (.edu ou .ac.fr).",
   },
   {
     question: "Que se passe-t-il si j'annule ?",

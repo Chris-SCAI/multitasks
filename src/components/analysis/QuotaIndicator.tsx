@@ -5,12 +5,12 @@ import { cn } from "@/lib/utils";
 interface QuotaIndicatorProps {
   used: number;
   limit: number;
-  plan: "free" | "ia_quotidienne" | "pro_sync";
+  plan: "free" | "etudiant" | "pro" | "equipe" | string;
 }
 
 export function QuotaIndicator({ used, limit, plan }: QuotaIndicatorProps) {
   const remaining = Math.max(0, limit - used);
-  const isUnlimited = plan === "pro_sync" && limit >= 999;
+  const isUnlimited = plan === "equipe" && limit >= 9999;
   const isLow = remaining <= 2 && !isUnlimited;
   const isExhausted = remaining === 0 && !isUnlimited;
   const percentage = isUnlimited ? 100 : Math.round((remaining / limit) * 100);

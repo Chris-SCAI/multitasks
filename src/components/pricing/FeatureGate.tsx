@@ -11,13 +11,13 @@ type GatedFeature = "sync" | "export" | "month_calendar";
 interface FeatureGateProps {
   feature: GatedFeature;
   children: React.ReactNode;
-  requiredPlan?: "ia_quotidienne" | "pro_sync";
+  requiredPlan?: "etudiant" | "pro" | "equipe";
 }
 
-const featurePlanMap: Record<GatedFeature, "ia_quotidienne" | "pro_sync"> = {
-  sync: "pro_sync",
-  export: "pro_sync",
-  month_calendar: "ia_quotidienne",
+const featurePlanMap: Record<GatedFeature, "etudiant" | "pro" | "equipe"> = {
+  sync: "pro",
+  export: "pro",
+  month_calendar: "etudiant",
 };
 
 const featureLabel: Record<GatedFeature, string> = {
@@ -48,7 +48,7 @@ export function FeatureGate({ feature, children, requiredPlan }: FeatureGateProp
         </div>
         <p className="text-center text-base font-medium text-neutral-300">
           Disponible avec le plan{" "}
-          {required === "pro_sync" ? "Pro Sync" : "IA Quotidienne"}
+          {required === "equipe" ? "Équipe" : required === "etudiant" ? "Étudiant" : "Pro"}
         </p>
         <Button
           size="sm"

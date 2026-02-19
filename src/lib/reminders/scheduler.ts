@@ -8,7 +8,7 @@ export interface Reminder {
 }
 
 export interface ReminderConfig {
-  maxPerDay: number; // free=1, ia_quotidienne=5, pro=Infinity
+  maxPerDay: number; // free=3, etudiant/pro/equipe=Infinity
 }
 
 /**
