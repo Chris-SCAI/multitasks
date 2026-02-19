@@ -31,6 +31,7 @@ interface TaskListProps {
   onCreateTask: () => void;
   onUpdateTask: (id: string, input: UpdateTaskInput) => Promise<void>;
   onDeleteTask: (id: string) => Promise<void>;
+  onEditTask?: (task: Task) => void;
   onReorder: (taskIds: string[]) => Promise<void>;
 }
 
@@ -39,11 +40,13 @@ function SortableTaskCard({
   domain,
   onUpdate,
   onDelete,
+  onEdit,
 }: {
   task: Task;
   domain?: Domain;
   onUpdate: (id: string, input: UpdateTaskInput) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (task: Task) => void;
 }) {
   const {
     attributes,
@@ -69,6 +72,7 @@ function SortableTaskCard({
         task={task}
         onUpdate={onUpdate}
         onDelete={onDelete}
+        onEdit={onEdit}
         domain={domain}
       />
     </div>
@@ -256,10 +260,15 @@ export function TaskList({
   onCreateTask,
   onUpdateTask,
   onDeleteTask,
+  onEditTask,
   onReorder,
 }: TaskListProps) {
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -335,6 +344,7 @@ export function TaskList({
                         domain={domain}
                         onUpdate={onUpdateTask}
                         onDelete={onDeleteTask}
+                        onEdit={onEditTask}
                       />
                     </motion.div>
                   ))}

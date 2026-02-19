@@ -8,6 +8,7 @@ import { Plus, ListTodo, CalendarClock, CheckCircle2 } from "lucide-react";
 import { TaskForm } from "@/components/tasks/TaskForm";
 import { TaskList } from "@/components/tasks/TaskList";
 import { TaskFilters } from "@/components/tasks/TaskFilters";
+import type { Task } from "@/types";
 
 function StatCard({
   icon: Icon,
@@ -62,6 +63,7 @@ export default function TasksPage() {
   } = useTasks();
   const { domains } = useDomains();
   const [showForm, setShowForm] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const stats = useMemo(() => {
     const today = new Date();
@@ -130,6 +132,7 @@ export default function TasksPage() {
         onCreateTask={() => setShowForm(true)}
         onUpdateTask={updateTask}
         onDeleteTask={deleteTask}
+        onEditTask={(task) => setEditingTask(task)}
         onReorder={reorderTasks}
       />
 
@@ -140,6 +143,29 @@ export default function TasksPage() {
         onOpenChange={setShowForm}
         onSubmit={async (input) => { await createTask(input); }}
       />
+
+      {editingTask && (
+        <TaskForm
+          key={editingTask.id}
+          mode="edit"
+          task={editingTask}
+          domains={domains}
+          open={!!editingTask}
+          onOpenChange={(open) => { if (!open) setEditingTask(null); }}
+          onSubmit={async (input) => {
+            await updateTask(editingTask.id, {
+              title: input.title,
+              description: input.description,
+              priority: input.priority,
+              domainId: input.domainId ?? undefined,
+              dueDate: input.dueDate,
+              estimatedMinutes: input.estimatedMinutes,
+              recurrenceRule: input.recurrenceRule,
+            });
+            setEditingTask(null);
+          }}
+        />
+      )}
 
       {hasTasks && (
         <button

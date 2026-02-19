@@ -8,6 +8,10 @@ import {
 } from "@/lib/ai/response-parser";
 import { checkQuota, incrementQuota } from "@/lib/quotas/checker";
 
+const recurrenceRuleSchema = z.object({
+  frequency: z.enum(["daily", "weekly", "monthly", "yearly"]),
+});
+
 const taskInputSchema = z.object({
   id: z.string().uuid(),
   title: z.string().min(1).max(200),
@@ -19,6 +23,7 @@ const taskInputSchema = z.object({
   dueDate: z.string().nullable(),
   estimatedMinutes: z.number().nullable(),
   actualMinutes: z.number().nullable(),
+  recurrenceRule: recurrenceRuleSchema.nullable().default(null),
   order: z.number(),
   createdAt: z.string(),
   updatedAt: z.string(),

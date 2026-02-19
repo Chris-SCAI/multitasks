@@ -15,6 +15,7 @@ const taskSchema = z.object({
   dueDate: z.string().nullable(),
   estimatedMinutes: z.number().nullable(),
   actualMinutes: z.number().nullable(),
+  recurrenceRule: z.object({ frequency: z.enum(["daily", "weekly", "monthly", "yearly"]) }).nullable().default(null),
   order: z.number(),
   createdAt: z.string(),
   updatedAt: z.string(),

@@ -8,21 +8,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface DomainSelectorProps {
   domains: Domain[];
   value: string;
   onChange: (value: string) => void;
+  triggerClassName?: string;
 }
 
 export function DomainSelector({
   domains,
   value,
   onChange,
+  triggerClassName,
 }: DomainSelectorProps) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-full">
+      <SelectTrigger className={cn("w-full", triggerClassName)}>
         <SelectValue placeholder="Choisir un domaine" />
       </SelectTrigger>
       <SelectContent>

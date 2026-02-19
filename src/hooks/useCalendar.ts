@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useTaskStore } from "@/stores/task-store";
+import { getDatePart } from "@/types/task";
 
 type CalendarView = "week" | "month";
 
@@ -151,7 +152,7 @@ export function useCalendar() {
 
   const getTasksForDay = useCallback(
     (date: string) => {
-      return tasks.filter((t) => t.dueDate === date);
+      return tasks.filter((t) => t.dueDate && getDatePart(t.dueDate) === date);
     },
     [tasks]
   );
@@ -159,7 +160,7 @@ export function useCalendar() {
   const getDayLoad = useCallback(
     (date: string): number => {
       return tasks
-        .filter((t) => t.dueDate === date)
+        .filter((t) => t.dueDate && getDatePart(t.dueDate) === date)
         .reduce((sum, t) => sum + (t.estimatedMinutes ?? 0), 0);
     },
     [tasks]
@@ -167,7 +168,7 @@ export function useCalendar() {
 
   const getConflicts = useCallback(
     (date: string): ConflictInfo => {
-      const dayTasks = tasks.filter((t) => t.dueDate === date);
+      const dayTasks = tasks.filter((t) => t.dueDate && getDatePart(t.dueDate) === date);
       const taskCount = dayTasks.length;
       const totalMinutes = dayTasks.reduce(
         (sum, t) => sum + (t.estimatedMinutes ?? 0),

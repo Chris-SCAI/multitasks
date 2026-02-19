@@ -6,6 +6,7 @@ import type {
   UpdateTaskInput,
   TaskFilters,
 } from "@/types";
+import { getNextDueDate } from "@/types/task";
 
 interface TaskState {
   tasks: Task[];
@@ -39,6 +40,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       const tasks: Task[] = dbTasks.map((t) => ({
         ...t,
         id: t.id!,
+        recurrenceRule: t.recurrenceRule ?? null,
       }));
       set({ tasks, isLoading: false });
     } catch (e) {
@@ -64,6 +66,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       dueDate: input.dueDate ?? null,
       estimatedMinutes: input.estimatedMinutes ?? null,
       actualMinutes: null,
+      recurrenceRule: input.recurrenceRule ?? null,
       order: maxOrder + 1,
       createdAt: now,
       updatedAt: now,
@@ -83,6 +86,42 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       ...(input.status === "done" ? { completedAt: now } : {}),
     };
     await db.tasks.update(id, updates);
+
+    // Si la tâche est marquée "done" et a une récurrence, créer la prochaine occurrence
+    if (input.status === "done") {
+      const currentTask = get().tasks.find((t) => t.id === id);
+      if (currentTask?.recurrenceRule && currentTask.dueDate) {
+        const nextDue = getNextDueDate(currentTask.dueDate, currentTask.recurrenceRule.frequency);
+        const maxOrder = get().tasks.reduce((max, t) => Math.max(max, t.order), -1);
+        const nextId = crypto.randomUUID();
+        const nextTask = {
+          id: nextId,
+          title: currentTask.title,
+          description: currentTask.description,
+          status: "todo" as const,
+          priority: currentTask.priority,
+          domainId: currentTask.domainId,
+          tags: [...currentTask.tags],
+          dueDate: nextDue,
+          estimatedMinutes: currentTask.estimatedMinutes,
+          actualMinutes: null,
+          recurrenceRule: currentTask.recurrenceRule,
+          order: maxOrder + 1,
+          createdAt: now,
+          updatedAt: now,
+          completedAt: null,
+        };
+        await db.tasks.add(nextTask);
+        set((state) => ({
+          tasks: [
+            ...state.tasks.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+            { ...nextTask, id: nextId } as Task,
+          ],
+        }));
+        return;
+      }
+    }
+
     set((state) => ({
       tasks: state.tasks.map((t) =>
         t.id === id ? { ...t, ...updates } : t

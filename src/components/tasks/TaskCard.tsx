@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Trash2, Calendar, Clock, Check } from "lucide-react";
+import { Trash2, Calendar, Clock, Check, Repeat, Pencil } from "lucide-react";
+import { RECURRENCE_LABELS, getDatePart } from "@/types/task";
 import { cn } from "@/lib/utils";
 import { sanitizeText } from "@/lib/sanitize";
 import { Button } from "@/components/ui/button";
@@ -28,10 +29,11 @@ interface TaskCardProps {
   task: Task;
   onUpdate: (id: string, input: UpdateTaskInput) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (task: Task) => void;
   domain?: Domain;
 }
 
-export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
+export function TaskCard({ task, onUpdate, onDelete, onEdit, domain }: TaskCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const isDone = task.status === "done";
 
@@ -47,11 +49,18 @@ export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
   }
 
   function formatDate(dateStr: string) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("fr-FR", {
+    const datePart = getDatePart(dateStr);
+    const date = new Date(datePart);
+    const formatted = date.toLocaleDateString("fr-FR", {
       day: "numeric",
       month: "short",
     });
+    // Si l'heure est incluse (YYYY-MM-DDTHH:mm), l'afficher
+    if (dateStr.length > 10) {
+      const timePart = dateStr.substring(11, 16); // HH:mm
+      return `${formatted} à ${timePart}`;
+    }
+    return formatted;
   }
 
   return (
@@ -136,6 +145,13 @@ export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
               {task.estimatedMinutes}min
             </span>
           )}
+
+          {task.recurrenceRule && (
+            <span className="inline-flex items-center gap-1.5 text-base text-violet-400">
+              <Repeat className="size-4" />
+              {RECURRENCE_LABELS[task.recurrenceRule.frequency]}
+            </span>
+          )}
         </div>
       </div>
 
@@ -158,13 +174,24 @@ export function TaskCard({ task, onUpdate, onDelete, domain }: TaskCardProps) {
             </Button>
           </div>
         ) : (
-          <Button
-            size="icon-xs"
-            variant="ghost"
-            onClick={() => setShowDeleteConfirm(true)}
-          >
-            <Trash2 className="size-5" />
-          </Button>
+          <>
+            {onEdit && (
+              <Button
+                size="icon-xs"
+                variant="ghost"
+                onClick={() => onEdit(task)}
+              >
+                <Pencil className="size-5" />
+              </Button>
+            )}
+            <Button
+              size="icon-xs"
+              variant="ghost"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              <Trash2 className="size-5" />
+            </Button>
+          </>
         )}
       </div>
     </motion.div>

@@ -11,6 +11,7 @@ export interface DBTask {
   dueDate: string | null;
   estimatedMinutes: number | null;
   actualMinutes: number | null;
+  recurrenceRule: { frequency: "daily" | "weekly" | "monthly" | "yearly" } | null;
   order: number;
   createdAt: string;
   updatedAt: string;
@@ -39,6 +40,17 @@ class MultitasksDB extends Dexie {
     this.version(1).stores({
       tasks: "id, status, priority, domainId, dueDate, order, createdAt",
       domains: "id, name, order, isDefault",
+    });
+
+    this.version(2).stores({
+      tasks: "id, status, priority, domainId, dueDate, order, createdAt",
+      domains: "id, name, order, isDefault",
+    }).upgrade((tx) => {
+      return tx.table("tasks").toCollection().modify((task) => {
+        if (task.recurrenceRule === undefined) {
+          task.recurrenceRule = null;
+        }
+      });
     });
   }
 }

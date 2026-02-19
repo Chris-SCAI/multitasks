@@ -13,6 +13,7 @@ export interface DbTask {
   deadline: string | null;
   estimated_duration: number | null;
   priority: "haute" | "moyenne" | "basse" | "non_definie";
+  recurrence_rule: { frequency: "daily" | "weekly" | "monthly" | "yearly" } | null;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -58,6 +59,7 @@ interface ClientTask {
   domainId: string | null;
   dueDate: string | null;
   estimatedMinutes: number | null;
+  recurrenceRule: { frequency: "daily" | "weekly" | "monthly" | "yearly" } | null;
   order: number;
   createdAt: string;
   updatedAt: string;
@@ -75,6 +77,7 @@ export function mapTaskToDb(task: ClientTask, userId: string): DbTask {
     deadline: task.dueDate,
     estimated_duration: task.estimatedMinutes,
     priority: priorityClientToDb[task.priority],
+    recurrence_rule: task.recurrenceRule,
     sort_order: task.order,
     created_at: task.createdAt,
     updated_at: task.updatedAt,
@@ -94,6 +97,7 @@ export function mapTaskFromDb(row: DbTask): Task {
     dueDate: row.deadline,
     estimatedMinutes: row.estimated_duration,
     actualMinutes: null,
+    recurrenceRule: row.recurrence_rule ?? null,
     order: row.sort_order,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

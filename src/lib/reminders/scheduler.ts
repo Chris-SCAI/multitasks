@@ -19,7 +19,8 @@ export interface ReminderConfig {
  * 2. dueDate seul => deadline - 24h
  * 3. Sinon => null (pas de rappel automatique)
  *
- * dueDate est au format "YYYY-MM-DD", la deadline est consideree a 23:59 de ce jour.
+ * dueDate est au format "YYYY-MM-DD" ou "YYYY-MM-DDTHH:mm".
+ * Si l'heure est précisée, la deadline est à cette heure. Sinon, 23:59.
  */
 export function calculateReminderTime(
   dueDate: string | null,
@@ -27,8 +28,11 @@ export function calculateReminderTime(
 ): string | null {
   if (!dueDate) return null;
 
-  // Deadline = 23:59 du jour de l'echeance
-  const deadline = new Date(`${dueDate}T23:59:00`);
+  // Si dueDate contient l'heure (YYYY-MM-DDTHH:mm), l'utiliser directement
+  // Sinon, utiliser 23:59 par défaut
+  const hasTime = dueDate.length > 10;
+  const deadlineStr = hasTime ? `${dueDate}:00` : `${dueDate}T23:59:00`;
+  const deadline = new Date(deadlineStr);
 
   if (isNaN(deadline.getTime())) return null;
 
