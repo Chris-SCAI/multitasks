@@ -8,7 +8,7 @@ const QUOTA_STORAGE_KEY = "multitasks_quota";
 // ---------------------------------------------------------------------------
 
 interface QuotaState {
-  plan: "free" | "ia_quotidienne" | "pro_sync";
+  plan: "free" | "etudiant" | "pro" | "equipe";
   analysesUsedTotal: number;
   analysesUsedPeriod: number;
   periodResetAt: string | null;
@@ -37,70 +37,100 @@ function getStoredState(): QuotaState | null {
 describe("checkQuota", () => {
   beforeEach(() => localStorage.clear());
 
-  // --- Plan free (lifetime = 2) ---
+  // --- Plan free (monthly = 5) ---
 
   it("plan free: allowed si 0 analyses utilisees", () => {
-    setQuotaState({ plan: "free", analysesUsedTotal: 0 });
+    setQuotaState({ plan: "free", analysesUsedPeriod: 0 });
+    const result = checkQuota();
+    expect(result.allowed).toBe(true);
+    expect(result.remaining).toBe(5);
+  });
+
+  it("plan free: allowed si 3 analyses utilisees", () => {
+    setQuotaState({ plan: "free", analysesUsedPeriod: 3 });
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    setQuotaState({
+      plan: "free",
+      analysesUsedPeriod: 3,
+      periodResetAt: endOfMonth.toISOString(),
+    });
     const result = checkQuota();
     expect(result.allowed).toBe(true);
     expect(result.remaining).toBe(2);
   });
 
-  it("plan free: allowed si 1 analyse utilisee", () => {
-    setQuotaState({ plan: "free", analysesUsedTotal: 1 });
-    const result = checkQuota();
-    expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(1);
-  });
-
-  it("plan free: not allowed si 2 analyses utilisees", () => {
-    setQuotaState({ plan: "free", analysesUsedTotal: 2 });
+  it("plan free: not allowed si 5 analyses utilisees", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    setQuotaState({
+      plan: "free",
+      analysesUsedPeriod: 5,
+      periodResetAt: endOfMonth.toISOString(),
+    });
     const result = checkQuota();
     expect(result.allowed).toBe(false);
     expect(result.remaining).toBe(0);
   });
 
-  it("plan free: not allowed si > 2 analyses utilisees", () => {
-    setQuotaState({ plan: "free", analysesUsedTotal: 5 });
+  it("plan free: not allowed si > 5 analyses utilisees", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    setQuotaState({
+      plan: "free",
+      analysesUsedPeriod: 8,
+      periodResetAt: endOfMonth.toISOString(),
+    });
     const result = checkQuota();
     expect(result.allowed).toBe(false);
     expect(result.remaining).toBe(0);
   });
 
   it("plan free: message indique le quota restant", () => {
-    setQuotaState({ plan: "free", analysesUsedTotal: 1 });
-    const result = checkQuota();
-    expect(result.message).toContain("1 analyse(s) restante(s)");
-  });
-
-  it("plan free: message indique epuise quand 0 restant", () => {
-    setQuotaState({ plan: "free", analysesUsedTotal: 2 });
-    const result = checkQuota();
-    expect(result.message).toContain("épuisé");
-  });
-
-  // --- Plan ia_quotidienne (monthly = 8) ---
-
-  it("plan ia_quotidienne: 8 analyses par mois, allowed si < 8", () => {
-    // Set periodResetAt to current month so no reset
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "ia_quotidienne",
+      plan: "free",
+      analysesUsedPeriod: 3,
+      periodResetAt: endOfMonth.toISOString(),
+    });
+    const result = checkQuota();
+    expect(result.message).toContain("2 analyse(s) restante(s)");
+  });
+
+  it("plan free: message indique epuise quand 0 restant", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    setQuotaState({
+      plan: "free",
       analysesUsedPeriod: 5,
       periodResetAt: endOfMonth.toISOString(),
     });
     const result = checkQuota();
-    expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(3);
+    expect(result.message).toContain("épuisé");
   });
 
-  it("plan ia_quotidienne: not allowed si >= 8", () => {
+  // --- Plan etudiant (monthly = 30) ---
+
+  it("plan etudiant: 30 analyses par mois, allowed si < 30", () => {
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "ia_quotidienne",
-      analysesUsedPeriod: 8,
+      plan: "etudiant",
+      analysesUsedPeriod: 15,
+      periodResetAt: endOfMonth.toISOString(),
+    });
+    const result = checkQuota();
+    expect(result.allowed).toBe(true);
+    expect(result.remaining).toBe(15);
+  });
+
+  it("plan etudiant: not allowed si >= 30", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    setQuotaState({
+      plan: "etudiant",
+      analysesUsedPeriod: 30,
       periodResetAt: endOfMonth.toISOString(),
     });
     const result = checkQuota();
@@ -108,84 +138,96 @@ describe("checkQuota", () => {
     expect(result.remaining).toBe(0);
   });
 
-  it("plan ia_quotidienne: reset mensuel quand le mois change", () => {
-    // Set periodResetAt to a past month so it resets
-    const pastMonth = new Date(2024, 0, 1); // January 2024
+  it("plan etudiant: reset mensuel quand le mois change", () => {
+    const pastMonth = new Date(2024, 0, 1);
     setQuotaState({
-      plan: "ia_quotidienne",
-      analysesUsedPeriod: 8,
+      plan: "etudiant",
+      analysesUsedPeriod: 30,
       periodResetAt: pastMonth.toISOString(),
     });
     const result = checkQuota();
-    // Should have been reset, so allowed again
     expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(8);
+    expect(result.remaining).toBe(30);
   });
 
-  it("plan ia_quotidienne: message contient 'ce mois'", () => {
+  it("plan etudiant: message contient 'ce mois'", () => {
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "ia_quotidienne",
-      analysesUsedPeriod: 3,
+      plan: "etudiant",
+      analysesUsedPeriod: 10,
       periodResetAt: endOfMonth.toISOString(),
     });
     const result = checkQuota();
     expect(result.message).toContain("ce mois");
   });
 
-  // --- Plan pro_sync (daily = 3) ---
+  // --- Plan pro (monthly = 100) ---
 
-  it("plan pro_sync: 3 analyses par jour, allowed si < 3", () => {
-    // periodResetAt = today so no reset
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+  it("plan pro: 100 analyses par mois, allowed si < 100", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "pro_sync",
-      analysesUsedPeriod: 1,
-      periodResetAt: today.toISOString(),
+      plan: "pro",
+      analysesUsedPeriod: 50,
+      periodResetAt: endOfMonth.toISOString(),
     });
     const result = checkQuota();
     expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(2);
+    expect(result.remaining).toBe(50);
   });
 
-  it("plan pro_sync: not allowed si >= 3", () => {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+  it("plan pro: not allowed si >= 100", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "pro_sync",
-      analysesUsedPeriod: 3,
-      periodResetAt: today.toISOString(),
+      plan: "pro",
+      analysesUsedPeriod: 100,
+      periodResetAt: endOfMonth.toISOString(),
     });
     const result = checkQuota();
     expect(result.allowed).toBe(false);
     expect(result.remaining).toBe(0);
   });
 
-  it("plan pro_sync: reset quotidien quand le jour change", () => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
+  it("plan pro: reset mensuel quand le mois change", () => {
+    const pastMonth = new Date(2024, 0, 1);
     setQuotaState({
-      plan: "pro_sync",
-      analysesUsedPeriod: 3,
-      periodResetAt: yesterday.toISOString(),
+      plan: "pro",
+      analysesUsedPeriod: 100,
+      periodResetAt: pastMonth.toISOString(),
     });
     const result = checkQuota();
     expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(3);
+    expect(result.remaining).toBe(100);
   });
 
-  it("plan pro_sync: message contient 'aujourd'hui'", () => {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+  it("plan pro: message contient 'ce mois'", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "pro_sync",
-      analysesUsedPeriod: 1,
-      periodResetAt: today.toISOString(),
+      plan: "pro",
+      analysesUsedPeriod: 20,
+      periodResetAt: endOfMonth.toISOString(),
     });
     const result = checkQuota();
-    expect(result.message).toContain("aujourd'hui");
+    expect(result.message).toContain("ce mois");
+  });
+
+  // --- Plan equipe (unlimited = 9999) ---
+
+  it("plan equipe: analyses illimitees, toujours allowed", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    setQuotaState({
+      plan: "equipe",
+      analysesUsedPeriod: 500,
+      periodResetAt: endOfMonth.toISOString(),
+    });
+    const result = checkQuota();
+    expect(result.allowed).toBe(true);
+    expect(result.remaining).toBe(9999);
+    expect(result.message).toContain("illimitées");
   });
 
   // --- Default state (no localStorage) ---
@@ -193,7 +235,7 @@ describe("checkQuota", () => {
   it("sans localStorage, retourne le plan free par defaut", () => {
     const result = checkQuota();
     expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(2);
+    expect(result.remaining).toBe(5);
   });
 });
 
@@ -216,7 +258,7 @@ describe("incrementQuota", () => {
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "ia_quotidienne",
+      plan: "etudiant",
       analysesUsedTotal: 5,
       analysesUsedPeriod: 3,
       periodResetAt: endOfMonth.toISOString(),
@@ -230,7 +272,6 @@ describe("incrementQuota", () => {
   it("le compteur persiste dans localStorage", () => {
     setQuotaState({ plan: "free", analysesUsedTotal: 0 });
     incrementQuota();
-    // Re-read from localStorage directly
     const raw = localStorage.getItem(QUOTA_STORAGE_KEY);
     expect(raw).not.toBeNull();
     const stored = JSON.parse(raw!);
@@ -254,38 +295,49 @@ describe("getQuotaInfo", () => {
   beforeEach(() => localStorage.clear());
 
   it("plan free: retourne les bonnes valeurs", () => {
-    setQuotaState({ plan: "free", analysesUsedTotal: 1 });
-    const info = getQuotaInfo();
-    expect(info.plan).toBe("free");
-    expect(info.used).toBe(1);
-    expect(info.limit).toBe(2);
-  });
-
-  it("plan free: message de reset 'a vie'", () => {
-    setQuotaState({ plan: "free" });
-    const info = getQuotaInfo();
-    expect(info.resetInfo).toContain("vie");
-  });
-
-  it("plan ia_quotidienne: retourne used = analysesUsedPeriod", () => {
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "ia_quotidienne",
-      analysesUsedPeriod: 4,
+      plan: "free",
+      analysesUsedPeriod: 2,
       periodResetAt: endOfMonth.toISOString(),
     });
     const info = getQuotaInfo();
-    expect(info.plan).toBe("ia_quotidienne");
-    expect(info.used).toBe(4);
-    expect(info.limit).toBe(8);
+    expect(info.plan).toBe("free");
+    expect(info.used).toBe(2);
+    expect(info.limit).toBe(5);
   });
 
-  it("plan ia_quotidienne: message de reset contient 'Renouvellement'", () => {
+  it("plan free: message de reset contient 'Renouvellement'", () => {
     const now = new Date();
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "ia_quotidienne",
+      plan: "free",
+      periodResetAt: endOfMonth.toISOString(),
+    });
+    const info = getQuotaInfo();
+    expect(info.resetInfo).toContain("Renouvellement");
+  });
+
+  it("plan etudiant: retourne used = analysesUsedPeriod", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    setQuotaState({
+      plan: "etudiant",
+      analysesUsedPeriod: 10,
+      periodResetAt: endOfMonth.toISOString(),
+    });
+    const info = getQuotaInfo();
+    expect(info.plan).toBe("etudiant");
+    expect(info.used).toBe(10);
+    expect(info.limit).toBe(30);
+  });
+
+  it("plan etudiant: message de reset contient 'Renouvellement'", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    setQuotaState({
+      plan: "etudiant",
       analysesUsedPeriod: 0,
       periodResetAt: endOfMonth.toISOString(),
     });
@@ -293,36 +345,36 @@ describe("getQuotaInfo", () => {
     expect(info.resetInfo).toContain("Renouvellement");
   });
 
-  it("plan pro_sync: retourne limit = 3", () => {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+  it("plan pro: retourne limit = 100", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "pro_sync",
-      analysesUsedPeriod: 2,
-      periodResetAt: today.toISOString(),
+      plan: "pro",
+      analysesUsedPeriod: 40,
+      periodResetAt: endOfMonth.toISOString(),
     });
     const info = getQuotaInfo();
-    expect(info.plan).toBe("pro_sync");
-    expect(info.used).toBe(2);
-    expect(info.limit).toBe(3);
+    expect(info.plan).toBe("pro");
+    expect(info.used).toBe(40);
+    expect(info.limit).toBe(100);
   });
 
-  it("plan pro_sync: message de reset quotidien", () => {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+  it("plan pro: message de reset contient 'Renouvellement'", () => {
+    const now = new Date();
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     setQuotaState({
-      plan: "pro_sync",
+      plan: "pro",
       analysesUsedPeriod: 0,
-      periodResetAt: today.toISOString(),
+      periodResetAt: endOfMonth.toISOString(),
     });
     const info = getQuotaInfo();
-    expect(info.resetInfo).toContain("quotidien");
+    expect(info.resetInfo).toContain("Renouvellement");
   });
 
   it("sans localStorage: retourne les defauts free", () => {
     const info = getQuotaInfo();
     expect(info.plan).toBe("free");
     expect(info.used).toBe(0);
-    expect(info.limit).toBe(2);
+    expect(info.limit).toBe(5);
   });
 });

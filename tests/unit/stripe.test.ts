@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { PLANS, getPlan, isFeatureAvailable, ANALYSIS_PACKS, STUDENT_DISCOUNT } from "@/lib/stripe/plans";
+import { PLANS, getPlan, isFeatureAvailable, ANALYSIS_PACKS } from "@/lib/stripe/plans";
 import { useSubscriptionStore } from "@/stores/subscription-store";
 import { getStripeClient, isStripeConfigured } from "@/lib/stripe/client";
 
@@ -16,11 +16,12 @@ beforeEach(() => {
 });
 
 describe("Plans configuration (plans.ts)", () => {
-  it("exporte les 3 plans (free, ia_quotidienne, pro_sync)", () => {
+  it("exporte les 4 plans (free, etudiant, pro, equipe)", () => {
     expect(PLANS.free).toBeDefined();
-    expect(PLANS.ia_quotidienne).toBeDefined();
-    expect(PLANS.pro_sync).toBeDefined();
-    expect(Object.keys(PLANS)).toHaveLength(3);
+    expect(PLANS.etudiant).toBeDefined();
+    expect(PLANS.pro).toBeDefined();
+    expect(PLANS.equipe).toBeDefined();
+    expect(Object.keys(PLANS)).toHaveLength(4);
   });
 
   it("plan free a les bons prix (0€)", () => {
@@ -31,53 +32,73 @@ describe("Plans configuration (plans.ts)", () => {
     expect(plan.stripePriceIdAnnual).toBeNull();
   });
 
-  it("plan free a les bonnes limites (3 domaines, 60 tâches, 2 analyses lifetime)", () => {
+  it("plan free a les bonnes limites (5 domaines, tâches illimitées, 5 analyses/mois)", () => {
     const plan = PLANS.free;
-    expect(plan.limits.domains).toBe(3);
-    expect(plan.limits.tasks).toBe(60);
-    expect(plan.limits.analysesPerPeriod).toBe(2);
-    expect(plan.limits.analysisPeriod).toBe("lifetime");
-    expect(plan.limits.remindersPerDay).toBe(1);
+    expect(plan.limits.domains).toBe(5);
+    expect(plan.limits.tasks).toBeNull();
+    expect(plan.limits.analysesPerPeriod).toBe(5);
+    expect(plan.limits.analysisPeriod).toBe("monthly");
+    expect(plan.limits.remindersPerDay).toBe(3);
     expect(plan.limits.calendarViews).toEqual(["week"]);
     expect(plan.limits.sync).toBe(false);
     expect(plan.limits.export).toBe(false);
   });
 
-  it("plan ia_quotidienne a les bons prix (5.90€/mois, 49€/an)", () => {
-    const plan = PLANS.ia_quotidienne;
-    expect(plan.priceMonthly).toBe(5.9);
-    expect(plan.priceAnnual).toBe(49);
+  it("plan etudiant a les bons prix (2.99€/mois, 29€/an)", () => {
+    const plan = PLANS.etudiant;
+    expect(plan.priceMonthly).toBe(2.99);
+    expect(plan.priceAnnual).toBe(29);
   });
 
-  it("plan ia_quotidienne a les bonnes limites (illimité, 8 analyses/mois, 5 rappels/jour)", () => {
-    const plan = PLANS.ia_quotidienne;
+  it("plan etudiant a les bonnes limites (illimité, 30 analyses/mois)", () => {
+    const plan = PLANS.etudiant;
     expect(plan.limits.domains).toBeNull();
     expect(plan.limits.tasks).toBeNull();
-    expect(plan.limits.analysesPerPeriod).toBe(8);
+    expect(plan.limits.analysesPerPeriod).toBe(30);
     expect(plan.limits.analysisPeriod).toBe("monthly");
-    expect(plan.limits.remindersPerDay).toBe(5);
+    expect(plan.limits.remindersPerDay).toBeNull();
     expect(plan.limits.calendarViews).toEqual(["week", "month"]);
     expect(plan.limits.sync).toBe(false);
     expect(plan.limits.export).toBe(false);
+    expect(plan.requiresVerification).toBe(true);
   });
 
-  it("plan pro_sync a les bons prix (12.90€/mois, 99€/an)", () => {
-    const plan = PLANS.pro_sync;
-    expect(plan.priceMonthly).toBe(12.9);
-    expect(plan.priceAnnual).toBe(99);
+  it("plan pro a les bons prix (7.99€/mois, 59€/an)", () => {
+    const plan = PLANS.pro;
+    expect(plan.priceMonthly).toBe(7.99);
+    expect(plan.priceAnnual).toBe(59);
   });
 
-  it("plan pro_sync a les bonnes limites (tout illimité, 3 analyses/jour, sync, export)", () => {
-    const plan = PLANS.pro_sync;
+  it("plan pro a les bonnes limites (tout illimité, 100 analyses/mois, sync, export)", () => {
+    const plan = PLANS.pro;
     expect(plan.limits.domains).toBeNull();
     expect(plan.limits.tasks).toBeNull();
-    expect(plan.limits.analysesPerPeriod).toBe(3);
-    expect(plan.limits.analysisPeriod).toBe("daily");
+    expect(plan.limits.analysesPerPeriod).toBe(100);
+    expect(plan.limits.analysisPeriod).toBe("monthly");
     expect(plan.limits.remindersPerDay).toBeNull();
     expect(plan.limits.calendarViews).toEqual(["week", "month"]);
     expect(plan.limits.sync).toBe(true);
     expect(plan.limits.export).toBe(true);
     expect(plan.recommended).toBe(true);
+  });
+
+  it("plan equipe a les bons prix (12.99€/mois, 99€/an)", () => {
+    const plan = PLANS.equipe;
+    expect(plan.priceMonthly).toBe(12.99);
+    expect(plan.priceAnnual).toBe(99);
+    expect(plan.perUser).toBe(true);
+  });
+
+  it("plan equipe a les bonnes limites (tout illimité, analyses illimitées, sync, export)", () => {
+    const plan = PLANS.equipe;
+    expect(plan.limits.domains).toBeNull();
+    expect(plan.limits.tasks).toBeNull();
+    expect(plan.limits.analysesPerPeriod).toBe(9999);
+    expect(plan.limits.analysisPeriod).toBe("monthly");
+    expect(plan.limits.remindersPerDay).toBeNull();
+    expect(plan.limits.calendarViews).toEqual(["week", "month"]);
+    expect(plan.limits.sync).toBe(true);
+    expect(plan.limits.export).toBe(true);
   });
 
   it("ANALYSIS_PACKS a les bons prix (10=4.90€, 30=9.90€)", () => {
@@ -90,16 +111,11 @@ describe("Plans configuration (plans.ts)", () => {
     expect(pack30!.price).toBe(9.9);
   });
 
-  it("STUDENT_DISCOUNT est 50% sur pro_sync avec prix annuel 49€", () => {
-    expect(STUDENT_DISCOUNT.percentOff).toBe(50);
-    expect(STUDENT_DISCOUNT.eligiblePlans).toContain("pro_sync");
-    expect(STUDENT_DISCOUNT.annualPriceWithDiscount).toBe(49);
-  });
-
   it("getPlan retourne le bon plan pour un id valide", () => {
     expect(getPlan("free").id).toBe("free");
-    expect(getPlan("ia_quotidienne").id).toBe("ia_quotidienne");
-    expect(getPlan("pro_sync").id).toBe("pro_sync");
+    expect(getPlan("etudiant").id).toBe("etudiant");
+    expect(getPlan("pro").id).toBe("pro");
+    expect(getPlan("equipe").id).toBe("equipe");
   });
 
   it("getPlan retourne le plan free pour un id invalide", () => {
@@ -107,17 +123,28 @@ describe("Plans configuration (plans.ts)", () => {
     expect(plan.id).toBe("free");
   });
 
-  it("isFeatureAvailable retourne true pour les features du plan courant", () => {
-    expect(isFeatureAvailable("pro_sync", "sync")).toBe(true);
-    expect(isFeatureAvailable("pro_sync", "export")).toBe(true);
-    expect(isFeatureAvailable("pro_sync", "month_calendar")).toBe(true);
+  it("isFeatureAvailable retourne true pour les features du plan pro", () => {
+    expect(isFeatureAvailable("pro", "sync")).toBe(true);
+    expect(isFeatureAvailable("pro", "export")).toBe(true);
+    expect(isFeatureAvailable("pro", "month_calendar")).toBe(true);
+  });
+
+  it("isFeatureAvailable retourne true pour les features du plan equipe", () => {
+    expect(isFeatureAvailable("equipe", "sync")).toBe(true);
+    expect(isFeatureAvailable("equipe", "export")).toBe(true);
+    expect(isFeatureAvailable("equipe", "month_calendar")).toBe(true);
   });
 
   it("isFeatureAvailable retourne false pour les features au-dessus du plan", () => {
     expect(isFeatureAvailable("free", "sync")).toBe(false);
     expect(isFeatureAvailable("free", "export")).toBe(false);
     expect(isFeatureAvailable("free", "month_calendar")).toBe(false);
-    expect(isFeatureAvailable("ia_quotidienne", "sync")).toBe(false);
+    expect(isFeatureAvailable("etudiant", "sync")).toBe(false);
+    expect(isFeatureAvailable("etudiant", "export")).toBe(false);
+  });
+
+  it("isFeatureAvailable retourne true pour month_calendar sur etudiant", () => {
+    expect(isFeatureAvailable("etudiant", "month_calendar")).toBe(true);
   });
 });
 
@@ -137,9 +164,9 @@ describe("Store subscription (subscription-store.ts)", () => {
   });
 
   it("setPlan met à jour le plan courant", () => {
-    useSubscriptionStore.getState().setPlan("ia_quotidienne");
-    expect(useSubscriptionStore.getState().currentPlan).toBe("ia_quotidienne");
-    expect(useSubscriptionStore.getState().getPlanConfig().id).toBe("ia_quotidienne");
+    useSubscriptionStore.getState().setPlan("etudiant");
+    expect(useSubscriptionStore.getState().currentPlan).toBe("etudiant");
+    expect(useSubscriptionStore.getState().getPlanConfig().id).toBe("etudiant");
   });
 
   it("setStripeIds met à jour les IDs Stripe", () => {
@@ -160,56 +187,48 @@ describe("Store subscription (subscription-store.ts)", () => {
   });
 
   it("persist fonctionne (lecture depuis localStorage après set)", () => {
-    // Set un plan
-    useSubscriptionStore.getState().setPlan("pro_sync");
+    useSubscriptionStore.getState().setPlan("pro");
     useSubscriptionStore.getState().setBillingPeriod("annual");
     useSubscriptionStore.getState().setStripeIds("cus_abc", "sub_xyz");
 
-    // Vérifier que les données sont dans localStorage
     const stored = localStorage.getItem("multitasks-subscription");
     expect(stored).toBeDefined();
 
     const parsed = JSON.parse(stored!);
-    expect(parsed.state.currentPlan).toBe("pro_sync");
+    expect(parsed.state.currentPlan).toBe("pro");
     expect(parsed.state.billingPeriod).toBe("annual");
     expect(parsed.state.stripeCustomerId).toBe("cus_abc");
     expect(parsed.state.stripeSubscriptionId).toBe("sub_xyz");
   });
 
   it("persist restaure l'état après clear et réinitialisation", () => {
-    // Set un état
-    useSubscriptionStore.getState().setPlan("ia_quotidienne");
+    useSubscriptionStore.getState().setPlan("etudiant");
     useSubscriptionStore.getState().setBillingPeriod("annual");
 
-    // Simuler un reload en réinitialisant le store manuellement
     const stored = localStorage.getItem("multitasks-subscription");
     expect(stored).toBeDefined();
 
     const parsed = JSON.parse(stored!);
-
-    // Vérifier que les données persistent
-    expect(parsed.state.currentPlan).toBe("ia_quotidienne");
+    expect(parsed.state.currentPlan).toBe("etudiant");
     expect(parsed.state.billingPeriod).toBe("annual");
   });
 
-  it("passage de free à ia_quotidienne donne accès au calendrier mois", () => {
-    // Plan free initial
+  it("passage de free à etudiant donne accès au calendrier mois", () => {
     let plan = useSubscriptionStore.getState().getPlanConfig();
     expect(plan.limits.calendarViews).toEqual(["week"]);
 
-    // Upgrade vers ia_quotidienne
-    useSubscriptionStore.getState().setPlan("ia_quotidienne");
+    useSubscriptionStore.getState().setPlan("etudiant");
     plan = useSubscriptionStore.getState().getPlanConfig();
     expect(plan.limits.calendarViews).toContain("month");
   });
 
-  it("passage de ia_quotidienne à pro_sync donne accès au sync et export", () => {
-    useSubscriptionStore.getState().setPlan("ia_quotidienne");
+  it("passage de etudiant à pro donne accès au sync et export", () => {
+    useSubscriptionStore.getState().setPlan("etudiant");
     let plan = useSubscriptionStore.getState().getPlanConfig();
     expect(plan.limits.sync).toBe(false);
     expect(plan.limits.export).toBe(false);
 
-    useSubscriptionStore.getState().setPlan("pro_sync");
+    useSubscriptionStore.getState().setPlan("pro");
     plan = useSubscriptionStore.getState().getPlanConfig();
     expect(plan.limits.sync).toBe(true);
     expect(plan.limits.export).toBe(true);
@@ -218,8 +237,6 @@ describe("Store subscription (subscription-store.ts)", () => {
 
 describe("Sécurité Stripe", () => {
   it("STRIPE_SECRET_KEY n'est pas dans un fichier NEXT_PUBLIC", () => {
-    // Ce test vérifie conceptuellement que la clé secrète n'est jamais exposée côté client
-    // Dans le code source, on vérifie que les variables NEXT_PUBLIC ne contiennent jamais SECRET
     const publicVars = ["NEXT_PUBLIC_STRIPE_KEY"];
     publicVars.forEach((varName) => {
       expect(varName).not.toContain("SECRET");
@@ -239,20 +256,25 @@ describe("Sécurité Stripe", () => {
   });
 
   it("Plans payants ont des stripePriceId (ou null si env non configuré)", () => {
-    // ia_quotidienne et pro_sync ont des stripePriceId configurés via env
-    // En test, ils peuvent être null si l'env n'est pas set, ce qui est attendu
-    const iaPlan = PLANS.ia_quotidienne;
-    const proPlan = PLANS.pro_sync;
+    const etudiantPlan = PLANS.etudiant;
+    const proPlan = PLANS.pro;
+    const equipePlan = PLANS.equipe;
 
-    // On vérifie juste que les champs existent (peuvent être null en test)
-    expect(iaPlan).toHaveProperty("stripePriceIdMonthly");
-    expect(iaPlan).toHaveProperty("stripePriceIdAnnual");
+    expect(etudiantPlan).toHaveProperty("stripePriceIdMonthly");
+    expect(etudiantPlan).toHaveProperty("stripePriceIdAnnual");
     expect(proPlan).toHaveProperty("stripePriceIdMonthly");
     expect(proPlan).toHaveProperty("stripePriceIdAnnual");
+    expect(equipePlan).toHaveProperty("stripePriceIdMonthly");
+    expect(equipePlan).toHaveProperty("stripePriceIdAnnual");
   });
 
   it("Types de plans sont bien typés (type safety)", () => {
-    const planIds: Array<"free" | "ia_quotidienne" | "pro_sync"> = ["free", "ia_quotidienne", "pro_sync"];
+    const planIds: Array<"free" | "etudiant" | "pro" | "equipe"> = [
+      "free",
+      "etudiant",
+      "pro",
+      "equipe",
+    ];
     planIds.forEach((id) => {
       const plan = PLANS[id];
       expect(plan.id).toBe(id);
@@ -262,19 +284,16 @@ describe("Sécurité Stripe", () => {
 
 describe("Client Stripe (client.ts)", () => {
   beforeEach(() => {
-    // Reset l'instance singleton entre les tests
     vi.resetModules();
   });
 
   it("getStripeClient retourne null si STRIPE_SECRET_KEY n'est pas définie", () => {
-    // En environnement de test, la clé n'est probablement pas définie
     const originalEnv = process.env.STRIPE_SECRET_KEY;
     delete process.env.STRIPE_SECRET_KEY;
 
     const client = getStripeClient();
     expect(client).toBeNull();
 
-    // Restaurer
     if (originalEnv) process.env.STRIPE_SECRET_KEY = originalEnv;
   });
 
@@ -284,7 +303,6 @@ describe("Client Stripe (client.ts)", () => {
 
     expect(isStripeConfigured()).toBe(false);
 
-    // Restaurer
     if (originalEnv) process.env.STRIPE_SECRET_KEY = originalEnv;
   });
 
@@ -294,7 +312,6 @@ describe("Client Stripe (client.ts)", () => {
 
     expect(isStripeConfigured()).toBe(true);
 
-    // Restaurer
     if (originalEnv) {
       process.env.STRIPE_SECRET_KEY = originalEnv;
     } else {
@@ -304,86 +321,91 @@ describe("Client Stripe (client.ts)", () => {
 });
 
 describe("Logique métier des plans", () => {
-  it("Plan annuel ia_quotidienne a une réduction vs mensuel (~17%)", () => {
-    const plan = PLANS.ia_quotidienne;
+  it("Plan annuel etudiant a une réduction vs mensuel", () => {
+    const plan = PLANS.etudiant;
     const yearlyTotal = plan.priceAnnual;
     const monthlyTotal = plan.priceMonthly * 12;
     const discount = ((monthlyTotal - yearlyTotal) / monthlyTotal) * 100;
 
-    // 5.90 * 12 = 70.80€, annuel = 49€ → ~30% de réduction
+    // 2.99 * 12 = 35.88€, annuel = 29€ → ~19% de réduction
     expect(discount).toBeGreaterThan(15);
     expect(yearlyTotal).toBeLessThan(monthlyTotal);
   });
 
-  it("Plan annuel pro_sync a une réduction vs mensuel (~36%)", () => {
-    const plan = PLANS.pro_sync;
+  it("Plan annuel pro a une réduction vs mensuel", () => {
+    const plan = PLANS.pro;
     const yearlyTotal = plan.priceAnnual;
     const monthlyTotal = plan.priceMonthly * 12;
     const discount = ((monthlyTotal - yearlyTotal) / monthlyTotal) * 100;
 
-    // 12.90 * 12 = 154.80€, annuel = 99€ → ~36% de réduction
+    // 7.99 * 12 = 95.88€, annuel = 59€ → ~38% de réduction
     expect(discount).toBeGreaterThan(30);
     expect(yearlyTotal).toBeLessThan(monthlyTotal);
   });
 
-  it("Réduction étudiante pro_sync annuel = prix ia_quotidienne annuel", () => {
-    const proPlan = PLANS.pro_sync;
-    const iaPlan = PLANS.ia_quotidienne;
+  it("Plan annuel equipe a une réduction vs mensuel", () => {
+    const plan = PLANS.equipe;
+    const yearlyTotal = plan.priceAnnual;
+    const monthlyTotal = plan.priceMonthly * 12;
+    const discount = ((monthlyTotal - yearlyTotal) / monthlyTotal) * 100;
 
-    // Réduction 50% sur pro_sync annuel (99€) = 49.50€ arrondi à 49€
-    const studentPrice = STUDENT_DISCOUNT.annualPriceWithDiscount;
-    expect(studentPrice).toBe(49);
-    expect(studentPrice).toBe(iaPlan.priceAnnual);
+    // 12.99 * 12 = 155.88€, annuel = 99€ → ~36% de réduction
+    expect(discount).toBeGreaterThan(30);
+    expect(yearlyTotal).toBeLessThan(monthlyTotal);
   });
 
   it("Quotas d'analyses augmentent avec les plans", () => {
-    expect(PLANS.free.limits.analysesPerPeriod).toBe(2);
-    expect(PLANS.ia_quotidienne.limits.analysesPerPeriod).toBe(8);
-    expect(PLANS.pro_sync.limits.analysesPerPeriod).toBe(3);
+    expect(PLANS.free.limits.analysesPerPeriod).toBe(5);
+    expect(PLANS.etudiant.limits.analysesPerPeriod).toBe(30);
+    expect(PLANS.pro.limits.analysesPerPeriod).toBe(100);
+    expect(PLANS.equipe.limits.analysesPerPeriod).toBe(9999);
 
-    // Note: pro_sync a moins que ia_quotidienne mais c'est quotidien vs mensuel
-    expect(PLANS.free.limits.analysisPeriod).toBe("lifetime");
-    expect(PLANS.ia_quotidienne.limits.analysisPeriod).toBe("monthly");
-    expect(PLANS.pro_sync.limits.analysisPeriod).toBe("daily");
+    // Tous les plans sont mensuels
+    expect(PLANS.free.limits.analysisPeriod).toBe("monthly");
+    expect(PLANS.etudiant.limits.analysisPeriod).toBe("monthly");
+    expect(PLANS.pro.limits.analysisPeriod).toBe("monthly");
+    expect(PLANS.equipe.limits.analysisPeriod).toBe("monthly");
   });
 
   it("Rappels par jour augmentent avec les plans", () => {
-    expect(PLANS.free.limits.remindersPerDay).toBe(1);
-    expect(PLANS.ia_quotidienne.limits.remindersPerDay).toBe(5);
-    expect(PLANS.pro_sync.limits.remindersPerDay).toBeNull(); // unlimited
+    expect(PLANS.free.limits.remindersPerDay).toBe(3);
+    expect(PLANS.etudiant.limits.remindersPerDay).toBeNull(); // unlimited
+    expect(PLANS.pro.limits.remindersPerDay).toBeNull(); // unlimited
+    expect(PLANS.equipe.limits.remindersPerDay).toBeNull(); // unlimited
   });
 
-  it("Seul pro_sync a sync et export", () => {
+  it("Seuls pro et equipe ont sync et export", () => {
     expect(PLANS.free.limits.sync).toBe(false);
     expect(PLANS.free.limits.export).toBe(false);
 
-    expect(PLANS.ia_quotidienne.limits.sync).toBe(false);
-    expect(PLANS.ia_quotidienne.limits.export).toBe(false);
+    expect(PLANS.etudiant.limits.sync).toBe(false);
+    expect(PLANS.etudiant.limits.export).toBe(false);
 
-    expect(PLANS.pro_sync.limits.sync).toBe(true);
-    expect(PLANS.pro_sync.limits.export).toBe(true);
+    expect(PLANS.pro.limits.sync).toBe(true);
+    expect(PLANS.pro.limits.export).toBe(true);
+
+    expect(PLANS.equipe.limits.sync).toBe(true);
+    expect(PLANS.equipe.limits.export).toBe(true);
   });
 
   it("Calendrier mois accessible seulement aux plans payants", () => {
     expect(PLANS.free.limits.calendarViews).not.toContain("month");
-    expect(PLANS.ia_quotidienne.limits.calendarViews).toContain("month");
-    expect(PLANS.pro_sync.limits.calendarViews).toContain("month");
+    expect(PLANS.etudiant.limits.calendarViews).toContain("month");
+    expect(PLANS.pro.limits.calendarViews).toContain("month");
+    expect(PLANS.equipe.limits.calendarViews).toContain("month");
   });
 });
 
 describe("Webhook Stripe — signature invalide", () => {
   it("rejette (400) une requête avec signature invalide", async () => {
-    // Setup : clé secrète + webhook secret configurés
     const originalSecret = process.env.STRIPE_SECRET_KEY;
     const originalWebhook = process.env.STRIPE_WEBHOOK_SECRET;
     process.env.STRIPE_SECRET_KEY = "sk_test_fake_key_for_testing";
     process.env.STRIPE_WEBHOOK_SECRET = "whsec_test_secret";
 
-    // Reset le singleton Stripe pour forcer la recréation
     vi.resetModules();
     const { POST } = await import("@/app/api/stripe/webhook/route");
 
-    // Construire une requête avec une signature invalide
     const body = JSON.stringify({ type: "checkout.session.completed" });
     const request = new Request("http://localhost:3000/api/stripe/webhook", {
       method: "POST",
@@ -400,7 +422,6 @@ describe("Webhook Stripe — signature invalide", () => {
     const json = await response.json();
     expect(json.error).toBe("Invalid signature");
 
-    // Restaurer les variables
     if (originalSecret) {
       process.env.STRIPE_SECRET_KEY = originalSecret;
     } else {
