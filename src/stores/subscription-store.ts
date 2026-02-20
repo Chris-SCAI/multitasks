@@ -12,7 +12,7 @@ interface SubscriptionState {
   setPlan: (planId: string) => void;
   setStripeIds: (customerId: string, subscriptionId: string) => void;
   setBillingPeriod: (period: "monthly" | "annual") => void;
-  loadPlanFromServer: () => Promise<void>;
+  loadPlanFromServer: () => Promise<boolean>;
 }
 
 export const useSubscriptionStore = create<SubscriptionState>()(
@@ -32,18 +32,18 @@ export const useSubscriptionStore = create<SubscriptionState>()(
         }),
       setBillingPeriod: (period) => set({ billingPeriod: period }),
 
-      loadPlanFromServer: async () => {
+      loadPlanFromServer: async (): Promise<boolean> => {
         try {
           const { createClient } = await import(
             "@/lib/db/supabase-client"
           );
           const supabase = createClient();
-          if (!supabase) return;
+          if (!supabase) return false;
 
           const {
             data: { user },
           } = await supabase.auth.getUser();
-          if (!user) return;
+          if (!user) return false;
 
           const { data: profile } = await supabase
             .from("profiles")
@@ -57,9 +57,11 @@ export const useSubscriptionStore = create<SubscriptionState>()(
               stripeCustomerId: profile.stripe_customer_id ?? null,
               stripeSubscriptionId: profile.stripe_subscription_id ?? null,
             });
+            return true;
           }
+          return false;
         } catch {
-          // Fallback silently to localStorage values
+          return false;
         }
       },
     }),

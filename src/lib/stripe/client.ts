@@ -11,6 +11,8 @@ export function getStripeClient(): Stripe | null {
   stripeInstance = new Stripe(secretKey, {
     apiVersion: "2026-01-28.clover",
     typescript: true,
+    timeout: 30000,
+    maxNetworkRetries: 2,
   });
 
   return stripeInstance;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomUUID } from "crypto";
+
 import { z } from "zod";
 import Stripe from "stripe";
 import { getStripeClient } from "@/lib/stripe/client";
@@ -45,11 +45,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const idempotencyKey = `checkout_${planId}_${billing}_${randomUUID()}`;
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-
     // Try to get authenticated user for customer_email and metadata
     const authResult = await getApiUser();
+    const userId = authResult.ok ? authResult.data.user.id : "anon";
+
+    // Student plan requires academic email verification
+    if (plan.requiresVerification) {
+      if (!authResult.ok) {
+        return NextResponse.json(
+          { error: "Connexion requise pour le plan Étudiant" },
+          { status: 401 }
+        );
+      }
+      const email = authResult.data.user.email ?? "";
+      const isAcademic = /\.(edu|ac\.\w{2,}|etu\.\w+|univ-\w+\.\w+|student\.\w+)$/i.test(
+        email.split("@")[1] ?? ""
+      );
+      if (!isAcademic) {
+        return NextResponse.json(
+          { error: "Le plan Étudiant nécessite une adresse email académique (.edu, .ac.fr, etc.)" },
+          { status: 403 }
+        );
+      }
+    }
+    const idempotencyKey = `checkout_${userId}_${planId}_${billing}`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: "subscription",
@@ -87,7 +107,10 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json({ url: session.url });
-  } catch {
+  } catch (err) {
+    console.error("[checkout] Failed to create session", {
+      error: err instanceof Error ? err.message : "Unknown",
+    });
     return NextResponse.json(
       { error: "Failed to create checkout session" },
       { status: 500 }

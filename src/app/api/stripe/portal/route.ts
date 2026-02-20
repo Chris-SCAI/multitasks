@@ -41,7 +41,11 @@ export async function POST() {
     });
 
     return NextResponse.json({ url: portalSession.url });
-  } catch {
+  } catch (err) {
+    console.error("[portal] Failed to create portal session", {
+      userId: user.id,
+      error: err instanceof Error ? err.message : "Unknown",
+    });
     return NextResponse.json(
       { error: "Impossible de créer la session du portail" },
       { status: 500 }

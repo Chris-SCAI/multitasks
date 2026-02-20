@@ -75,6 +75,7 @@ export default function SettingsPage() {
   const { domains, createDomain, updateDomain, deleteDomain } =
     useDomainStore();
   const { currentPlan, setPlan, stripeCustomerId } = useSubscriptionStore();
+  const loadPlanFromServer = useSubscriptionStore((s) => s.loadPlanFromServer);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
   const quotaInfo = useAnalysisStore((s) => s.quotaInfo);
   const planId = currentPlan as "free" | "etudiant" | "pro" | "equipe";
@@ -95,6 +96,20 @@ export default function SettingsPage() {
     if (saved) setDisplayName(saved);
     if (tasks.length === 0) loadTasks();
   }, [tasks.length, loadTasks]);
+
+  // Refresh plan on mount (covers portal return via ?tab=abonnement)
+  // and when tab becomes visible again (portal opens in another tab)
+  useEffect(() => {
+    loadPlanFromServer();
+
+    function handleVisibility() {
+      if (document.visibilityState === "visible") {
+        loadPlanFromServer();
+      }
+    }
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [loadPlanFromServer]);
 
   function handleSaveProfile() {
     localStorage.setItem("multitasks-display-name", displayName);

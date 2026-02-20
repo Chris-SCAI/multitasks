@@ -14,20 +14,32 @@ export function CheckoutSuccess() {
 
   useEffect(() => {
     if (searchParams.get("checkout") !== "success") return;
+    let cancelled = false;
 
-    // Refresh plan from server
-    loadPlanFromServer();
+    async function refreshPlan() {
+      // Retry up to 3 times with 2s delay (webhook may arrive late)
+      for (let attempt = 0; attempt < 3; attempt++) {
+        if (cancelled) return;
+        const updated = await loadPlanFromServer();
+        if (updated) break;
+        if (attempt < 2) await new Promise((r) => setTimeout(r, 2000));
+      }
+      if (cancelled) return;
+      setVisible(true);
 
-    setVisible(true);
+      // Clean URL parameter
+      const url = new URL(window.location.href);
+      url.searchParams.delete("checkout");
+      router.replace(url.pathname + url.search, { scroll: false });
+    }
 
-    // Clean URL parameter
-    const url = new URL(window.location.href);
-    url.searchParams.delete("checkout");
-    router.replace(url.pathname + url.search, { scroll: false });
+    refreshPlan();
 
-    // Auto-dismiss after 5s
     const timer = setTimeout(() => setVisible(false), 5000);
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [searchParams, router, loadPlanFromServer]);
 
   return (

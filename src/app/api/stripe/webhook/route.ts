@@ -67,46 +67,72 @@ export async function POST(request: NextRequest) {
 
   switch (event.type) {
     case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session;
-      const planId = session.metadata?.planId;
-      const userId = session.metadata?.userId;
-      const customerId =
-        typeof session.customer === "string" ? session.customer : null;
-      const subscriptionId =
-        typeof session.subscription === "string" ? session.subscription : null;
+      try {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const planId = session.metadata?.planId;
+        const userId = session.metadata?.userId;
+        const customerId =
+          typeof session.customer === "string" ? session.customer : null;
+        const subscriptionId =
+          typeof session.subscription === "string"
+            ? session.subscription
+            : null;
 
-      if (!planId) break;
+        if (!planId) break;
 
-      // Find the user: prefer metadata userId, fallback to email lookup
-      let targetUserId = userId;
-
-      if (!targetUserId && session.customer_email) {
-        // Use admin auth API to find user by email
-        const { data } = await adminSupabase.auth.admin.listUsers({
-          page: 1,
-          perPage: 1,
-        });
-        // Search in all users for matching email
-        const matchedUser = data?.users?.find(
-          (u) => u.email === session.customer_email
-        );
-        if (matchedUser) {
-          targetUserId = matchedUser.id;
+        // Validate planId against known plans
+        if (!PLANS[planId]) {
+          console.error("[webhook] checkout.session.completed: unknown planId", {
+            planId,
+            customerId,
+          });
+          break;
         }
-      }
 
-      // Last fallback: find by stripe_customer_id
-      if (!targetUserId && customerId) {
-        const { data: profile } = await adminSupabase
-          .from("profiles")
-          .select("id")
-          .eq("stripe_customer_id", customerId)
-          .single();
-        if (profile) targetUserId = profile.id;
-      }
+        // Find the user: prefer metadata userId, fallback to email lookup
+        let targetUserId = userId;
 
-      if (targetUserId) {
-        await adminSupabase
+        if (!targetUserId && session.customer_email) {
+          // Paginated search for user by email
+          let matchedUser = null;
+          let page = 1;
+          const perPage = 100;
+          while (!matchedUser) {
+            const { data } = await adminSupabase.auth.admin.listUsers({
+              page,
+              perPage,
+            });
+            if (!data?.users?.length) break;
+            matchedUser = data.users.find(
+              (u) => u.email === session.customer_email
+            );
+            if (data.users.length < perPage) break;
+            page++;
+          }
+          if (matchedUser) {
+            targetUserId = matchedUser.id;
+          }
+        }
+
+        // Last fallback: find by stripe_customer_id
+        if (!targetUserId && customerId) {
+          const { data: profile } = await adminSupabase
+            .from("profiles")
+            .select("id")
+            .eq("stripe_customer_id", customerId)
+            .single();
+          if (profile) targetUserId = profile.id;
+        }
+
+        if (!targetUserId) {
+          console.error(
+            "[webhook] checkout.session.completed: user not found",
+            { customerId }
+          );
+          break;
+        }
+
+        const { error: updateError } = await adminSupabase
           .from("profiles")
           .update({
             plan: planId,
@@ -115,54 +141,144 @@ export async function POST(request: NextRequest) {
             updated_at: new Date().toISOString(),
           })
           .eq("id", targetUserId);
+
+        if (updateError) {
+          console.error(
+            "[webhook] checkout.session.completed: DB update failed",
+            {
+              userId: targetUserId,
+              planId,
+              error: updateError.message,
+            }
+          );
+          return NextResponse.json(
+            { error: "Database update failed" },
+            { status: 500 }
+          );
+        }
+
+        console.log("[webhook] checkout.session.completed: success", {
+          userId: targetUserId,
+          planId,
+          customerId,
+        });
+      } catch (err) {
+        console.error(
+          "[webhook] checkout.session.completed: unexpected error",
+          { error: err instanceof Error ? err.message : "Unknown" }
+        );
+        return NextResponse.json(
+          { error: "Internal error" },
+          { status: 500 }
+        );
       }
       break;
     }
 
     case "customer.subscription.updated": {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId =
-        typeof subscription.customer === "string"
-          ? subscription.customer
-          : null;
+      try {
+        const subscription = event.data.object as Stripe.Subscription;
+        const customerId =
+          typeof subscription.customer === "string"
+            ? subscription.customer
+            : null;
 
-      if (!customerId) break;
+        if (!customerId) break;
 
-      const priceId = subscription.items.data[0]?.price?.id;
-      if (!priceId) break;
+        const priceId = subscription.items.data[0]?.price?.id;
+        if (!priceId) break;
 
-      const priceToPlan = buildPriceToPlanMap();
-      const newPlanId = priceToPlan[priceId];
-      if (!newPlanId) break;
+        const priceToPlan = buildPriceToPlanMap();
+        const newPlanId = priceToPlan[priceId];
+        if (!newPlanId) break;
 
-      await adminSupabase
-        .from("profiles")
-        .update({
-          plan: newPlanId,
-          stripe_subscription_id: subscription.id,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("stripe_customer_id", customerId);
+        const { error: updateError } = await adminSupabase
+          .from("profiles")
+          .update({
+            plan: newPlanId,
+            stripe_subscription_id: subscription.id,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("stripe_customer_id", customerId);
+
+        if (updateError) {
+          console.error(
+            "[webhook] customer.subscription.updated: DB update failed",
+            {
+              customerId,
+              newPlanId,
+              error: updateError.message,
+            }
+          );
+          return NextResponse.json(
+            { error: "Database update failed" },
+            { status: 500 }
+          );
+        }
+
+        console.log("[webhook] customer.subscription.updated: success", {
+          customerId,
+          newPlanId,
+        });
+      } catch (err) {
+        console.error(
+          "[webhook] customer.subscription.updated: unexpected error",
+          { error: err instanceof Error ? err.message : "Unknown" }
+        );
+        return NextResponse.json(
+          { error: "Internal error" },
+          { status: 500 }
+        );
+      }
       break;
     }
 
     case "customer.subscription.deleted": {
-      const subscription = event.data.object as Stripe.Subscription;
-      const customerId =
-        typeof subscription.customer === "string"
-          ? subscription.customer
-          : null;
+      try {
+        const subscription = event.data.object as Stripe.Subscription;
+        const customerId =
+          typeof subscription.customer === "string"
+            ? subscription.customer
+            : null;
 
-      if (!customerId) break;
+        if (!customerId) break;
 
-      await adminSupabase
-        .from("profiles")
-        .update({
-          plan: "free",
-          stripe_subscription_id: null,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("stripe_customer_id", customerId);
+        const { error: updateError } = await adminSupabase
+          .from("profiles")
+          .update({
+            plan: "free",
+            stripe_subscription_id: null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("stripe_customer_id", customerId);
+
+        if (updateError) {
+          console.error(
+            "[webhook] customer.subscription.deleted: DB update failed",
+            {
+              customerId,
+              error: updateError.message,
+            }
+          );
+          return NextResponse.json(
+            { error: "Database update failed" },
+            { status: 500 }
+          );
+        }
+
+        console.log("[webhook] customer.subscription.deleted: success", {
+          customerId,
+        });
+      } catch (err) {
+        console.error(
+          "[webhook] customer.subscription.deleted: unexpected error",
+          { error: err instanceof Error ? err.message : "Unknown" }
+        );
+        return NextResponse.json(
+          { error: "Internal error" },
+          { status: 500 }
+        );
+      }
       break;
     }
   }
